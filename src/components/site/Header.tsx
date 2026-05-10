@@ -1,16 +1,41 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, Menu, X, Globe } from "lucide-react";
-import { getAllPropertyTypes, getAllProperties } from "@/lib/server-functions";
+import { getAllPropertyTypes, getAllProperties, createLead } from "@/lib/server-functions";
 import { useSiteSettings } from "./SiteSettingsContext";
+import { toast } from "sonner";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [showMega, setShowMega] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [types, setTypes] = useState<any[]>([]);
   const [featured, setFeatured] = useState<any>(null);
   const settings = useSiteSettings();
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    setIsSubmitting(true);
+    try {
+      await createLead({
+        data: {
+          name: formData.get("name"),
+          email: formData.get("email"),
+          phone: formData.get("phone"),
+          source: "Header Get In Touch"
+        }
+      });
+      toast.success("Thank you! We will get in touch soon.");
+      setShowContactModal(false);
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -57,7 +82,8 @@ export function Header() {
           )}
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-9">
+        <nav className="hidden lg:flex items-center gap-6">
+          <Link to="/" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Home</Link>
           <div 
             className="relative h-20 flex items-center group cursor-pointer"
             onMouseEnter={() => setShowMega(true)}
@@ -69,13 +95,15 @@ export function Header() {
             </span>
           </div>
           <Link to="/communities" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Communities</Link>
-          <Link to="/about" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>About Us</Link>
-          <Link to="/admin" className={`text-[10px] font-bold uppercase tracking-[0.2em] border border-brand/20 px-4 py-2 rounded-full hover:bg-brand hover:text-white transition ${scrolled || showMega ? "text-brand" : "text-white"}`}>Admin Panel</Link>
+          <Link to="/services" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Services</Link>
+          <Link to="/blogs" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Blogs</Link>
+          <Link to="/about" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>About</Link>
+          <Link to="/contact" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Contact Us</Link>
         </nav>
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() => {}}
+            onClick={() => setShowContactModal(true)}
             className="hidden md:inline-flex items-center bg-brand text-white px-6 py-3 text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all rounded-sm shadow-lg shadow-brand/10"
           >
             Get in Touch
@@ -173,6 +201,36 @@ export function Header() {
                  )}
               </div>
            </div>
+        </div>
+      )}
+      {/* Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowContactModal(false)}>
+          <div className="bg-white rounded-3xl max-w-md w-full p-8 relative animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowContactModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-800 transition">
+              <X className="w-5 h-5" />
+            </button>
+            <h3 className="text-2xl font-black text-ink mb-2">Get In Touch</h3>
+            <p className="text-slate-500 text-sm mb-6">Leave your details and our property experts will contact you shortly.</p>
+            
+            <form onSubmit={handleContactSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Name</label>
+                <input required name="name" type="text" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand transition outline-none" placeholder="John Doe" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Email</label>
+                <input required name="email" type="email" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand transition outline-none" placeholder="john@example.com" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Phone</label>
+                <input required name="phone" type="tel" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand transition outline-none" placeholder="+1234567890" />
+              </div>
+              <button disabled={isSubmitting} type="submit" className="w-full bg-brand text-white font-bold tracking-[0.2em] uppercase text-xs py-4 rounded-xl hover:bg-black transition-colors disabled:opacity-50 mt-4">
+                {isSubmitting ? "Submitting..." : "Submit Enquiry"}
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </header>

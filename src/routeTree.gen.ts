@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SustainabilityRouteImport } from './routes/sustainability'
+import { Route as ServicesRouteImport } from './routes/services'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NewsroomRouteImport } from './routes/newsroom'
 import { Route as InvestorRelationsRouteImport } from './routes/investor-relations'
@@ -45,6 +46,11 @@ const TermsRoute = TermsRouteImport.update({
 const SustainabilityRoute = SustainabilityRouteImport.update({
   id: '/sustainability',
   path: '/sustainability',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/investor-relations': typeof InvestorRelationsRoute
   '/newsroom': typeof NewsroomRoute
   '/privacy': typeof PrivacyRoute
+  '/services': typeof ServicesRoute
   '/sustainability': typeof SustainabilityRoute
   '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/investor-relations': typeof InvestorRelationsRoute
   '/newsroom': typeof NewsroomRoute
   '/privacy': typeof PrivacyRoute
+  '/services': typeof ServicesRoute
   '/sustainability': typeof SustainabilityRoute
   '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/investor-relations': typeof InvestorRelationsRoute
   '/newsroom': typeof NewsroomRoute
   '/privacy': typeof PrivacyRoute
+  '/services': typeof ServicesRoute
   '/sustainability': typeof SustainabilityRoute
   '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/investor-relations'
     | '/newsroom'
     | '/privacy'
+    | '/services'
     | '/sustainability'
     | '/terms'
     | '/blogs/$slug'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/investor-relations'
     | '/newsroom'
     | '/privacy'
+    | '/services'
     | '/sustainability'
     | '/terms'
     | '/blogs/$slug'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/investor-relations'
     | '/newsroom'
     | '/privacy'
+    | '/services'
     | '/sustainability'
     | '/terms'
     | '/blogs/$slug'
@@ -364,6 +376,7 @@ export interface RootRouteChildren {
   InvestorRelationsRoute: typeof InvestorRelationsRoute
   NewsroomRoute: typeof NewsroomRoute
   PrivacyRoute: typeof PrivacyRoute
+  ServicesRoute: typeof ServicesRoute
   SustainabilityRoute: typeof SustainabilityRoute
   TermsRoute: typeof TermsRoute
   BlogsSlugRoute: typeof BlogsSlugRoute
@@ -395,6 +408,13 @@ declare module '@tanstack/react-router' {
       path: '/sustainability'
       fullPath: '/sustainability'
       preLoaderRoute: typeof SustainabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -588,6 +608,7 @@ const rootRouteChildren: RootRouteChildren = {
   InvestorRelationsRoute: InvestorRelationsRoute,
   NewsroomRoute: NewsroomRoute,
   PrivacyRoute: PrivacyRoute,
+  ServicesRoute: ServicesRoute,
   SustainabilityRoute: SustainabilityRoute,
   TermsRoute: TermsRoute,
   BlogsSlugRoute: BlogsSlugRoute,
