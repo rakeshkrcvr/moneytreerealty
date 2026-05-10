@@ -5,7 +5,7 @@ const fields = ["Property Type", "Bedrooms", "Price Range", "Community"];
 export function SearchBar() {
   return (
     <div className="bg-background shadow-[var(--shadow-elegant)] border-t border-border">
-      <div className="container-emaar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
+      <div className="container-realty grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
         {fields.map((f) => (
           <button
             key={f}

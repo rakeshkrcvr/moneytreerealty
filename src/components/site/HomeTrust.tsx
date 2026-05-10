@@ -10,7 +10,7 @@ export function Testimonials({ reviews }: { reviews: any[] }) {
         <Quote className="w-96 h-96 -mr-24 -mt-24" />
       </div>
 
-      <div className="container-emaar relative z-10">
+      <div className="container-realty relative z-10">
         <div className="text-center mb-16">
           <p className="text-xs tracking-[0.4em] uppercase text-gold mb-4">Voices of Trust</p>
           <h2 className="text-3xl md:text-5xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>
@@ -42,7 +42,7 @@ export function HomeFAQ({ items }: { items: any[] }) {
 
   return (
     <section className="py-24 bg-background">
-      <div className="container-emaar max-w-4xl mx-auto">
+      <div className="container-realty max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-xs tracking-[0.4em] uppercase text-brand mb-4">Questions</p>
           <h2 className="text-3xl md:text-5xl text-ink uppercase" style={{ fontFamily: "var(--font-serif)" }}>

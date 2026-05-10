@@ -1,7 +1,7 @@
 export function Intro() {
   return (
     <section className="py-24 bg-background">
-      <div className="container-emaar max-w-4xl text-center">
+      <div className="container-realty max-w-4xl text-center">
         <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">
           The Leading Developer in Dubai
         </p>

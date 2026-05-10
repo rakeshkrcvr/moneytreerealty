@@ -5,8 +5,8 @@ import { completed } from "@/lib/site-data";
 export const Route = createFileRoute("/completed/$slug")({
   head: ({ params }) => {
     const p = completed.find((x) => x.slug === params.slug);
-    const title = p ? `${p.title} — ${p.location} | Emaar` : "Completed Project — Emaar";
-    const desc = p?.description ?? "Move-in ready homes from Emaar.";
+    const title = p ? `${p.title} — ${p.location} | Golden Door Realty` : "Completed Project — Golden Door Realty";
+    const desc = p?.description ?? "Move-in ready homes from Golden Door Realty.";
     return {
       meta: [
         { title },
@@ -38,13 +38,13 @@ function CompletedDetail() {
   return (
     <PageShell eyebrow={`Handed Over · ${p.year}`} title={p.title} intro={p.description} heroImg={p.img}>
       <section className="py-24 bg-background">
-        <div className="container-emaar grid md:grid-cols-2 gap-16">
+        <div className="container-realty grid md:grid-cols-2 gap-16">
           <div>
             <p className="text-xs tracking-[0.4em] uppercase text-brand mb-4">Overview</p>
             <h2 className="text-3xl md:text-4xl text-ink mb-6" style={{ fontFamily: "var(--font-serif)" }}>{p.title}</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">{p.description}</p>
             <p className="text-muted-foreground leading-relaxed">
-              Located in {p.location}, this Emaar development was handed over in {p.year} and forms part of a
+              Located in {p.location}, this Golden Door Realty development was handed over in {p.year} and forms part of a
               thriving, fully serviced community with retail, leisure and connectivity built in.
             </p>
           </div>
@@ -60,7 +60,7 @@ function CompletedDetail() {
       </section>
 
       <section className="py-24 bg-surface">
-        <div className="container-emaar">
+        <div className="container-realty">
           <div className="flex items-end justify-between mb-12">
             <h2 className="text-3xl md:text-4xl text-ink" style={{ fontFamily: "var(--font-serif)" }}>More completed projects</h2>
             <Link to="/completed" className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink border-b border-ink pb-1 hover:text-brand hover:border-brand transition">View all</Link>

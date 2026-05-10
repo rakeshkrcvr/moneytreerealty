@@ -8,7 +8,7 @@ export const Route = createFileRoute("/communities/$slug")({
   loader: async ({ params }) => {
     const community = await getCommunityBySlug(params.slug);
     if (!community) throw notFound();
-    const projects = await getProjectsInCommunity(community.title);
+    const projects = await getProjectsInCommunity(params.slug);
     return JSON.parse(JSON.stringify({ community, projects }));
   },
   component: CommunityDetail,
@@ -25,7 +25,7 @@ function CommunityDetail() {
       <section className="relative h-[80vh] flex items-center overflow-hidden">
         <img src={community.img} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]" />
-        <div className="container-emaar relative z-10 text-white">
+        <div className="container-realty relative z-10 text-white">
           <div className="max-w-3xl animate-fade-up">
             <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4 font-bold">{community.tag}</p>
             <h1 className="text-5xl md:text-8xl uppercase mb-8 leading-tight" style={{ fontFamily: "var(--font-serif)" }}>
@@ -46,7 +46,7 @@ function CommunityDetail() {
       </section>
 
       {/* Overview */}
-      <section className="py-32 container-emaar">
+      <section className="py-32 container-realty">
         <div className="grid md:grid-cols-2 gap-24 items-start">
            <div>
               <h2 className="text-3xl uppercase tracking-widest mb-10" style={{ fontFamily: "var(--font-serif)" }}>Community Overview</h2>
@@ -67,7 +67,7 @@ function CommunityDetail() {
 
       {/* Projects */}
       <section className="py-32 bg-ink text-white">
-        <div className="container-emaar">
+        <div className="container-realty">
           <div className="mb-20">
              <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4 font-bold">The Collection</p>
              <h2 className="text-4xl md:text-6xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>Active Projects</h2>
@@ -75,7 +75,7 @@ function CommunityDetail() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
              {projects.active.map((p: any) => (
-               <Link key={p.slug} to="/launches/$slug" params={{ slug: p.slug }} className="group">
+               <Link key={p.slug} to="/property/$slug" params={{ slug: p.slug }} className="group">
                   <div className="aspect-[4/5] overflow-hidden mb-6 bg-white/5 relative">
                      <img src={p.img} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
                      <div className="absolute top-4 left-4 bg-brand text-white px-4 py-2 text-[9px] font-bold uppercase tracking-widest">Active</div>

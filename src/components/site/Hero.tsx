@@ -18,7 +18,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="container-emaar relative z-10 text-center text-white mt-20">
+      <div className="container-realty relative z-10 text-center text-white mt-20">
         <p className="text-xs md:text-sm tracking-[0.5em] uppercase mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
           Welcome to the Future of Living
         </p>

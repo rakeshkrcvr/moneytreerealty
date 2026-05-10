@@ -13,28 +13,29 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SustainabilityRouteImport } from './routes/sustainability'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NewsroomRouteImport } from './routes/newsroom'
-import { Route as LaunchesRouteImport } from './routes/launches'
 import { Route as InvestorRelationsRouteImport } from './routes/investor-relations'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as CustomerServiceRouteImport } from './routes/customer-service'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CompletedRouteImport } from './routes/completed'
-import { Route as CommunitiesRouteImport } from './routes/communities'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BrokersRouteImport } from './routes/brokers'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LaunchesIndexRouteImport } from './routes/launches.index'
+import { Route as CompletedIndexRouteImport } from './routes/completed.index'
 import { Route as CommunitiesIndexRouteImport } from './routes/communities.index'
+import { Route as BlogsIndexRouteImport } from './routes/blogs.index'
+import { Route as PropertySlugRouteImport } from './routes/property.$slug'
 import { Route as PropertiesVillasRouteImport } from './routes/properties.villas'
 import { Route as PropertiesTownhousesRouteImport } from './routes/properties.townhouses'
 import { Route as PropertiesHospitalityRouteImport } from './routes/properties.hospitality'
 import { Route as PropertiesCommercialRouteImport } from './routes/properties.commercial'
 import { Route as PropertiesApartmentsRouteImport } from './routes/properties.apartments'
-import { Route as LaunchesSlugRouteImport } from './routes/launches.$slug'
 import { Route as CompletedSlugRouteImport } from './routes/completed.$slug'
 import { Route as CommunitiesSlugRouteImport } from './routes/communities.$slug'
+import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -54,11 +55,6 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const NewsroomRoute = NewsroomRouteImport.update({
   id: '/newsroom',
   path: '/newsroom',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LaunchesRoute = LaunchesRouteImport.update({
-  id: '/launches',
-  path: '/launches',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvestorRelationsRoute = InvestorRelationsRouteImport.update({
@@ -86,16 +82,6 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CompletedRoute = CompletedRouteImport.update({
-  id: '/completed',
-  path: '/completed',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CommunitiesRoute = CommunitiesRouteImport.update({
-  id: '/communities',
-  path: '/communities',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CareersRoute = CareersRouteImport.update({
   id: '/careers',
   path: '/careers',
@@ -121,10 +107,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LaunchesIndexRoute = LaunchesIndexRouteImport.update({
+  id: '/launches/',
+  path: '/launches/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompletedIndexRoute = CompletedIndexRouteImport.update({
+  id: '/completed/',
+  path: '/completed/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunitiesIndexRoute = CommunitiesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CommunitiesRoute,
+  id: '/communities/',
+  path: '/communities/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogsIndexRoute = BlogsIndexRouteImport.update({
+  id: '/blogs/',
+  path: '/blogs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertySlugRoute = PropertySlugRouteImport.update({
+  id: '/property/$slug',
+  path: '/property/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesVillasRoute = PropertiesVillasRouteImport.update({
   id: '/properties/villas',
@@ -151,20 +157,20 @@ const PropertiesApartmentsRoute = PropertiesApartmentsRouteImport.update({
   path: '/properties/apartments',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LaunchesSlugRoute = LaunchesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => LaunchesRoute,
-} as any)
 const CompletedSlugRoute = CompletedSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => CompletedRoute,
+  id: '/completed/$slug',
+  path: '/completed/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CommunitiesSlugRoute = CommunitiesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => CommunitiesRoute,
+  id: '/communities/$slug',
+  path: '/communities/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogsSlugRoute = BlogsSlugRouteImport.update({
+  id: '/blogs/$slug',
+  path: '/blogs/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -173,27 +179,28 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/brokers': typeof BrokersRoute
   '/careers': typeof CareersRoute
-  '/communities': typeof CommunitiesRouteWithChildren
-  '/completed': typeof CompletedRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/customer-service': typeof CustomerServiceRoute
   '/faqs': typeof FaqsRoute
   '/investor-relations': typeof InvestorRelationsRoute
-  '/launches': typeof LaunchesRouteWithChildren
   '/newsroom': typeof NewsroomRoute
   '/privacy': typeof PrivacyRoute
   '/sustainability': typeof SustainabilityRoute
   '/terms': typeof TermsRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/communities/$slug': typeof CommunitiesSlugRoute
   '/completed/$slug': typeof CompletedSlugRoute
-  '/launches/$slug': typeof LaunchesSlugRoute
   '/properties/apartments': typeof PropertiesApartmentsRoute
   '/properties/commercial': typeof PropertiesCommercialRoute
   '/properties/hospitality': typeof PropertiesHospitalityRoute
   '/properties/townhouses': typeof PropertiesTownhousesRoute
   '/properties/villas': typeof PropertiesVillasRoute
+  '/property/$slug': typeof PropertySlugRoute
+  '/blogs/': typeof BlogsIndexRoute
   '/communities/': typeof CommunitiesIndexRoute
+  '/completed/': typeof CompletedIndexRoute
+  '/launches/': typeof LaunchesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -201,26 +208,28 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/brokers': typeof BrokersRoute
   '/careers': typeof CareersRoute
-  '/completed': typeof CompletedRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/customer-service': typeof CustomerServiceRoute
   '/faqs': typeof FaqsRoute
   '/investor-relations': typeof InvestorRelationsRoute
-  '/launches': typeof LaunchesRouteWithChildren
   '/newsroom': typeof NewsroomRoute
   '/privacy': typeof PrivacyRoute
   '/sustainability': typeof SustainabilityRoute
   '/terms': typeof TermsRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/communities/$slug': typeof CommunitiesSlugRoute
   '/completed/$slug': typeof CompletedSlugRoute
-  '/launches/$slug': typeof LaunchesSlugRoute
   '/properties/apartments': typeof PropertiesApartmentsRoute
   '/properties/commercial': typeof PropertiesCommercialRoute
   '/properties/hospitality': typeof PropertiesHospitalityRoute
   '/properties/townhouses': typeof PropertiesTownhousesRoute
   '/properties/villas': typeof PropertiesVillasRoute
+  '/property/$slug': typeof PropertySlugRoute
+  '/blogs': typeof BlogsIndexRoute
   '/communities': typeof CommunitiesIndexRoute
+  '/completed': typeof CompletedIndexRoute
+  '/launches': typeof LaunchesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -229,27 +238,28 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/brokers': typeof BrokersRoute
   '/careers': typeof CareersRoute
-  '/communities': typeof CommunitiesRouteWithChildren
-  '/completed': typeof CompletedRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/customer-service': typeof CustomerServiceRoute
   '/faqs': typeof FaqsRoute
   '/investor-relations': typeof InvestorRelationsRoute
-  '/launches': typeof LaunchesRouteWithChildren
   '/newsroom': typeof NewsroomRoute
   '/privacy': typeof PrivacyRoute
   '/sustainability': typeof SustainabilityRoute
   '/terms': typeof TermsRoute
+  '/blogs/$slug': typeof BlogsSlugRoute
   '/communities/$slug': typeof CommunitiesSlugRoute
   '/completed/$slug': typeof CompletedSlugRoute
-  '/launches/$slug': typeof LaunchesSlugRoute
   '/properties/apartments': typeof PropertiesApartmentsRoute
   '/properties/commercial': typeof PropertiesCommercialRoute
   '/properties/hospitality': typeof PropertiesHospitalityRoute
   '/properties/townhouses': typeof PropertiesTownhousesRoute
   '/properties/villas': typeof PropertiesVillasRoute
+  '/property/$slug': typeof PropertySlugRoute
+  '/blogs/': typeof BlogsIndexRoute
   '/communities/': typeof CommunitiesIndexRoute
+  '/completed/': typeof CompletedIndexRoute
+  '/launches/': typeof LaunchesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -259,27 +269,28 @@ export interface FileRouteTypes {
     | '/admin'
     | '/brokers'
     | '/careers'
-    | '/communities'
-    | '/completed'
     | '/contact'
     | '/cookies'
     | '/customer-service'
     | '/faqs'
     | '/investor-relations'
-    | '/launches'
     | '/newsroom'
     | '/privacy'
     | '/sustainability'
     | '/terms'
+    | '/blogs/$slug'
     | '/communities/$slug'
     | '/completed/$slug'
-    | '/launches/$slug'
     | '/properties/apartments'
     | '/properties/commercial'
     | '/properties/hospitality'
     | '/properties/townhouses'
     | '/properties/villas'
+    | '/property/$slug'
+    | '/blogs/'
     | '/communities/'
+    | '/completed/'
+    | '/launches/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,26 +298,28 @@ export interface FileRouteTypes {
     | '/admin'
     | '/brokers'
     | '/careers'
-    | '/completed'
     | '/contact'
     | '/cookies'
     | '/customer-service'
     | '/faqs'
     | '/investor-relations'
-    | '/launches'
     | '/newsroom'
     | '/privacy'
     | '/sustainability'
     | '/terms'
+    | '/blogs/$slug'
     | '/communities/$slug'
     | '/completed/$slug'
-    | '/launches/$slug'
     | '/properties/apartments'
     | '/properties/commercial'
     | '/properties/hospitality'
     | '/properties/townhouses'
     | '/properties/villas'
+    | '/property/$slug'
+    | '/blogs'
     | '/communities'
+    | '/completed'
+    | '/launches'
   id:
     | '__root__'
     | '/'
@@ -314,27 +327,28 @@ export interface FileRouteTypes {
     | '/admin'
     | '/brokers'
     | '/careers'
-    | '/communities'
-    | '/completed'
     | '/contact'
     | '/cookies'
     | '/customer-service'
     | '/faqs'
     | '/investor-relations'
-    | '/launches'
     | '/newsroom'
     | '/privacy'
     | '/sustainability'
     | '/terms'
+    | '/blogs/$slug'
     | '/communities/$slug'
     | '/completed/$slug'
-    | '/launches/$slug'
     | '/properties/apartments'
     | '/properties/commercial'
     | '/properties/hospitality'
     | '/properties/townhouses'
     | '/properties/villas'
+    | '/property/$slug'
+    | '/blogs/'
     | '/communities/'
+    | '/completed/'
+    | '/launches/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -343,23 +357,28 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   BrokersRoute: typeof BrokersRoute
   CareersRoute: typeof CareersRoute
-  CommunitiesRoute: typeof CommunitiesRouteWithChildren
-  CompletedRoute: typeof CompletedRouteWithChildren
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   CustomerServiceRoute: typeof CustomerServiceRoute
   FaqsRoute: typeof FaqsRoute
   InvestorRelationsRoute: typeof InvestorRelationsRoute
-  LaunchesRoute: typeof LaunchesRouteWithChildren
   NewsroomRoute: typeof NewsroomRoute
   PrivacyRoute: typeof PrivacyRoute
   SustainabilityRoute: typeof SustainabilityRoute
   TermsRoute: typeof TermsRoute
+  BlogsSlugRoute: typeof BlogsSlugRoute
+  CommunitiesSlugRoute: typeof CommunitiesSlugRoute
+  CompletedSlugRoute: typeof CompletedSlugRoute
   PropertiesApartmentsRoute: typeof PropertiesApartmentsRoute
   PropertiesCommercialRoute: typeof PropertiesCommercialRoute
   PropertiesHospitalityRoute: typeof PropertiesHospitalityRoute
   PropertiesTownhousesRoute: typeof PropertiesTownhousesRoute
   PropertiesVillasRoute: typeof PropertiesVillasRoute
+  PropertySlugRoute: typeof PropertySlugRoute
+  BlogsIndexRoute: typeof BlogsIndexRoute
+  CommunitiesIndexRoute: typeof CommunitiesIndexRoute
+  CompletedIndexRoute: typeof CompletedIndexRoute
+  LaunchesIndexRoute: typeof LaunchesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -390,13 +409,6 @@ declare module '@tanstack/react-router' {
       path: '/newsroom'
       fullPath: '/newsroom'
       preLoaderRoute: typeof NewsroomRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/launches': {
-      id: '/launches'
-      path: '/launches'
-      fullPath: '/launches'
-      preLoaderRoute: typeof LaunchesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/investor-relations': {
@@ -434,20 +446,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/completed': {
-      id: '/completed'
-      path: '/completed'
-      fullPath: '/completed'
-      preLoaderRoute: typeof CompletedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/communities': {
-      id: '/communities'
-      path: '/communities'
-      fullPath: '/communities'
-      preLoaderRoute: typeof CommunitiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/careers': {
       id: '/careers'
       path: '/careers'
@@ -483,12 +481,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/launches/': {
+      id: '/launches/'
+      path: '/launches'
+      fullPath: '/launches/'
+      preLoaderRoute: typeof LaunchesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/completed/': {
+      id: '/completed/'
+      path: '/completed'
+      fullPath: '/completed/'
+      preLoaderRoute: typeof CompletedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/communities/': {
       id: '/communities/'
-      path: '/'
+      path: '/communities'
       fullPath: '/communities/'
       preLoaderRoute: typeof CommunitiesIndexRouteImport
-      parentRoute: typeof CommunitiesRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogs/': {
+      id: '/blogs/'
+      path: '/blogs'
+      fullPath: '/blogs/'
+      preLoaderRoute: typeof BlogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/property/$slug': {
+      id: '/property/$slug'
+      path: '/property/$slug'
+      fullPath: '/property/$slug'
+      preLoaderRoute: typeof PropertySlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/properties/villas': {
       id: '/properties/villas'
@@ -525,67 +551,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesApartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/launches/$slug': {
-      id: '/launches/$slug'
-      path: '/$slug'
-      fullPath: '/launches/$slug'
-      preLoaderRoute: typeof LaunchesSlugRouteImport
-      parentRoute: typeof LaunchesRoute
-    }
     '/completed/$slug': {
       id: '/completed/$slug'
-      path: '/$slug'
+      path: '/completed/$slug'
       fullPath: '/completed/$slug'
       preLoaderRoute: typeof CompletedSlugRouteImport
-      parentRoute: typeof CompletedRoute
+      parentRoute: typeof rootRouteImport
     }
     '/communities/$slug': {
       id: '/communities/$slug'
-      path: '/$slug'
+      path: '/communities/$slug'
       fullPath: '/communities/$slug'
       preLoaderRoute: typeof CommunitiesSlugRouteImport
-      parentRoute: typeof CommunitiesRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogs/$slug': {
+      id: '/blogs/$slug'
+      path: '/blogs/$slug'
+      fullPath: '/blogs/$slug'
+      preLoaderRoute: typeof BlogsSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface CommunitiesRouteChildren {
-  CommunitiesSlugRoute: typeof CommunitiesSlugRoute
-  CommunitiesIndexRoute: typeof CommunitiesIndexRoute
-}
-
-const CommunitiesRouteChildren: CommunitiesRouteChildren = {
-  CommunitiesSlugRoute: CommunitiesSlugRoute,
-  CommunitiesIndexRoute: CommunitiesIndexRoute,
-}
-
-const CommunitiesRouteWithChildren = CommunitiesRoute._addFileChildren(
-  CommunitiesRouteChildren,
-)
-
-interface CompletedRouteChildren {
-  CompletedSlugRoute: typeof CompletedSlugRoute
-}
-
-const CompletedRouteChildren: CompletedRouteChildren = {
-  CompletedSlugRoute: CompletedSlugRoute,
-}
-
-const CompletedRouteWithChildren = CompletedRoute._addFileChildren(
-  CompletedRouteChildren,
-)
-
-interface LaunchesRouteChildren {
-  LaunchesSlugRoute: typeof LaunchesSlugRoute
-}
-
-const LaunchesRouteChildren: LaunchesRouteChildren = {
-  LaunchesSlugRoute: LaunchesSlugRoute,
-}
-
-const LaunchesRouteWithChildren = LaunchesRoute._addFileChildren(
-  LaunchesRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -593,23 +581,28 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   BrokersRoute: BrokersRoute,
   CareersRoute: CareersRoute,
-  CommunitiesRoute: CommunitiesRouteWithChildren,
-  CompletedRoute: CompletedRouteWithChildren,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   CustomerServiceRoute: CustomerServiceRoute,
   FaqsRoute: FaqsRoute,
   InvestorRelationsRoute: InvestorRelationsRoute,
-  LaunchesRoute: LaunchesRouteWithChildren,
   NewsroomRoute: NewsroomRoute,
   PrivacyRoute: PrivacyRoute,
   SustainabilityRoute: SustainabilityRoute,
   TermsRoute: TermsRoute,
+  BlogsSlugRoute: BlogsSlugRoute,
+  CommunitiesSlugRoute: CommunitiesSlugRoute,
+  CompletedSlugRoute: CompletedSlugRoute,
   PropertiesApartmentsRoute: PropertiesApartmentsRoute,
   PropertiesCommercialRoute: PropertiesCommercialRoute,
   PropertiesHospitalityRoute: PropertiesHospitalityRoute,
   PropertiesTownhousesRoute: PropertiesTownhousesRoute,
   PropertiesVillasRoute: PropertiesVillasRoute,
+  PropertySlugRoute: PropertySlugRoute,
+  BlogsIndexRoute: BlogsIndexRoute,
+  CommunitiesIndexRoute: CommunitiesIndexRoute,
+  CompletedIndexRoute: CompletedIndexRoute,
+  LaunchesIndexRoute: LaunchesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

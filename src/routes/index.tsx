@@ -7,16 +7,17 @@ import { Communities } from "@/components/site/Communities";
 import { Launches } from "@/components/site/Launches";
 import { PropertyCategories, WhyChooseUs } from "@/components/site/PropertyCategories";
 import { Testimonials, HomeFAQ } from "@/components/site/HomeTrust";
+import { Developers } from "@/components/site/Developers";
 import { TourBanner } from "@/components/site/TourBanner";
 import { Blog } from "@/components/site/Blog";
 import { Footer } from "@/components/site/Footer";
 
-import { getAllProperties, getAllPropertyTypes, getAllBlogs, getAllTestimonials, getAllFAQs } from "@/lib/server-functions";
+import { getAllBlogs, getAllTestimonials, getAllFAQs, getAllProperties, getAllCommunities, getAllPropertyTypes } from "@/lib/server-functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Emaar — Premium Properties in the Best Locations" },
+      { title: "Golden Door Realty — Premium Properties in the Best Locations" },
       {
         name: "description",
         content:
@@ -25,20 +26,21 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async () => {
-    const [properties, types, blogs, testimonials, faqs] = await Promise.all([
-      getAllProperties(),
-      getAllPropertyTypes(),
+    const [blogs, testimonials, faqs, properties, communities, propertyTypes] = await Promise.all([
       getAllBlogs(),
       getAllTestimonials(),
       getAllFAQs(),
+      getAllProperties(),
+      getAllCommunities(),
+      getAllPropertyTypes()
     ]);
-    return { properties, types, blogs, testimonials, faqs };
+    return { blogs, testimonials, faqs, properties, communities, propertyTypes };
   },
   component: Index,
 });
 
 function Index() {
-  const { properties, types, blogs, testimonials, faqs } = Route.useLoaderData();
+  const { blogs, testimonials, faqs, properties, communities, propertyTypes } = Route.useLoaderData();
   
   return (
     <div className="min-h-screen bg-background">
@@ -46,15 +48,15 @@ function Index() {
       <main>
         <Hero />
         <Intro />
-        {/* Pass live data to components */}
-        <FeaturedProperties properties={properties.slice(0, 2)} />
-        <PropertyCategories />
-        <Communities types={types} />
-        <Launches properties={properties.slice(0, 3)} />
+        <FeaturedProperties items={properties.slice(0, 2)} />
+        <PropertyCategories items={propertyTypes} />
+        <Communities items={communities} />
+        <Launches items={properties.slice(0, 3)} />
         <WhyChooseUs />
         <TourBanner />
         <Testimonials reviews={testimonials} />
         <Blog posts={blogs} />
+        <Developers />
         <HomeFAQ items={faqs} />
       </main>
       <Footer />

@@ -1,17 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { launches } from "@/lib/site-data";
+import { getAllLaunches } from "@/lib/server-functions";
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, ChevronRight, X, LayoutGrid, List } from "lucide-react";
 
-export const Route = createFileRoute("/launches")({
+export const Route = createFileRoute("/launches/")({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      type: (search.type as string) || undefined,
+    };
+  },
   head: () => ({
     meta: [
-      { title: "Properties Portfolio — Emaar" },
+      { title: "Properties Portfolio — Golden Door Realty" },
       { name: "description", content: "Explore our comprehensive portfolio of residential, commercial, and luxury properties." },
     ],
   }),
+  loader: async () => {
+    const launches = await getAllLaunches();
+    return { launches };
+  },
   component: LaunchesPage,
 });
 
@@ -24,9 +33,13 @@ const filters = {
   tags: ["New Launch", "Ready To Move", "Luxury Projects", "Affordable Housing", "RERA Approved", "Verified"]
 };
 
+import { useSearch } from "@tanstack/react-router";
+
 function LaunchesPage() {
+  const { type } = useSearch({ from: "/launches/" });
+  const { launches } = Route.useLoaderData();
   const [activePurpose, setActivePurpose] = useState("Buy");
-  const [selectedSub, setSelectedSub] = useState<string | null>(null);
+  const [selectedSub, setSelectedSub] = useState<string | null>(type || null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [search, setSearch] = useState("");
 
@@ -34,10 +47,12 @@ function LaunchesPage() {
     return launches.filter(it => {
       const matchSearch = it.title.toLowerCase().includes(search.toLowerCase()) || 
                           it.location.toLowerCase().includes(search.toLowerCase());
-      // For demo, we just filter by search since site-data is simple
-      return matchSearch;
+      
+      const matchSub = selectedSub ? it.type === selectedSub : true;
+      
+      return matchSearch && matchSub;
     });
-  }, [search]);
+  }, [search, selectedSub, launches]);
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -45,15 +60,15 @@ function LaunchesPage() {
 
       {/* Hero / Header Section */}
       <section className="bg-ink text-white py-20 border-b border-white/5">
-        <div className="container-emaar text-center">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Emaar Portfolio</p>
+        <div className="container-realty text-center">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Golden Door Realty Portfolio</p>
           <h1 className="text-4xl md:text-6xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>Properties</h1>
         </div>
       </section>
 
       {/* Main Content Area */}
       <section className="py-12 bg-background">
-        <div className="container-emaar flex flex-col lg:flex-row gap-12">
+        <div className="container-realty flex flex-col lg:flex-row gap-12">
           
           {/* Sidebar Filter */}
           <aside className="w-full lg:w-72 shrink-0 space-y-10">
@@ -143,9 +158,9 @@ function LaunchesPage() {
             </div>
 
             {/* Grid */}
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredItems.map((it) => (
-                <Link key={it.slug} to="/launches/$slug" params={{ slug: it.slug }} className="group block border border-border bg-white p-4 hover:border-brand transition shadow-sm">
+                <Link key={it.slug} to="/property/$slug" params={{ slug: it.slug }} className="group block border border-border bg-white p-4 hover:border-brand transition shadow-sm">
                   <div className="overflow-hidden aspect-[4/5] mb-5 relative">
                     <img src={it.img} alt={it.title} loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />

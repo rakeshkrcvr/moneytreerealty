@@ -11,6 +11,8 @@ import {
 import appCss from "../styles.css?url";
 import { ContactDialogProvider } from "@/components/site/ContactDialog";
 import { Toaster } from "sonner";
+import { getSiteSettings } from "../lib/server-functions";
+import { SiteSettingsProvider } from "@/components/site/SiteSettingsContext";
 
 function NotFoundComponent() {
   return (
@@ -70,20 +72,28 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async () => {
+    try {
+      const settings = await getSiteSettings();
+      return { settings: settings || {} };
+    } catch (e) {
+      return { settings: {} };
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "A web application that replicates the Emaar website, showcasing real estate projects and amenities." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "A web application that replicates the Emaar website, showcasing real estate projects and amenities." },
+      { title: "Golden Door Realty" },
+      { name: "description", content: "A web application for Golden Door Realty, showcasing premium real estate projects and amenities in India." },
+      { name: "author", content: "Golden Door Realty" },
+      { property: "og:title", content: "Golden Door Realty" },
+      { property: "og:description", content: "A web application for Golden Door Realty, showcasing premium real estate projects and amenities in India." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "A web application that replicates the Emaar website, showcasing real estate projects and amenities." },
+      { name: "twitter:site", content: "@GoldenDoorRealty" },
+      { name: "twitter:title", content: "Golden Door Realty" },
+      { name: "twitter:description", content: "A web application for Golden Door Realty, showcasing premium real estate projects and amenities in India." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70e189dd-f3ed-424a-b759-469d2593b751/id-preview-726928e1--e609add8-929e-43c9-8df2-4bf0f0b64cf5.lovable.app-1778222462340.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70e189dd-f3ed-424a-b759-469d2593b751/id-preview-726928e1--e609add8-929e-43c9-8df2-4bf0f0b64cf5.lovable.app-1778222462340.png" },
     ],
@@ -91,6 +101,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "stylesheet",
+        href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
       },
     ],
   }),
@@ -116,13 +130,26 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { settings } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ContactDialogProvider>
+      <SiteSettingsProvider settings={settings}>
+        <ContactDialogProvider>
+        {settings?.theme_color && (
+          <style>{`
+            :root {
+              --brand: ${settings.theme_color} !important;
+              --primary: ${settings.theme_color} !important;
+              --color-brand: ${settings.theme_color} !important;
+              --color-primary: ${settings.theme_color} !important;
+            }
+          `}</style>
+        )}
         <Outlet />
         <Toaster richColors position="top-center" />
       </ContactDialogProvider>
+      </SiteSettingsProvider>
     </QueryClientProvider>
   );
 }

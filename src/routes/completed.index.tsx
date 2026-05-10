@@ -3,12 +3,12 @@ import { PageShell } from "@/components/site/PageShell";
 import hero from "@/assets/community-marina.jpg";
 import { completed } from "@/lib/site-data";
 
-export const Route = createFileRoute("/completed")({
+export const Route = createFileRoute("/completed/")({
   head: () => ({
     meta: [
-      { title: "Recently Completed Projects — Emaar Properties" },
-      { name: "description", content: "Tour Emaar's most recently handed-over residential and lifestyle projects across Dubai." },
-      { property: "og:title", content: "Recently Completed — Emaar" },
+      { title: "Recently Completed Projects — Golden Door Realty" },
+      { name: "description", content: "Tour Golden Door Realty's most recently handed-over residential and lifestyle projects across Dubai." },
+      { property: "og:title", content: "Recently Completed — Golden Door Realty" },
       { property: "og:description", content: "Move-in ready homes from Dubai's leading developer." },
     ],
   }),
@@ -24,7 +24,7 @@ function CompletedPage() {
       heroImg={hero}
     >
       <section className="py-24 bg-background">
-        <div className="container-emaar grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="container-realty grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {completed.map((p) => (
             <Link key={p.slug} to="/completed/$slug" params={{ slug: p.slug }} className="group cursor-pointer block">
               <div className="relative overflow-hidden aspect-[4/3] mb-5">

@@ -6,9 +6,9 @@ import hero from "@/assets/community-hills.jpg";
 export const Route = createFileRoute("/sustainability")({
   head: () => ({
     meta: [
-      { title: "Sustainability — Emaar Properties" },
-      { name: "description", content: "Emaar's commitment to sustainable development — green communities, energy efficiency and responsible business practices." },
-      { property: "og:title", content: "Sustainability — Emaar" },
+      { title: "Sustainability — Golden Door Realty" },
+      { name: "description", content: "Golden Door Realty's commitment to sustainable development — green communities, energy efficiency and responsible business practices." },
+      { property: "og:title", content: "Sustainability — Golden Door Realty" },
       { property: "og:description", content: "Building a sustainable future for Dubai." },
     ],
   }),
@@ -31,7 +31,7 @@ function SustainabilityPage() {
       heroImg={hero}
     >
       <section className="py-24 bg-background">
-        <div className="container-emaar grid md:grid-cols-2 gap-16 items-center">
+        <div className="container-realty grid md:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">2030 Vision</p>
             <h2 className="text-3xl md:text-5xl text-ink mb-6">Building a Better Tomorrow</h2>
@@ -50,7 +50,7 @@ function SustainabilityPage() {
       </section>
 
       <section className="py-24 bg-surface">
-        <div className="container-emaar">
+        <div className="container-realty">
           <h2 className="text-3xl md:text-4xl text-ink text-center mb-14">Our Pillars</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {pillars.map((p) => (

@@ -12,7 +12,7 @@ export function InfoPage({ eyebrow, title, intro, heroImg, sections }: InfoPageP
   return (
     <PageShell eyebrow={eyebrow} title={title} intro={intro} heroImg={heroImg}>
       <section className="py-24 bg-background">
-        <div className="container-emaar max-w-3xl space-y-12">
+        <div className="container-realty max-w-3xl space-y-12">
           {sections.map((s) => (
             <div key={s.heading}>
               <h2 className="text-2xl md:text-3xl text-ink mb-4" style={{ fontFamily: "var(--font-serif)" }}>

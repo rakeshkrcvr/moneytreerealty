@@ -21,19 +21,19 @@ function CommunitiesListPage() {
       <Header />
       
       <section className="py-24 bg-surface border-b border-border">
-        <div className="container-emaar">
+        <div className="container-realty">
            <p className="text-[10px] tracking-[0.4em] uppercase text-brand mb-4 font-bold">The Master Collection</p>
            <h1 className="text-4xl md:text-7xl uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>
               Our <span className="text-muted-foreground/40 italic">Communities</span>
            </h1>
            <p className="max-w-2xl text-muted-foreground text-lg leading-relaxed">
-              Explore the iconic districts that define Dubai's skyline. From waterfront marinas to serene golf estates, each Emaar community offers a unique lifestyle and unparalleled investment value.
+              Explore the iconic districts that define Dubai's skyline. From waterfront marinas to serene golf estates, each Golden Door Realty community offers a unique lifestyle and unparalleled investment value.
            </p>
         </div>
       </section>
 
       <section className="py-20">
-        <div className="container-emaar space-y-12">
+        <div className="container-realty space-y-12">
           {communities.map((c, i) => (
             <div key={c.slug} className={`flex flex-col ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} gap-0 border border-border overflow-hidden bg-white hover:shadow-2xl transition-shadow duration-500`}>
                <div className="md:w-1/2 aspect-video md:aspect-auto overflow-hidden">

@@ -5,7 +5,7 @@ const launches = [
     slug: "aurora-heights", 
     title: "Aurora Heights", 
     location: "Downtown Dubai", 
-    price: "From AED 2.4M", 
+    price: "From ₹ 2.4M", 
     type: "Apartments", // This is the old type field
     category: "Residential", // NEW: Main Category
     sub_category: "Apartment", // NEW: Sub Category
@@ -25,7 +25,7 @@ const launches = [
     slug: "business-bay-offices", 
     title: "Executive Suites", 
     location: "Business Bay", 
-    price: "From AED 1.2M", 
+    price: "From ₹ 1.2M", 
     type: "Office",
     category: "Commercial",
     sub_category: "Office",

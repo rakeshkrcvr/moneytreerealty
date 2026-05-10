@@ -6,8 +6,8 @@ import { Users, Briefcase, Newspaper, ArrowRight, CheckCircle2 } from "lucide-re
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Emaar — Shaping the Future of Living" },
-      { name: "description", content: "Discover Emaar's journey as Dubai's leading master-developer of iconic real estate, retail, and hospitality destinations." },
+      { title: "About Golden Door Realty — Shaping the Future of Living" },
+      { name: "description", content: "Discover Golden Door Realty's journey as Dubai's leading master-developer of iconic real estate, retail, and hospitality destinations." },
     ],
   }),
   component: AboutPage,
@@ -38,17 +38,17 @@ function AboutPage() {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-ink/60" />
-        <div className="container-emaar relative z-10 text-center text-white">
+        <div className="container-realty relative z-10 text-center text-white">
           <p className="text-xs tracking-[0.5em] uppercase mb-6 text-gold">Shaping Skylines</p>
           <h1 className="text-5xl md:text-8xl tracking-tight uppercase" style={{ fontFamily: "var(--font-serif)" }}>
-            ABOUT EMAAR
+            ABOUT GOLDEN DOOR REALTY
           </h1>
         </div>
       </section>
 
       {/* Company Overview */}
       <section className="py-24 bg-background">
-        <div className="container-emaar grid lg:grid-cols-2 gap-24 items-center">
+        <div className="container-realty grid lg:grid-cols-2 gap-24 items-center">
           <div>
             <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">Global Legacy</p>
             <h2 className="text-3xl md:text-5xl text-ink uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>
@@ -56,12 +56,12 @@ function AboutPage() {
             </h2>
             <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">
               <p>
-                Emaar Properties is one of the world’s most valuable and admired real estate development companies. 
-                With proven competencies in properties, shopping malls & retail and hospitality & leisure, Emaar shapes 
+                Golden Door Realty is one of the world’s most valuable and admired real estate development companies. 
+                With proven competencies in properties, shopping malls & retail and hospitality & leisure, Golden Door Realty shapes 
                 new lifestyles with a focus on design excellence, build quality and timely delivery.
               </p>
               <p>
-                Founded in 1997, Emaar has built an incredible legacy of building iconic landmarks in Dubai and 
+                Founded in 1997, Golden Door Realty has built an incredible legacy of building iconic landmarks in Dubai and 
                 globally, most notably Burj Khalifa, the world's tallest building.
               </p>
             </div>
@@ -79,7 +79,7 @@ function AboutPage() {
 
       {/* Mission & Vision */}
       <section className="py-24 bg-ink text-white">
-        <div className="container-emaar grid md:grid-cols-2 gap-16">
+        <div className="container-realty grid md:grid-cols-2 gap-16">
           <div className="p-12 border border-white/10 bg-white/5">
             <h3 className="text-3xl mb-6 text-gold uppercase" style={{ fontFamily: "var(--font-serif)" }}>Our Mission</h3>
             <p className="text-xl font-light leading-relaxed text-white/80">
@@ -97,7 +97,7 @@ function AboutPage() {
 
       {/* Our Team */}
       <section className="py-24 bg-background">
-        <div className="container-emaar text-center">
+        <div className="container-realty text-center">
           <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">Leadership</p>
           <h2 className="text-3xl md:text-5xl text-ink uppercase mb-16" style={{ fontFamily: "var(--font-serif)" }}>MEET OUR TEAM</h2>
           <div className="grid md:grid-cols-3 gap-12">
@@ -116,9 +116,9 @@ function AboutPage() {
 
       {/* Careers */}
       <section className="py-24 bg-surface border-y border-border">
-        <div className="container-emaar grid lg:grid-cols-2 gap-24 items-center">
+        <div className="container-realty grid lg:grid-cols-2 gap-24 items-center">
           <div>
-            <h2 className="text-3xl md:text-5xl text-ink uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>CAREERS AT EMAAR</h2>
+            <h2 className="text-3xl md:text-5xl text-ink uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>CAREERS AT GOLDEN DOOR REALTY</h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
               Join a team of visionaries and innovators. We are always looking for passionate individuals who want to help us shape the future of real estate.
             </p>
@@ -145,7 +145,7 @@ function AboutPage() {
 
       {/* Press & Media */}
       <section className="py-24 bg-background">
-        <div className="container-emaar">
+        <div className="container-realty">
           <div className="flex items-end justify-between mb-16">
             <div>
               <p className="text-xs tracking-[0.4em] uppercase text-brand mb-4">Latest Updates</p>
@@ -158,7 +158,7 @@ function AboutPage() {
 
           <div className="grid md:grid-cols-2 gap-12">
             {[
-              { t: "Emaar Announces Record Revenue for Q1 2026", d: "A 15% increase compared to previous year, driven by strong international sales.", date: "May 12, 2026" },
+              { t: "Golden Door Realty Announces Record Revenue for Q1 2026", d: "A 15% increase compared to previous year, driven by strong international sales.", date: "May 12, 2026" },
               { t: "New Landmark Launch in Dubai Creek Harbour", d: "The latest residential tower promises a new standard of luxury living.", date: "April 28, 2026" }
             ].map((n, i) => (
               <div key={i} className="p-10 border border-border hover:border-brand transition group cursor-pointer">

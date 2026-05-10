@@ -4,7 +4,7 @@ import { Play } from "lucide-react";
 export function TourBanner() {
   return (
     <section className="py-24 bg-ink">
-      <div className="container-emaar">
+      <div className="container-realty">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="text-white">
             <p className="text-xs tracking-[0.4em] uppercase text-gold mb-4">

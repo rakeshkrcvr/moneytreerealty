@@ -4,7 +4,7 @@ const connectionString = "postgresql://neondb_owner:npg_3nqjkzrFX8vN@ep-raspy-sm
 const sql = postgres(connectionString, { ssl: "require" });
 
 async function init() {
-  console.log("Seeding database with REAL Emaar.com data...");
+  console.log("Seeding database with REAL Golden Door Realty.com data...");
 
   // Create tables
   await sql`CREATE TABLE IF NOT EXISTS communities (slug TEXT PRIMARY KEY, title TEXT, tag TEXT, img TEXT, description TEXT, highlights TEXT[])`;
@@ -17,7 +17,7 @@ async function init() {
       title: "Downtown Dubai", 
       tag: "The Centre of Now", 
       img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000", 
-      description: "Emaar's flagship mega-development, home to Burj Khalifa, The Dubai Mall, and The Dubai Fountain. It represents the pinnacle of urban luxury.", 
+      description: "Golden Door Realty's flagship mega-development, home to Burj Khalifa, The Dubai Mall, and The Dubai Fountain. It represents the pinnacle of urban luxury.", 
       highlights: ["World's Tallest Building", "Dubai Opera District", "Luxury Retail & Dining", "Burj Park Living"] 
     },
     { 
@@ -29,8 +29,8 @@ async function init() {
       highlights: ["Waterfront Lifestyle", "Creek Marina", "Central Park", "Stunning Skyline Views"] 
     },
     { 
-      slug: "emaar-beachfront", 
-      title: "Emaar Beachfront", 
+      slug: "golden-door-beachfront", 
+      title: "Golden Door Realty Beachfront", 
       tag: "Private Island Living", 
       img: "https://images.unsplash.com/photo-1544161515-4ad6ce6e8320?auto=format&fit=crop&q=80&w=2000", 
       description: "An exclusive residential community situated between JBR and Palm Jumeirah, offering 1.5km of pristine private beach.", 
@@ -51,7 +51,7 @@ async function init() {
       slug: "valo", 
       title: "Valo", 
       location: "Dubai Creek Harbour", 
-      price: "From AED 1.8M", 
+      price: "From ₹ 1.8M", 
       type: "Apartments", 
       img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=2000", 
       description: "A modern residential masterpiece offering 1, 2, and 3-bedroom apartments with breathtaking views of the Creek and Dubai skyline.", 
@@ -61,8 +61,8 @@ async function init() {
     { 
       slug: "address-seafront", 
       title: "Address Seafront", 
-      location: "Emaar Beachfront", 
-      price: "From AED 3.5M", 
+      location: "Golden Door Realty Beachfront", 
+      price: "From ₹ 3.5M", 
       type: "Branded Residences", 
       img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=2000", 
       description: "Experience the ultimate in beachfront living with the luxury and service of the world-renowned Address Hotels + Resorts.", 
@@ -73,7 +73,7 @@ async function init() {
       slug: "aeon", 
       title: "Aeon", 
       location: "Dubai Creek Harbour", 
-      price: "From AED 1.6M", 
+      price: "From ₹ 1.6M", 
       type: "Apartments", 
       img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000", 
       description: "Urban living redefined at Aeon, where sleek architecture meets functional design in Dubai's most exciting new district.", 
@@ -83,11 +83,11 @@ async function init() {
     { 
         slug: "bayview-address", 
         title: "Bayview", 
-        location: "Emaar Beachfront", 
-        price: "From AED 2.9M", 
+        location: "Golden Door Realty Beachfront", 
+        price: "From ₹ 2.9M", 
         type: "Luxury Apartments", 
         img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000", 
-        description: "The first ever Address branded project in Emaar Beachfront, offering unparalleled views of the Arabian Gulf.", 
+        description: "The first ever Address branded project in Golden Door Realty Beachfront, offering unparalleled views of the Arabian Gulf.", 
         bedrooms: "1 - 4 BR", 
         handover: "Q3 2028" 
     }
@@ -122,7 +122,7 @@ async function init() {
     `;
   }
 
-  console.log("Real Emaar data seeded successfully!");
+  console.log("Real Golden Door Realty data seeded successfully!");
   process.exit(0);
 }
 

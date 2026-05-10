@@ -18,7 +18,7 @@ export function PageShell({ eyebrow, title, intro, heroImg, children }: PageShel
           <img src={heroImg} alt={title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
         </div>
-        <div className="container-emaar relative pb-16 text-white">
+        <div className="container-realty relative pb-16 text-white">
           <p className="text-xs tracking-[0.4em] uppercase text-gold mb-4">{eyebrow}</p>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl tracking-wide max-w-3xl"

@@ -2,26 +2,32 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { ArrowRight } from "lucide-react";
-import { communities } from "@/lib/site-data";
+import { getAllCommunities } from "@/lib/server-functions";
 
 export const Route = createFileRoute("/communities")({
   head: () => ({
     meta: [
-      { title: "Master Communities — Emaar Properties" },
-      { name: "description", content: "Explore the most iconic master-planned communities in Dubai, developed by Emaar." },
+      { title: "Master Communities — Golden Door Realty" },
+      { name: "description", content: "Explore the most iconic master-planned communities in Dubai, developed by Golden Door Realty." },
     ],
   }),
+  loader: async () => {
+    const communities = await getAllCommunities();
+    return { communities };
+  },
   component: CommunitiesPage,
 });
 
 function CommunitiesPage() {
+  const { communities } = Route.useLoaderData();
+  
   return (
     <div className="min-h-screen bg-background pt-20">
       <Header />
 
       {/* Hero */}
       <section className="bg-ink text-white py-24 border-b border-white/5">
-        <div className="container-emaar text-center">
+        <div className="container-realty text-center">
           <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-6 font-bold">Master-Planned Destinations</p>
           <h1 className="text-4xl md:text-7xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>Our Communities</h1>
           <p className="mt-8 text-white/60 text-lg max-w-2xl mx-auto leading-relaxed font-light">
@@ -32,7 +38,7 @@ function CommunitiesPage() {
 
       {/* Communities Grid */}
       <section className="py-24 bg-background">
-        <div className="container-emaar space-y-12">
+        <div className="container-realty space-y-12">
           {communities.map((it, idx) => (
             <Link 
               key={it.slug} 

@@ -1,16 +1,28 @@
-import { Building2, Home, TreePine, Warehouse } from "lucide-react";
+import { Building2, Home, TreePine, Warehouse, LayoutGrid } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
-const categories = [
-  { icon: Building2, label: "Apartments", count: "120+ Listings", img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1000" },
-  { icon: Home, label: "Villas", count: "45+ Listings", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000" },
-  { icon: Warehouse, label: "Townhouses", count: "30+ Listings", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000" },
-  { icon: TreePine, label: "Land Plots", count: "12+ Listings", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000" },
-];
+export function PropertyCategories({ items = [] }: { items?: any[] }) {
+  const displayCategories = items.length > 0 ? items.map((it: any, i: number) => ({
+    icon: [Building2, Home, Warehouse, TreePine][i % 4] || LayoutGrid,
+    label: it.name,
+    count: "Explore Collection",
+    img: it.img || [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000"
+    ][i % 4],
+    slug: it.name
+  })) : [
+    { icon: Building2, label: "Apartments", count: "120+ Listings", img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1000", slug: "Apartments" },
+    { icon: Home, label: "Villas", count: "45+ Listings", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000", slug: "Villas" },
+    { icon: Warehouse, label: "Townhouses", count: "30+ Listings", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000", slug: "Townhouses" },
+    { icon: TreePine, label: "Land Plots", count: "12+ Listings", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000", slug: "Land Plots" },
+  ];
 
-export function PropertyCategories() {
   return (
     <section className="py-24 bg-background">
-      <div className="container-emaar">
+      <div className="container-realty">
         <div className="text-center mb-16">
           <p className="text-xs tracking-[0.4em] uppercase text-brand mb-4">Discovery</p>
           <h2 className="text-3xl md:text-5xl text-ink uppercase" style={{ fontFamily: "var(--font-serif)" }}>
@@ -19,8 +31,13 @@ export function PropertyCategories() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((c, i) => (
-            <div key={i} className="group relative h-96 overflow-hidden cursor-pointer">
+          {displayCategories.map((c: any, i: number) => (
+            <Link 
+              key={i} 
+              to="/launches/" 
+              search={{ type: c.slug }}
+              className="group relative h-96 overflow-hidden cursor-pointer block"
+            >
               <img 
                 src={c.img} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" 
@@ -35,7 +52,7 @@ export function PropertyCategories() {
                   <p className="text-[10px] uppercase tracking-widest text-white/60">{c.count}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -46,7 +63,7 @@ export function PropertyCategories() {
 export function WhyChooseUs() {
   return (
     <section className="py-24 bg-surface border-y border-border overflow-hidden">
-      <div className="container-emaar grid lg:grid-cols-2 gap-24 items-center">
+      <div className="container-realty grid lg:grid-cols-2 gap-24 items-center">
         <div className="relative">
           <div className="aspect-[4/5] bg-muted relative z-10">
             <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=1000" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
@@ -59,10 +76,10 @@ export function WhyChooseUs() {
           <div>
             <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">Unrivaled Excellence</p>
             <h2 className="text-3xl md:text-6xl text-ink uppercase leading-tight mb-8" style={{ fontFamily: "var(--font-serif)" }}>
-              Why Choose <br /> <span className="text-gold">Emaar Properties</span>
+              Why Choose <br /> <span className="text-gold">Golden Door Realty</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
-              As one of the world's most valuable and admired real estate development companies, Emaar shapes new lifestyles with a focus on design excellence and build quality.
+              As one of the world's most valuable and admired real estate development companies, Golden Door Realty shapes new lifestyles with a focus on design excellence and build quality.
             </p>
           </div>
 

@@ -3,7 +3,7 @@ import { InfoPage } from "@/components/site/InfoPage";
 import hero from "@/assets/community-downtown.jpg";
 
 export const Route = createFileRoute("/properties/commercial")({
-  head: () => ({ meta: [{ title: "Commercial Properties — Emaar" }, { name: "description", content: "Grade-A commercial offices and retail in Dubai's premier districts." }] }),
+  head: () => ({ meta: [{ title: "Commercial Properties — Golden Door Realty" }, { name: "description", content: "Grade-A commercial offices and retail in Dubai's premier districts." }] }),
   component: () => (
     <InfoPage eyebrow="Business" title="Commercial Properties" heroImg={hero}
       intro="Premium office and retail spaces in Dubai's most prestigious business hubs."

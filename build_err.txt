@@ -1,0 +1,28 @@
+
+> build
+> vite build
+
+vite v7.3.3 building client environment for production...
+transforming...
+✓ 2053 modules transformed.
+✗ Build failed in 9.67s
+error during build:
+src/routes/communities.$slug.tsx (4:9): "getCommunityBySlug" is not exported by "src/lib/server-functions.ts", imported by "src/routes/communities.$slug.tsx".
+file: /Users/macbookpro/Desktop/emaar-exact-replica-main/src/routes/communities.$slug.tsx:4:9
+
+2: import { Header } from "@/components/site/Header";
+3: import { Footer } from "@/components/site/Footer";
+4: import { MapPin, ChevronRight, Building2, Sparkles, Navigation, Compass } from "lucide-react";
+            ^
+5: import { getCommunityBySlug, getProjectsInCommunity } from "@/lib/server-functions";
+
+    at getRollupError (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/parseAst.js:406:41)
+    at error (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/parseAst.js:402:42)
+    at Module.error (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:17390:16)
+    at Module.traceVariable (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:17823:29)
+    at ModuleScope.findVariable (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:15413:39)
+    at ReturnValueScope.findVariable (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:5682:38)
+    at FunctionBodyScope.findVariable (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:5682:38)
+    at Identifier.bind (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:5449:40)
+    at CallExpression.bind (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:2831:23)
+    at CallExpression.bind (file:///Users/macbookpro/Desktop/emaar-exact-replica-main/node_modules/rollup/dist/es/shared/node-entry.js:12522:15)
