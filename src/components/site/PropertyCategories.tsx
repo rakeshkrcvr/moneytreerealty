@@ -35,8 +35,8 @@ export function PropertyCategories({ items = [] }: { items?: any[] }) {
           {displayCategories.map((c: any, i: number) => (
             <Link 
               key={i} 
-              to="/launches/" 
-              search={{ type: c.slug }}
+              to="/property/$slug" 
+              params={{ slug: c.slug }}
               className="group relative h-96 overflow-hidden cursor-pointer block"
             >
               <img 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronDown, Menu, X, Globe } from "lucide-react";
 import { getAllPropertyTypes, getAllProperties, createLead } from "@/lib/server-functions";
 import { useSiteSettings } from "./SiteSettingsContext";
@@ -37,6 +37,11 @@ export function Header() {
     }
   };
 
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+  const forceDark = !isHome || scrolled || showMega;
+  const textColor = forceDark ? "text-ink" : "text-white";
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -64,7 +69,7 @@ export function Header() {
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${
-        scrolled || showMega ? "bg-white shadow-xl py-4" : "bg-transparent py-8"
+        forceDark ? "bg-white shadow-xl py-4" : "bg-transparent py-8"
       }`}
       onMouseLeave={() => setShowMega(false)}
     >
@@ -75,7 +80,7 @@ export function Header() {
           ) : (
             <>
               <div className="w-10 h-10 bg-brand flex items-center justify-center text-white font-bold italic text-xl shadow-lg group-hover:scale-110 transition-transform">e</div>
-              <span className={`font-bold text-lg tracking-tighter transition-colors ${scrolled || showMega ? "text-ink" : "text-white"}`}>
+              <span className={`font-bold text-lg tracking-tighter transition-colors ${textColor}`}>
                 {settings?.email?.includes('emaar') ? 'GOLDEN DOOR REALTY' : (settings?.phone ? 'ESTATE' : 'GOLDEN DOOR REALTY')}
               </span>
             </>
@@ -83,22 +88,20 @@ export function Header() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-6">
-          <Link to="/" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Home</Link>
+          <Link to="/" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Home</Link>
           <div 
             className="relative h-20 flex items-center group cursor-pointer"
             onMouseEnter={() => setShowMega(true)}
           >
-            <span className={`text-[11px] font-semibold tracking-[0.15em] uppercase flex items-center gap-1 ${
-              scrolled || showMega ? "text-ink" : "text-white"
-            }`}>
+            <span className={`text-[11px] font-semibold tracking-[0.15em] uppercase flex items-center gap-1 ${textColor}`}>
               Properties <ChevronDown className={`w-3 h-3 transition-transform ${showMega ? "rotate-180" : ""}`} />
             </span>
           </div>
-          <Link to="/communities" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Communities</Link>
-          <Link to="/services" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Services</Link>
-          <Link to="/blogs" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Blogs</Link>
-          <Link to="/about" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>About</Link>
-          <Link to="/contact" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${scrolled || showMega ? "text-ink" : "text-white"}`}>Contact Us</Link>
+          <Link to="/communities" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Communities</Link>
+          <Link to="/services" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Services</Link>
+          <Link to="/blogs" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Blogs</Link>
+          <Link to="/about" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>About</Link>
+          <Link to="/contact" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Contact Us</Link>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -109,7 +112,7 @@ export function Header() {
             Get in Touch
           </button>
           <button
-            className={`lg:hidden ${scrolled || showMega ? "text-ink" : "text-white"}`}
+            className={`lg:hidden ${textColor}`}
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -128,8 +131,8 @@ export function Header() {
                       types.filter(t => t.category === 'Residential').map((t: any) => (
                         <li key={t.id}>
                           <Link 
-                            to="/launches/" 
-                            search={{ type: t.name }}
+                            to="/property/$slug" 
+                            params={{ slug: t.name }}
                             className="text-sm font-bold text-ink hover:text-brand transition-colors"
                           >
                             {t.name}
@@ -138,9 +141,9 @@ export function Header() {
                       ))
                     ) : (
                       <>
-                        <li><Link to="/launches/" search={{ type: 'Apartments' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Apartments</Link></li>
-                        <li><Link to="/launches/" search={{ type: 'Villas' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Villas</Link></li>
-                        <li><Link to="/launches/" search={{ type: 'Townhouses' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Townhouses</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'Apartments' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Apartments</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'Villas' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Villas</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'Townhouses' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Townhouses</Link></li>
                       </>
                     )}
                  </ul>
@@ -162,8 +165,8 @@ export function Header() {
                       ))
                     ) : (
                       <>
-                        <li><Link to="/launches/" search={{ type: 'Office' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Modern Offices</Link></li>
-                        <li><Link to="/launches/" search={{ type: 'Retail' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Retail Spaces</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'Office' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Modern Offices</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'Retail' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Retail Spaces</Link></li>
                       </>
                     )}
                  </ul>

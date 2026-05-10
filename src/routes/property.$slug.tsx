@@ -3,11 +3,21 @@ import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import {
-  MapPin, BedDouble, Building2, Compass, User, Star, ArrowRight
+  MapPin, BedDouble, Building2, Compass, User, Star, ArrowRight,
+  Search, SlidersHorizontal, LayoutGrid, List
 } from "lucide-react";
 import { getLaunchBySlug, getAllLaunches, getAllCommunities, createLead, getAllAmenitiesMaster } from "@/lib/server-functions";
 import { toast } from "sonner";
 import { useState, useMemo, useEffect } from "react";
+
+const filters = {
+  purpose: ["Buy", "Rent", "Commercial", "Plots & Land"],
+  buy: ["Apartments", "Villas", "Independent Houses", "Builder Floors", "Studio Apartments", "Luxury Homes"],
+  rent: ["Apartments", "PG / Hostel", "Villas", "Office Spaces", "Shops"],
+  commercial: ["Office Space", "Retail Shops", "Warehouses", "Showrooms", "Co-working Spaces"],
+  plots: ["Residential Plots", "Commercial Plots", "Agricultural Land"],
+  tags: ["New Launch", "Ready To Move", "Luxury Projects", "Affordable Housing", "RERA Approved", "Verified"]
+};
 
 // Icon Map for Dynamic Amenities (fallback only, FontAwesome is primary)
 export const Route = createFileRoute("/property/$slug")({
@@ -18,9 +28,23 @@ export const Route = createFileRoute("/property/$slug")({
       getAllAmenitiesMaster()
     ]);
 
-    if (!l) throw notFound();
+    // If no individual property found, check if it's a category (property type)
+    if (!l) {
+      const typeProperties = (allL || []).filter((p: any) => p.type.toLowerCase() === params.slug.toLowerCase());
+      if (typeProperties.length > 0 || filters.buy.map(b => b.toLowerCase()).includes(params.slug.toLowerCase())) {
+        return {
+          isCategory: true,
+          categoryName: params.slug,
+          properties: typeProperties,
+          allL: allL || [],
+          allAmenities: allAmenities || []
+        };
+      }
+      throw notFound();
+    }
     
     return { 
+      isCategory: false,
       l, 
       others: (allL || []).filter((p: any) => p.slug !== params.slug).slice(0, 3),
       allAmenities: allAmenities || []
@@ -30,10 +54,161 @@ export const Route = createFileRoute("/property/$slug")({
 });
 
 function PropertyDetail() {
-  const { l, others, allAmenities } = Route.useLoaderData();
+  const data = Route.useLoaderData() as any;
   const settings = useSiteSettings();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [search, setSearch] = useState("");
+  const [activePurpose, setActivePurpose] = useState("Buy");
 
+  // --- Category View ---
+  if (data.isCategory) {
+    const { categoryName, properties, allL } = data;
+    
+    const filteredItems = properties.filter((it: any) => 
+      it.title.toLowerCase().includes(search.toLowerCase()) || 
+      it.location.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <section className="bg-ink text-white py-32 border-b border-white/5">
+          <div className="container-realty text-center">
+            <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Golden Door Realty Portfolio</p>
+            <h1 className="text-4xl md:text-7xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>{categoryName}</h1>
+          </div>
+        </section>
+
+        <section className="py-24 bg-surface">
+          <div className="container-realty flex flex-col lg:flex-row gap-12">
+            {/* Sidebar Filter */}
+            <aside className="w-full lg:w-72 shrink-0 space-y-10">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input 
+                  type="text" 
+                  placeholder="Search in this category..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full bg-white border border-border px-10 py-3 text-xs focus:outline-none focus:border-brand uppercase tracking-wider"
+                />
+              </div>
+
+              <div>
+                <h4 className="text-[10px] uppercase tracking-widest font-bold text-ink mb-4 flex items-center gap-2">
+                  <SlidersHorizontal className="w-3 h-3" /> Categories
+                </h4>
+                <div className="flex flex-col gap-2">
+                  {filters.buy.map(p => (
+                    <Link 
+                      key={p} 
+                      to="/property/$slug" 
+                      params={{ slug: p }}
+                      className={`text-left px-4 py-2 text-xs uppercase tracking-widest transition-colors ${categoryName.toLowerCase() === p.toLowerCase() ? "bg-brand text-white font-bold" : "text-muted-foreground hover:text-ink"}`}
+                    >
+                      {p}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-brand/5 p-6 rounded-2xl border border-brand/10">
+                 <h4 className="text-[10px] uppercase tracking-widest font-bold text-brand mb-4">Need Help?</h4>
+                 <p className="text-xs text-slate-600 leading-relaxed mb-4">Can't find what you're looking for? Speak to our experts.</p>
+                 <a href={`tel:${settings?.phone || ''}`} className="text-sm font-bold text-ink block mb-6">{settings?.phone || '+971 50 123 4567'}</a>
+                 
+                 <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    setIsSubmitting(true);
+                    const fd = new FormData(e.currentTarget);
+                    try {
+                      await createLead({ data: {
+                        name: fd.get("name") as string,
+                        email: fd.get("email") as string,
+                        phone: fd.get("phone") as string,
+                        source: `Sidebar Category Inquiry: ${categoryName}`
+                      }});
+                      toast.success("Enquiry sent! We will contact you shortly.");
+                      (e.target as HTMLFormElement).reset();
+                    } catch(err) {
+                      toast.error("Failed to send enquiry");
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                 }} className="space-y-4 pt-6 border-t border-brand/10">
+                    <div className="space-y-1.5">
+                       <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Name</label>
+                       <input name="name" required className="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand transition-all text-xs" />
+                    </div>
+                    <div className="space-y-1.5">
+                       <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Email</label>
+                       <input name="email" required type="email" className="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand transition-all text-xs" />
+                    </div>
+                    <div className="space-y-1.5">
+                       <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Phone</label>
+                       <input name="phone" required className="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand transition-all text-xs" />
+                    </div>
+                    <button disabled={isSubmitting} type="submit" className="w-full bg-brand text-white py-4 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-ink transition-all shadow-lg shadow-brand/20 mt-4">
+                      {isSubmitting ? "Submitting..." : "Send Enquiry"}
+                    </button>
+                 </form>
+              </div>
+            </aside>
+
+            {/* Listings Grid */}
+            <div className="flex-1">
+              <div className="flex justify-between items-center mb-8 pb-6 border-b border-border">
+                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">Showing {filteredItems.length} results</p>
+                <div className="flex items-center gap-4">
+                  <LayoutGrid className="w-4 h-4 text-ink cursor-pointer" />
+                  <List className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredItems.map((it: any) => (
+                  <Link key={it.slug} to="/property/$slug" params={{ slug: it.slug }} className="group block border border-border bg-white p-4 hover:border-brand transition shadow-sm animate-fade-up">
+                    <div className="overflow-hidden aspect-[4/5] mb-5 relative">
+                      <img src={it.img} alt={it.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
+                      <div className="absolute top-4 left-4 bg-ink/80 text-white text-[9px] px-3 py-1 uppercase tracking-widest backdrop-blur-sm">
+                        {it.type}
+                      </div>
+                    </div>
+                      <h3 className="text-lg text-ink group-hover:text-brand transition-colors uppercase tracking-widest mb-4 line-clamp-1">{it.title}</h3>
+                    <div className="flex justify-between items-center mb-6">
+                      <p className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground flex items-center gap-2">
+                        <MapPin className="w-3 h-3 text-brand" /> {it.location}
+                      </p>
+                      <div className="bg-brand/5 border border-brand/10 px-3 py-1.5 rounded-lg">
+                        <p className="text-[10px] font-bold text-brand uppercase tracking-wider">{it.price}</p>
+                      </div>
+                    </div>
+                    <div className="pt-4 border-t border-border flex justify-between items-center group/btn">
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-ink">View Details</span>
+                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover/btn:text-brand group-hover/btn:translate-x-1 transition-all" />
+                    </div>
+                  </Link>
+                ))}
+                
+                {filteredItems.length === 0 && (
+                  <div className="col-span-full py-24 text-center border border-dashed border-border rounded-3xl">
+                    <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-xl uppercase tracking-widest text-ink mb-2">No properties found</h3>
+                    <p className="text-sm text-muted-foreground">Try adjusting your search terms or check other categories.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  // --- Individual Property View ---
+  const { l, others, allAmenities } = data;
+  
   const propertyAmenities = useMemo(() => {
     if (!l.amenities_ids || !allAmenities) return [];
     return allAmenities.filter((a: any) => l.amenities_ids.includes(a.id.toString()) || l.amenities_ids.includes(a.id));
