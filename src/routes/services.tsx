@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Home, Key, Headset, Calculator, Building, Scale, ArrowRight } from "lucide-react";
+import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -47,21 +48,32 @@ const services = [
 ];
 
 function ServicesPage() {
+  const settings = useSiteSettings();
+  const content = settings?.page_content?.services || {};
+
+  const heroImage = content.hero_image || "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=2000";
+  const heroSubtitle = content.hero_subtitle || "Premium Solutions";
+  const heroTitle = content.hero_title || "OUR SERVICES";
+  const overviewSubtitle = content.overview_subtitle || "What We Offer";
+  const overviewTitle = content.overview_title || "COMPREHENSIVE REAL ESTATE EXPERTISE";
+  const ctaTitle = content.cta_title || "READY TO GET STARTED?";
+  const ctaDesc = content.cta_desc || "Speak with our property consultants today to discover how our tailored services can help you achieve your real estate goals.";
+
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden pt-20">
         <img 
-          src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=2000" 
+          src={heroImage} 
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-ink/60" />
         <div className="container-realty relative z-10 text-center text-white">
-          <p className="text-xs tracking-[0.5em] uppercase mb-6 text-gold">Premium Solutions</p>
+          <p className="text-xs tracking-[0.5em] uppercase mb-6 text-gold">{heroSubtitle}</p>
           <h1 className="text-5xl md:text-8xl tracking-tight uppercase" style={{ fontFamily: "var(--font-serif)" }}>
-            OUR SERVICES
+            {heroTitle}
           </h1>
         </div>
       </section>
@@ -70,9 +82,9 @@ function ServicesPage() {
       <section className="py-24 bg-surface">
         <div className="container-realty">
           <div className="text-center mb-20">
-            <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">What We Offer</p>
+            <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">{overviewSubtitle}</p>
             <h2 className="text-3xl md:text-5xl text-ink uppercase max-w-3xl mx-auto" style={{ fontFamily: "var(--font-serif)" }}>
-              COMPREHENSIVE REAL ESTATE EXPERTISE
+              {overviewTitle}
             </h2>
           </div>
 
@@ -100,14 +112,14 @@ function ServicesPage() {
       <section className="py-24 bg-ink text-white text-center">
         <div className="container-realty max-w-3xl">
           <h2 className="text-3xl md:text-5xl uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>
-            READY TO GET STARTED?
+            {ctaTitle}
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-12">
-            Speak with our property consultants today to discover how our tailored services can help you achieve your real estate goals.
+            {ctaDesc}
           </p>
           <button 
             className="bg-brand text-white px-10 py-5 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-ink transition duration-300"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} // The header will have the Get In Touch modal
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             Request Consultation
           </button>

@@ -3,6 +3,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { ArrowUpRight, MapPin, Compass } from "lucide-react";
 import { getAllCommunities } from "@/lib/server-functions";
+import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 
 export const Route = createFileRoute("/communities/")({
   loader: async () => {
@@ -15,6 +16,12 @@ export const Route = createFileRoute("/communities/")({
 
 function CommunitiesListPage() {
   const communities = Route.useLoaderData();
+  const settings = useSiteSettings();
+  const content = settings?.page_content?.communities || {};
+
+  const heroSubtitle = content.hero_subtitle || "The Master Collection";
+  const heroTitle = content.hero_title || "Our <span className=\"text-muted-foreground/40 italic\">Communities</span>";
+  const heroDesc = content.hero_desc || "Explore the iconic districts that define Dubai's skyline. From waterfront marinas to serene golf estates, each Golden Door Realty community offers a unique lifestyle and unparalleled investment value.";
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -22,12 +29,10 @@ function CommunitiesListPage() {
       
       <section className="py-24 bg-surface border-b border-border">
         <div className="container-realty">
-           <p className="text-[10px] tracking-[0.4em] uppercase text-brand mb-4 font-bold">The Master Collection</p>
-           <h1 className="text-4xl md:text-7xl uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>
-              Our <span className="text-muted-foreground/40 italic">Communities</span>
-           </h1>
+           <p className="text-[10px] tracking-[0.4em] uppercase text-brand mb-4 font-bold">{heroSubtitle}</p>
+           <h1 className="text-4xl md:text-7xl uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }} dangerouslySetInnerHTML={{ __html: heroTitle }} />
            <p className="max-w-2xl text-muted-foreground text-lg leading-relaxed">
-              Explore the iconic districts that define Dubai's skyline. From waterfront marinas to serene golf estates, each Golden Door Realty community offers a unique lifestyle and unparalleled investment value.
+              {heroDesc}
            </p>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import { Building2, Home, TreePine, Warehouse, LayoutGrid } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useSiteSettings } from "./SiteSettingsContext";
 
 export function PropertyCategories({ items = [] }: { items?: any[] }) {
   const displayCategories = items.length > 0 ? items.map((it: any, i: number) => ({
@@ -61,12 +62,27 @@ export function PropertyCategories({ items = [] }: { items?: any[] }) {
 }
 
 export function WhyChooseUs() {
+  const settings = useSiteSettings();
+  const content = settings?.page_content?.home || {};
+  
+  const whyImage = content.why_image || "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=1000";
+  const whySubtitle = content.why_subtitle || "Unrivaled Excellence";
+  const whyTitle = content.why_title || "Why Choose <br /> <span className=\"text-gold\">Golden Door Realty</span>";
+  const whyDesc = content.why_desc || "As one of the world's most valuable and admired real estate development companies, Golden Door Realty shapes new lifestyles with a focus on design excellence and build quality.";
+  
+  const features = [
+    { t: content.why_f1_t || "Global Legacy", d: content.why_f1_d || "Developing iconic landmarks like Burj Khalifa since 1997." },
+    { t: content.why_f2_t || "Build Quality", d: content.why_f2_d || "Premium materials and meticulous attention to every detail." },
+    { t: content.why_f3_t || "Smart Integration", d: content.why_f3_d || "Cutting-edge technology integrated into every home." },
+    { t: content.why_f4_t || "After-Sales", d: content.why_f4_d || "Dedicated 24/7 community management and support." }
+  ];
+
   return (
     <section className="py-24 bg-surface border-y border-border overflow-hidden">
       <div className="container-realty grid lg:grid-cols-2 gap-24 items-center">
         <div className="relative">
           <div className="aspect-[4/5] bg-muted relative z-10">
-            <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=1000" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+            <img src={whyImage} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
           </div>
           <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-brand/5 -z-0" />
           <div className="absolute -top-12 -left-12 w-64 h-64 bg-ink/5 -z-0" />
@@ -74,22 +90,19 @@ export function WhyChooseUs() {
 
         <div className="space-y-12">
           <div>
-            <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">Unrivaled Excellence</p>
-            <h2 className="text-3xl md:text-6xl text-ink uppercase leading-tight mb-8" style={{ fontFamily: "var(--font-serif)" }}>
-              Why Choose <br /> <span className="text-gold">Golden Door Realty</span>
-            </h2>
+            <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">{whySubtitle}</p>
+            <h2 
+              className="text-3xl md:text-6xl text-ink uppercase leading-tight mb-8" 
+              style={{ fontFamily: "var(--font-serif)" }}
+              dangerouslySetInnerHTML={{ __html: whyTitle }}
+            />
             <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
-              As one of the world's most valuable and admired real estate development companies, Golden Door Realty shapes new lifestyles with a focus on design excellence and build quality.
+              {whyDesc}
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-12">
-            {[
-              { t: "Global Legacy", d: "Developing iconic landmarks like Burj Khalifa since 1997." },
-              { t: "Build Quality", d: "Premium materials and meticulous attention to every detail." },
-              { t: "Smart Integration", d: "Cutting-edge technology integrated into every home." },
-              { t: "After-Sales", d: "Dedicated 24/7 community management and support." }
-            ].map((it, i) => (
+            {features.map((it, i) => (
               <div key={i}>
                 <h4 className="text-sm font-bold uppercase tracking-widest text-ink mb-3">{it.t}</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">{it.d}</p>

@@ -1,33 +1,51 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, MapPin, Building2, Home } from "lucide-react";
+import { useSiteSettings } from "./SiteSettingsContext";
 
 export function Hero() {
   const [activeTab, setActiveTab] = useState("buy");
+  const settings = useSiteSettings();
+  
+  const heroContent = settings?.page_content?.home || {};
+  const heroImage = heroContent.hero_image || "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000";
+  const heroVideo = heroContent.hero_video;
+  const heroSubtitle = heroContent.hero_subtitle || "Welcome to the Future of Living";
+  const heroTitleHtml = heroContent.hero_title || "FIND YOUR <br /> <span className=\"text-gold\">DREAM HOME</span>";
 
   return (
     <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
       {/* Background with Overlay */}
       <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000"
-          alt="Dubai Skyline"
-          className="w-full h-full object-cover"
-        />
+        {heroVideo ? (
+          <video
+            src={heroVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <img
+            src={heroImage}
+            alt="Dubai Skyline"
+            className="w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
       </div>
 
       {/* Content */}
       <div className="container-realty relative z-10 text-center text-white mt-20">
         <p className="text-xs md:text-sm tracking-[0.5em] uppercase mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          Welcome to the Future of Living
+          {heroSubtitle}
         </p>
         <h1 
           className="text-5xl md:text-8xl tracking-tighter mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200"
           style={{ fontFamily: "var(--font-serif)" }}
-        >
-          FIND YOUR <br /> <span className="text-gold">DREAM HOME</span>
-        </h1>
+          dangerouslySetInnerHTML={{ __html: heroTitleHtml }}
+        />
 
         {/* Search Bar Container */}
         <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md p-2 rounded-sm shadow-2xl animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">

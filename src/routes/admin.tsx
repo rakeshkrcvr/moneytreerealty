@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { 
-  LayoutDashboard, Building2, Eye, Trash2, X, Plus, Layers, Tags, Search, User, Database, AlertCircle, CheckCircle2, Settings, FileText
+  LayoutDashboard, Building2, Eye, Trash2, X, Plus, Layers, Tags, Search, User, Database, AlertCircle, CheckCircle2, Settings, FileText, AppWindow, ChevronDown, ChevronRight, Compass
 } from "lucide-react";
 import { 
   getAllProperties, getAllPropertyTypes, getAllAmenitiesMaster, 
@@ -11,7 +11,8 @@ import {
   getSiteSettings, updateSiteSettings,
   getAllDevelopers, createDeveloper, updateDeveloper, deleteDeveloper,
   updateLead,
-  getAllBlogs, createBlog, updateBlog, deleteBlog
+  getAllBlogs, createBlog, updateBlog, deleteBlog,
+  getAllCommunities, createCommunity, updateCommunity, deleteCommunity
 } from "../lib/server-functions";
 import { toast } from "sonner";
 
@@ -39,6 +40,8 @@ function AdminDashboard() {
   const [floorPlans, setFloorPlans] = useState<any[]>([]);
   const [developerLogoUrl, setDeveloperLogoUrl] = useState("");
   const [blogImgUrl, setBlogImgUrl] = useState("");
+  const [editingPageContent, setEditingPageContent] = useState<string | null>(null);
+  const [isPagesExpanded, setIsPagesExpanded] = useState(false);
 
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) {
     const file = e.target.files?.[0];
@@ -91,7 +94,7 @@ function AdminDashboard() {
     setIsUploading(false);
     toast.success(`${newUrls.length} images added to gallery`);
   }
-  const [data, setData] = useState<any>({ properties: [], types: [], amenities: [], leads: [], developers: [], blogs: [], settings: null });
+  const [data, setData] = useState<any>({ properties: [], types: [], amenities: [], leads: [], developers: [], blogs: [], communities: [], settings: null });
   const [dbStatus, setDbStatus] = useState<"checking" | "connected" | "failed">("checking");
 
   useEffect(() => {
@@ -132,6 +135,7 @@ function AdminDashboard() {
       setFloorPlans([]);
       setDeveloperLogoUrl("");
       setBlogImgUrl("");
+      setEditingPageContent(null);
     }
   }, [showAddModal]);
 
@@ -142,14 +146,15 @@ function AdminDashboard() {
 
   async function refreshData() {
     try {
-      const [p, t, a, ld, s, dev, bl] = await Promise.all([
+      const [p, t, a, ld, s, dev, bl, comms] = await Promise.all([
         getAllProperties(),
         getAllPropertyTypes(),
         getAllAmenitiesMaster(),
         getAllLeads(),
         getSiteSettings(),
         getAllDevelopers(),
-        getAllBlogs()
+        getAllBlogs(),
+        getAllCommunities()
       ]);
       
       setData({ 
@@ -159,6 +164,7 @@ function AdminDashboard() {
         leads: ld || [],
         developers: dev || [],
         blogs: bl || [],
+        communities: comms || [],
         settings: s || null
       });
 
@@ -179,6 +185,7 @@ function AdminDashboard() {
       else if (type === "amenity") await deleteAmenity({ data: id });
       else if (type === "developer") await deleteDeveloper({ data: id });
       else if (type === "blog") await deleteBlog({ data: id });
+      else if (type === "community") await deleteCommunity({ data: id });
       toast.success(`${type} deleted successfully`);
       refreshData();
     } catch (e) {
@@ -255,6 +262,17 @@ function AdminDashboard() {
           } 
         });
         toast.success("Blog updated!");
+      } else if (editingItem._type === 'community') {
+        await updateCommunity({
+          data: {
+            id: editingItem.id,
+            title: formData.get("title") as string,
+            tag: formData.get("tag") as string,
+            description: formData.get("description") as string,
+            img: formData.get("img") as string
+          }
+        });
+        toast.success("Community updated!");
       } else {
         await updateProperty({
           data: {
@@ -381,6 +399,29 @@ function AdminDashboard() {
     }
   }
 
+  async function handleAddCommunity(e: React.FormEvent) {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const c = {
+      title: formData.get("title") as string,
+      tag: formData.get("tag") as string,
+      description: formData.get("description") as string,
+      img: formData.get("img") as string,
+    };
+    
+    setIsSubmitting(true);
+    try {
+      await createCommunity({ data: c });
+      toast.success("Community added!");
+      setShowAddModal(null);
+      refreshData();
+    } catch (error) {
+      toast.error("Failed to add community.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, count: data.properties.length },
     { id: "manage_property", label: "Properties", icon: Building2, count: data.properties.length },
@@ -389,6 +430,8 @@ function AdminDashboard() {
     { id: "developers", label: "Developers", icon: Building2, count: data.developers.length },
     { id: "blogs", label: "Blogs", icon: FileText, count: data.blogs.length },
     { id: "leads", label: "Leads", icon: User, count: data.leads.length },
+    { id: "manage_communities", label: "Communities", icon: Compass, count: data.communities?.length || 0 },
+    { id: "pages", label: "Pages", icon: AppWindow, subItems: ["home", "about", "contact", "services", "communities"] },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -417,17 +460,51 @@ function AdminDashboard() {
         </div>
         <nav className="flex-1 space-y-1">
            {sidebarItems.map((item) => (
-             <button 
-               key={item.id} 
-               onClick={() => navigate({ search: { tab: item.id } })}
-               className={`w-full flex items-center justify-between px-5 py-3.5 text-[13px] font-bold transition-all rounded-2xl cursor-pointer group ${tab === item.id ? "bg-blue-600 text-white shadow-xl shadow-blue-100" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}
-             >
-               <div className="flex items-center gap-4">
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-               </div>
-               {item.count !== undefined && <span className={`px-2 py-0.5 rounded-lg text-[10px] ${tab === item.id ? "bg-white/20" : "bg-slate-100 text-slate-400"}`}>{item.count}</span>}
-             </button>
+             <div key={item.id}>
+               <button 
+                 onClick={() => {
+                   if (item.id === "pages") {
+                     setIsPagesExpanded(!isPagesExpanded);
+                     navigate({ search: { tab: item.id } });
+                     setEditingPageContent(null);
+                   } else {
+                     navigate({ search: { tab: item.id } });
+                   }
+                 }}
+                 className={`w-full flex items-center justify-between px-5 py-3.5 text-[13px] font-bold transition-all rounded-2xl cursor-pointer group ${tab === item.id ? "bg-blue-600 text-white shadow-xl shadow-blue-100" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}
+               >
+                 <div className="flex items-center gap-4">
+                    <item.icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                   {item.count !== undefined && <span className={`px-2 py-0.5 rounded-lg text-[10px] ${tab === item.id ? "bg-white/20" : "bg-slate-100 text-slate-400"}`}>{item.count}</span>}
+                   {item.subItems && (
+                     isPagesExpanded ? <ChevronDown className="w-4 h-4 opacity-50" /> : <ChevronRight className="w-4 h-4 opacity-50" />
+                   )}
+                 </div>
+               </button>
+               {item.subItems && isPagesExpanded && (
+                 <div className="mt-1 mb-2 ml-10 space-y-1">
+                   {item.subItems.map(sub => (
+                     <button
+                       key={sub}
+                       onClick={() => {
+                         navigate({ search: { tab: "pages" } });
+                         setEditingPageContent(sub);
+                       }}
+                       className={`w-full text-left px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                         tab === "pages" && editingPageContent === sub
+                         ? "text-blue-600 bg-blue-50"
+                         : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                       }`}
+                     >
+                       {sub.replace("-", " ")}
+                     </button>
+                   ))}
+                 </div>
+               )}
+             </div>
            ))}
         </nav>
         
@@ -821,6 +898,630 @@ function AdminDashboard() {
                   </tbody>
                </table>
               </div>
+            )}
+
+            {tab === "manage_communities" && (
+              <div className="space-y-6">
+                 <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-black">Communities</h2>
+                    <button onClick={() => setShowAddModal("community")} className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-700 transition shadow-sm">Add Community</button>
+                 </div>
+                 <div className="grid grid-cols-3 gap-5">
+                    {(data.communities || []).map((c: any) => (
+                       <div key={c.id} className="bg-white p-6 rounded-[32px] border border-white shadow-sm flex flex-col gap-4 group hover:border-blue-100 transition-all">
+                          <div className="flex items-center gap-4">
+                             <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 transition-colors overflow-hidden">
+                                {c.img ? (
+                                   <img src={c.img} className="w-full h-full object-cover" />
+                                ) : (
+                                   <Compass className="w-6 h-6 text-slate-300" />
+                                )}
+                             </div>
+                             <div>
+                                <p className="font-bold uppercase tracking-widest text-[11px] text-slate-600 line-clamp-1">{c.title}</p>
+                                <p className="text-[8px] uppercase tracking-widest text-slate-400 font-bold">{c.tag || 'Location'}</p>
+                             </div>
+                          </div>
+                          <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">{c.description}</p>
+                          <div className="flex gap-2 mt-auto">
+                             <button onClick={() => setEditingItem({ ...c, _type: 'community' })} className="flex-1 px-4 h-9 flex items-center justify-center gap-2 bg-white rounded-xl text-slate-200 hover:text-blue-500 border border-slate-100 transition-all hover:border-blue-100 shadow-sm font-bold text-[9px] uppercase tracking-widest cursor-pointer">
+                                <Plus className="w-3 h-3 rotate-45" /> Edit
+                             </button>
+                             <button onClick={() => handleDelete("community", c.id)} className="w-9 h-9 flex items-center justify-center bg-white rounded-xl text-slate-200 hover:text-red-500 border border-slate-100 transition-all hover:border-red-100 shadow-sm cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+            )}
+
+            {tab === "pages" && (
+            <div className="space-y-6 max-w-4xl">
+               <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                    {editingPageContent ? `Edit ${editingPageContent.charAt(0).toUpperCase() + editingPageContent.slice(1)} Page` : "Manage Pages"}
+                  </h2>
+                  {editingPageContent && (
+                    <button onClick={() => setEditingPageContent(null)} className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition">
+                      Back to Pages
+                    </button>
+                  )}
+               </div>
+
+               {editingPageContent === "home" ? (
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      setIsSubmitting(true);
+                      const formData = new FormData(e.currentTarget);
+                      
+                      const newContent = {
+                        ...(data.settings?.page_content || {}),
+                        home: {
+                          hero_subtitle: formData.get("hero_subtitle"),
+                          hero_title: formData.get("hero_title"),
+                          hero_image: formData.get("hero_image"),
+                          hero_video: formData.get("hero_video"),
+                          intro_subtitle: formData.get("intro_subtitle"),
+                          intro_title: formData.get("intro_title"),
+                          intro_desc_1: formData.get("intro_desc_1"),
+                          intro_desc_2: formData.get("intro_desc_2"),
+                          why_image: formData.get("why_image"),
+                          why_subtitle: formData.get("why_subtitle"),
+                          why_title: formData.get("why_title"),
+                          why_desc: formData.get("why_desc"),
+                          why_f1_t: formData.get("why_f1_t"),
+                          why_f1_d: formData.get("why_f1_d"),
+                          why_f2_t: formData.get("why_f2_t"),
+                          why_f2_d: formData.get("why_f2_d"),
+                          why_f3_t: formData.get("why_f3_t"),
+                          why_f3_d: formData.get("why_f3_d"),
+                          why_f4_t: formData.get("why_f4_t"),
+                          why_f4_d: formData.get("why_f4_d"),
+                          tour_subtitle: formData.get("tour_subtitle"),
+                          tour_title: formData.get("tour_title"),
+                          tour_desc: formData.get("tour_desc"),
+                          tour_btn_text: formData.get("tour_btn_text"),
+                          tour_btn_link: formData.get("tour_btn_link"),
+                          tour_image: formData.get("tour_image"),
+                        }
+                      };
+
+                      try {
+                        await updateSiteSettings({
+                          data: {
+                            ...data.settings,
+                            page_content: newContent
+                          }
+                        });
+                        toast.success("Home page content updated!");
+                        refreshData();
+                      } catch(err) {
+                        toast.error("Failed to update content");
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }} className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Hero Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Subtitle</label>
+                           <input name="hero_subtitle" defaultValue={data.settings?.page_content?.home?.hero_subtitle || "Welcome to the Future of Living"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Title (HTML allowed)</label>
+                           <textarea name="hero_title" rows={3} defaultValue={data.settings?.page_content?.home?.hero_title || "FIND YOUR <br /> <span className=\"text-gold\">DREAM HOME</span>"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Background Image URL</label>
+                           <input name="hero_image" defaultValue={data.settings?.page_content?.home?.hero_image || "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=2000"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Background Video URL (Optional)</label>
+                           <input name="hero_video" defaultValue={data.settings?.page_content?.home?.hero_video || ""} placeholder="https://.../video.mp4" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <p className="text-[10px] text-slate-400 mt-2">If a video URL is provided, it will play in the background instead of the image.</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Intro Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Intro Subtitle</label>
+                           <input name="intro_subtitle" defaultValue={data.settings?.page_content?.home?.intro_subtitle || "The Leading Developer in Dubai"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Intro Title</label>
+                           <input name="intro_title" defaultValue={data.settings?.page_content?.home?.intro_title || "Premium Properties in the Best Locations"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">First Paragraph</label>
+                           <textarea name="intro_desc_1" rows={4} defaultValue={data.settings?.page_content?.home?.intro_desc_1 || "We define the skyline and the standard for luxury living, offering an exceptional portfolio of apartments, villas, and townhouses across the city's most sought-after districts. From iconic Downtown to vibrant Marina, our master-planned communities represent the absolute pinnacle of real estate."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Second Paragraph</label>
+                           <textarea name="intro_desc_2" rows={3} defaultValue={data.settings?.page_content?.home?.intro_desc_2 || "Beyond an unparalleled lifestyle, we offer a secure path for investment — combining architectural excellence with world-class amenities, ensuring high capital appreciation and strong rental yields."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Why Choose Us Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Image URL</label>
+                           <input name="why_image" defaultValue={data.settings?.page_content?.home?.why_image || "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=1000"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                             <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Subtitle</label>
+                             <input name="why_subtitle" defaultValue={data.settings?.page_content?.home?.why_subtitle || "Unrivaled Excellence"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div>
+                             <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title (HTML Allowed)</label>
+                             <input name="why_title" defaultValue={data.settings?.page_content?.home?.why_title || "Why Choose <br /> <span className=\"text-gold\">Golden Door Realty</span>"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Main Description</label>
+                           <textarea name="why_desc" rows={3} defaultValue={data.settings?.page_content?.home?.why_desc || "As one of the world's most valuable and admired real estate development companies, Golden Door Realty shapes new lifestyles with a focus on design excellence and build quality."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">Feature 1 Title</label>
+                             <input name="why_f1_t" defaultValue={data.settings?.page_content?.home?.why_f1_t || "Global Legacy"} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-2">Feature 1 Description</label>
+                             <input name="why_f1_d" defaultValue={data.settings?.page_content?.home?.why_f1_d || "Developing iconic landmarks like Burj Khalifa since 1997."} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">Feature 2 Title</label>
+                             <input name="why_f2_t" defaultValue={data.settings?.page_content?.home?.why_f2_t || "Build Quality"} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-2">Feature 2 Description</label>
+                             <input name="why_f2_d" defaultValue={data.settings?.page_content?.home?.why_f2_d || "Premium materials and meticulous attention to every detail."} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">Feature 3 Title</label>
+                             <input name="why_f3_t" defaultValue={data.settings?.page_content?.home?.why_f3_t || "Smart Integration"} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-2">Feature 3 Description</label>
+                             <input name="why_f3_d" defaultValue={data.settings?.page_content?.home?.why_f3_d || "Cutting-edge technology integrated into every home."} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">Feature 4 Title</label>
+                             <input name="why_f4_t" defaultValue={data.settings?.page_content?.home?.why_f4_t || "After-Sales"} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-2">Feature 4 Description</label>
+                             <input name="why_f4_d" defaultValue={data.settings?.page_content?.home?.why_f4_d || "Dedicated 24/7 community management and support."} className="w-full bg-white border-transparent rounded-lg px-3 py-2 text-xs focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Tour Banner Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Background/Thumbnail Image URL</label>
+                           <input name="tour_image" defaultValue={data.settings?.page_content?.home?.tour_image || ""} placeholder="Leave empty for default image" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                             <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Subtitle</label>
+                             <input name="tour_subtitle" defaultValue={data.settings?.page_content?.home?.tour_subtitle || "Virtual Experience"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div>
+                             <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title</label>
+                             <input name="tour_title" defaultValue={data.settings?.page_content?.home?.tour_title || "Communities 360° Tour"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Description</label>
+                           <textarea name="tour_desc" rows={2} defaultValue={data.settings?.page_content?.home?.tour_desc || "Experience our communities and amenities from the comfort of your home — from vibrant cities to serene waterfronts."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                             <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Button Text</label>
+                             <input name="tour_btn_text" defaultValue={data.settings?.page_content?.home?.tour_btn_text || "Start the Tour"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div>
+                             <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Button Link URL</label>
+                             <input name="tour_btn_link" defaultValue={data.settings?.page_content?.home?.tour_btn_link || "#"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-slate-100 flex justify-end">
+                        <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
+                           {isSubmitting ? "Saving..." : "Update Content"}
+                        </button>
+                      </div>
+                    </form>
+                 </div>
+               ) : editingPageContent === "about" ? (
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      setIsSubmitting(true);
+                      const formData = new FormData(e.currentTarget);
+                      
+                      const newContent = {
+                        ...(data.settings?.page_content || {}),
+                        about: {
+                          hero_image: formData.get("hero_image"),
+                          hero_subtitle: formData.get("hero_subtitle"),
+                          hero_title: formData.get("hero_title"),
+                          overview_subtitle: formData.get("overview_subtitle"),
+                          overview_title: formData.get("overview_title"),
+                          overview_desc_1: formData.get("overview_desc_1"),
+                          overview_desc_2: formData.get("overview_desc_2"),
+                          mission_title: formData.get("mission_title"),
+                          mission_desc: formData.get("mission_desc"),
+                          vision_title: formData.get("vision_title"),
+                          vision_desc: formData.get("vision_desc"),
+                        }
+                      };
+
+                      try {
+                        await updateSiteSettings({
+                          data: {
+                            ...data.settings,
+                            page_content: newContent
+                          }
+                        });
+                        toast.success("About page content updated!");
+                        refreshData();
+                      } catch(err) {
+                        toast.error("Failed to update content");
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }} className="space-y-6">
+                      
+                      {/* Hero Section */}
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Hero Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Background Image URL</label>
+                           <input name="hero_image" defaultValue={data.settings?.page_content?.about?.hero_image || "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=2000"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Subtitle</label>
+                              <input name="hero_subtitle" defaultValue={data.settings?.page_content?.about?.hero_subtitle || "Shaping Skylines"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Title</label>
+                              <input name="hero_title" defaultValue={data.settings?.page_content?.about?.hero_title || "ABOUT GOLDEN DOOR REALTY"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                      </div>
+
+                      {/* Overview Section */}
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Company Overview</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Subtitle</label>
+                              <input name="overview_subtitle" defaultValue={data.settings?.page_content?.about?.overview_subtitle || "Global Legacy"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title (HTML Allowed)</label>
+                              <input name="overview_title" defaultValue={data.settings?.page_content?.about?.overview_title || "SHAPING THE FUTURE <br /> OF LIFESTYLES"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">First Paragraph</label>
+                           <textarea name="overview_desc_1" rows={3} defaultValue={data.settings?.page_content?.about?.overview_desc_1 || "Golden Door Realty is one of the world's most valuable and admired real estate development companies. With proven competencies in properties, shopping malls & retail and hospitality & leisure, Golden Door Realty shapes new lifestyles with a focus on design excellence, build quality and timely delivery."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Second Paragraph</label>
+                           <textarea name="overview_desc_2" rows={2} defaultValue={data.settings?.page_content?.about?.overview_desc_2 || "Founded in 1997, Golden Door Realty has built an incredible legacy of building iconic landmarks in Dubai and globally, most notably Burj Khalifa, the world's tallest building."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                      </div>
+
+                      {/* Mission & Vision */}
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Mission & Vision</h3>
+                        <div className="grid grid-cols-2 gap-6">
+                           <div className="space-y-4 p-4 bg-slate-50 rounded-xl">
+                              <div>
+                                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Mission Title</label>
+                                 <input name="mission_title" defaultValue={data.settings?.page_content?.about?.mission_title || "Our Mission"} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                              </div>
+                              <div>
+                                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Mission Description</label>
+                                 <textarea name="mission_desc" rows={3} defaultValue={data.settings?.page_content?.about?.mission_desc || "To shape the future of urban living through innovative, premium and integrated lifestyle communities that redefine the standards of luxury and convenience."} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                              </div>
+                           </div>
+                           <div className="space-y-4 p-4 bg-slate-50 rounded-xl">
+                              <div>
+                                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Vision Title</label>
+                                 <input name="vision_title" defaultValue={data.settings?.page_content?.about?.vision_title || "Our Vision"} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                              </div>
+                              <div>
+                                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Vision Description</label>
+                                 <textarea name="vision_desc" rows={3} defaultValue={data.settings?.page_content?.about?.vision_desc || "To be the most valuable lifestyle real estate developer globally, delivering sustainable value to our stakeholders and shaping the world of tomorrow."} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                              </div>
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-slate-100 flex justify-end">
+                        <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
+                           {isSubmitting ? "Saving..." : "Update About Page"}
+                        </button>
+                      </div>
+                    </form>
+                 </div>
+               ) : editingPageContent === "contact" ? (
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      setIsSubmitting(true);
+                      const formData = new FormData(e.currentTarget);
+                      
+                      const newContent = {
+                        ...(data.settings?.page_content || {}),
+                        contact: {
+                          hero_image: formData.get("hero_image"),
+                          hero_subtitle: formData.get("hero_subtitle"),
+                          hero_title: formData.get("hero_title"),
+                          address: formData.get("address"),
+                          phone: formData.get("phone"),
+                          email: formData.get("email"),
+                          hours: formData.get("hours"),
+                          map_iframe_url: formData.get("map_iframe_url"),
+                          form_title: formData.get("form_title"),
+                          form_desc: formData.get("form_desc"),
+                        }
+                      };
+
+                      try {
+                        await updateSiteSettings({
+                          data: {
+                            ...data.settings,
+                            page_content: newContent
+                          }
+                        });
+                        toast.success("Contact page content updated!");
+                        refreshData();
+                      } catch(err) {
+                        toast.error("Failed to update content");
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }} className="space-y-6">
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Hero Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Background Image URL</label>
+                           <input name="hero_image" defaultValue={data.settings?.page_content?.contact?.hero_image || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Subtitle</label>
+                              <input name="hero_subtitle" defaultValue={data.settings?.page_content?.contact?.hero_subtitle || "Get in Touch"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Title</label>
+                              <input name="hero_title" defaultValue={data.settings?.page_content?.contact?.hero_title || "CONTACT US"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Contact Details</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Address</label>
+                           <textarea name="address" rows={3} defaultValue={data.settings?.page_content?.contact?.address || "Golden Door Realty Square, Building 3\nSheikh Mohammed Bin Rashid Boulevard\nDowntown Dubai, United Arab Emirates"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Phone</label>
+                              <input name="phone" defaultValue={data.settings?.page_content?.contact?.phone || "+971 4 366 1688"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Email</label>
+                              <input name="email" defaultValue={data.settings?.page_content?.contact?.email || "contactus@goldendoorrealty.com"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Working Hours</label>
+                           <input name="hours" defaultValue={data.settings?.page_content?.contact?.hours || "Sunday – Thursday: 9:00 AM – 6:00 PM"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Map & Form</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Google Map Iframe URL (Embed Link)</label>
+                           <input name="map_iframe_url" defaultValue={data.settings?.page_content?.contact?.map_iframe_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1785100234475!2d55.27138287607738!3d25.19719693170799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f4334adcc6279%3A0xc3c5443e0160b73b!2sBurj%20Khalifa!5e0!3m2!1sen!2sae!4v1715360000000!5m2!1sen!2sae"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Form Title</label>
+                              <input name="form_title" defaultValue={data.settings?.page_content?.contact?.form_title || "Send us a Message"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Form Description</label>
+                              <input name="form_desc" defaultValue={data.settings?.page_content?.contact?.form_desc || "Our team will get back to you within 24 hours."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-slate-100 flex justify-end">
+                        <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
+                           {isSubmitting ? "Saving..." : "Update Contact Page"}
+                        </button>
+                      </div>
+                    </form>
+                 </div>
+               ) : editingPageContent === "services" ? (
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      setIsSubmitting(true);
+                      const formData = new FormData(e.currentTarget);
+                      
+                      const newContent = {
+                        ...(data.settings?.page_content || {}),
+                        services: {
+                          hero_image: formData.get("hero_image"),
+                          hero_subtitle: formData.get("hero_subtitle"),
+                          hero_title: formData.get("hero_title"),
+                          overview_subtitle: formData.get("overview_subtitle"),
+                          overview_title: formData.get("overview_title"),
+                          cta_title: formData.get("cta_title"),
+                          cta_desc: formData.get("cta_desc"),
+                        }
+                      };
+
+                      try {
+                        await updateSiteSettings({
+                          data: {
+                            ...data.settings,
+                            page_content: newContent
+                          }
+                        });
+                        toast.success("Services page content updated!");
+                        refreshData();
+                      } catch(err) {
+                        toast.error("Failed to update content");
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }} className="space-y-6">
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Hero Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Background Image URL</label>
+                           <input name="hero_image" defaultValue={data.settings?.page_content?.services?.hero_image || "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=2000"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Subtitle</label>
+                              <input name="hero_subtitle" defaultValue={data.settings?.page_content?.services?.hero_subtitle || "Premium Solutions"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Title</label>
+                              <input name="hero_title" defaultValue={data.settings?.page_content?.services?.hero_title || "OUR SERVICES"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Overview Section</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Subtitle</label>
+                              <input name="overview_subtitle" defaultValue={data.settings?.page_content?.services?.overview_subtitle || "What We Offer"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                           <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title</label>
+                              <input name="overview_title" defaultValue={data.settings?.page_content?.services?.overview_title || "COMPREHENSIVE REAL ESTATE EXPERTISE"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">CTA Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">CTA Title</label>
+                           <input name="cta_title" defaultValue={data.settings?.page_content?.services?.cta_title || "READY TO GET STARTED?"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">CTA Description</label>
+                           <textarea name="cta_desc" rows={3} defaultValue={data.settings?.page_content?.services?.cta_desc || "Speak with our property consultants today to discover how our tailored services can help you achieve your real estate goals."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-slate-100 flex justify-end">
+                        <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
+                           {isSubmitting ? "Saving..." : "Update Services Page"}
+                        </button>
+                      </div>
+                    </form>
+                 </div>
+               ) : editingPageContent === "communities" ? (
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      setIsSubmitting(true);
+                      const formData = new FormData(e.currentTarget);
+                      
+                      const newContent = {
+                        ...(data.settings?.page_content || {}),
+                        communities: {
+                          hero_subtitle: formData.get("hero_subtitle"),
+                          hero_title: formData.get("hero_title"),
+                          hero_desc: formData.get("hero_desc"),
+                        }
+                      };
+
+                      try {
+                        await updateSiteSettings({
+                          data: {
+                            ...data.settings,
+                            page_content: newContent
+                          }
+                        });
+                        toast.success("Communities page content updated!");
+                        refreshData();
+                      } catch(err) {
+                        toast.error("Failed to update content");
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }} className="space-y-6">
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Hero Section</h3>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Subtitle</label>
+                           <input name="hero_subtitle" defaultValue={data.settings?.page_content?.communities?.hero_subtitle || "The Master Collection"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title (HTML Allowed)</label>
+                           <input name="hero_title" defaultValue={data.settings?.page_content?.communities?.hero_title || "Our <span className=\"text-muted-foreground/40 italic\">Communities</span>"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                        <div>
+                           <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Description</label>
+                           <textarea name="hero_desc" rows={3} defaultValue={data.settings?.page_content?.communities?.hero_desc || "Explore the iconic districts that define Dubai's skyline. From waterfront marinas to serene golf estates, each Golden Door Realty community offers a unique lifestyle and unparalleled investment value."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-slate-100 flex justify-end">
+                        <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
+                           {isSubmitting ? "Saving..." : "Update Communities Page"}
+                        </button>
+                      </div>
+                    </form>
+                 </div>
+               ) : editingPageContent ? (
+                 <div className="bg-white rounded-[40px] p-16 text-center shadow-sm border border-white">
+                    <AppWindow className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-slate-400 mb-2">Content Editor Coming Soon</h3>
+                    <p className="text-sm text-slate-400 max-w-sm mx-auto">The content editor for {editingPageContent} is currently under development.</p>
+                 </div>
+               ) : (
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white space-y-4">
+                     {["home", "about", "contact", "services", "communities"].map(page => (
+                        <div key={page} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-100 transition-all group">
+                           <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-white border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center group-hover:text-blue-600 group-hover:border-blue-100 transition-all">
+                                 <AppWindow className="w-5 h-5" />
+                              </div>
+                              <div>
+                                 <p className="font-bold uppercase tracking-widest text-sm text-slate-700 group-hover:text-blue-600 transition-colors">{page.replace("-", " ")} Page</p>
+                                 <p className="text-[10px] text-slate-400">Manage templates and content sections</p>
+                              </div>
+                           </div>
+                           <button 
+                             onClick={() => setEditingPageContent(page)}
+                             className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2"
+                           >
+                              <Plus className="w-3.5 h-3.5 rotate-45" /> Edit Content
+                           </button>
+                        </div>
+                     ))}
+                 </div>
+               )}
+            </div>
             )}
 
             {tab === "settings" && (
@@ -1275,6 +1976,26 @@ function AdminDashboard() {
                            </div>
                         </div>
                       )}
+                      {editingItem._type === 'community' && (
+                        <div className="space-y-6">
+                           <div className="mt-4 space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Community Title</label>
+                              <input name="title" defaultValue={editingItem.title} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                           </div>
+                           <div className="mt-4 space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tag (e.g. Affordable Luxury)</label>
+                              <input name="tag" defaultValue={editingItem.tag} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                           </div>
+                           <div className="mt-4 space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Featured Image URL</label>
+                              <input name="img" defaultValue={editingItem.img} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                           </div>
+                           <div className="mt-4 space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Description</label>
+                              <textarea name="description" defaultValue={editingItem.description} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition h-32" />
+                           </div>
+                        </div>
+                      )}
                     </div>
                   )}
                  <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.01] transition-all">
@@ -1672,6 +2393,37 @@ function AdminDashboard() {
            </div>
         </div>
       )}
+       {showAddModal === "community" && (
+         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
+               <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+                  <h3 className="text-xl font-black">Add Community</h3>
+                  <button onClick={() => setShowAddModal(null)} className="p-2 hover:bg-slate-50 rounded-full transition-colors"><X className="w-6 h-6" /></button>
+               </div>
+               <form onSubmit={handleAddCommunity} className="p-10 space-y-6">
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Community Title</label>
+                     <input name="title" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Noida West" />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tag (e.g. Affordable Luxury)</label>
+                     <input name="tag" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Most Popular residential hub" />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Image URL</label>
+                     <input name="img" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="https://..." />
+                  </div>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Description</label>
+                     <textarea name="description" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition h-32" placeholder="Describe the community..." />
+                  </div>
+                  <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.01] transition-all">
+                     {isSubmitting ? "Adding..." : "Add Community"}
+                  </button>
+               </form>
+            </div>
+         </div>
+       )}
 
       <style>{`
         @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

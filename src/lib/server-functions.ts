@@ -99,8 +99,9 @@ export const updateSiteSettings = createServerFn({ method: "POST" }).handler(asy
     logo_url_light = ${data.logo_url_light}, 
     theme_color = ${data.theme_color}, 
     email = ${data.email}, 
-    phone = ${data.phone}, 
-    whatsapp = ${data.whatsapp} 
+    whatsapp = ${data.whatsapp},
+    page_templates = ${data.page_templates},
+    page_content = ${data.page_content}
     WHERE id = 1`;
   return { success: true };
 });
@@ -261,9 +262,31 @@ export const getAllCommunities = createServerFn({ method: "GET" }).handler(async
   const db = await getSql();
   if (!db) return [];
   try { 
-    const res = await db`SELECT * FROM communities ORDER BY title ASC`; 
+    const res = await db`SELECT * FROM communities ORDER BY id DESC`; 
     return res.map((row: any) => ({ ...row }));
   } catch (e) { return []; }
+});
+
+export const createCommunity = createServerFn({ method: "POST" }).handler(async ({ data }: { data: any }) => {
+  const db = await getSql();
+  if (!db) throw new Error("DB Error");
+  const slug = data.title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+  await db`INSERT INTO communities (title, slug, tag, description, img) VALUES (${data.title}, ${slug}, ${data.tag}, ${data.description}, ${data.img})`;
+  return { success: true };
+});
+
+export const updateCommunity = createServerFn({ method: "POST" }).handler(async ({ data }: { data: any }) => {
+  const db = await getSql();
+  if (!db) throw new Error("DB Error");
+  await db`UPDATE communities SET title = ${data.title}, tag = ${data.tag}, description = ${data.description}, img = ${data.img} WHERE id = ${data.id}`;
+  return { success: true };
+});
+
+export const deleteCommunity = createServerFn({ method: "POST" }).handler(async ({ data: id }: { data: number }) => {
+  const db = await getSql();
+  if (!db) throw new Error("DB Error");
+  await db`DELETE FROM communities WHERE id = ${id}`;
+  return { success: true };
 });
 
 export const getAllBlogs = createServerFn({ method: "GET" }).handler(async () => {
@@ -365,8 +388,8 @@ export const createLead = createServerFn({ method: "POST" }).handler(async ({ da
   const db = await getSql();
   if (!db) throw new Error("Offline");
   try {
-    await db`INSERT INTO leads (name, email, phone, property_slug) 
-             VALUES (${data.name}, ${data.email}, ${data.phone}, ${data.source || data.property_slug || 'General'})`;
+    await db`INSERT INTO leads (name, email, phone, property_slug, message) 
+             VALUES (${data.name}, ${data.email}, ${data.phone}, ${data.source || data.property_slug || 'General'}, ${data.message || ''})`;
     return { success: true };
   } catch (e) {
     console.error("Lead creation failed:", e);
