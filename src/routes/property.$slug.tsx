@@ -6,7 +6,7 @@ import {
   MapPin, BedDouble, Building2, Compass, User, Star, ArrowRight,
   Search, SlidersHorizontal, LayoutGrid, List
 } from "lucide-react";
-import { getLaunchBySlug, getAllLaunches, getAllCommunities, createLead, getAllAmenitiesMaster } from "@/lib/server-functions";
+import { getLaunchBySlug, getAllLaunches, getAllCommunities, createLead, getAllAmenitiesMaster, getAllPropertyTypes } from "@/lib/server-functions";
 import { toast } from "sonner";
 import { useState, useMemo, useEffect } from "react";
 
@@ -22,19 +22,36 @@ const filters = {
 // Icon Map for Dynamic Amenities (fallback only, FontAwesome is primary)
 export const Route = createFileRoute("/property/$slug")({
   loader: async ({ params }) => {
-    const [l, allL, allAmenities] = await Promise.all([
+    const [l, allL, allAmenities, allPropertyTypes] = await Promise.all([
       getLaunchBySlug({ data: params.slug }),
       getAllLaunches(),
-      getAllAmenitiesMaster()
+      getAllAmenitiesMaster(),
+      getAllPropertyTypes()
     ]);
 
     // If no individual property found, check if it's a category (property type)
     if (!l) {
-      const typeProperties = (allL || []).filter((p: any) => p.type.toLowerCase() === params.slug.toLowerCase());
-      if (typeProperties.length > 0 || filters.buy.map(b => b.toLowerCase()).includes(params.slug.toLowerCase())) {
+      const dbTypes = (allPropertyTypes || []).map((t: any) => t.name);
+      const propertyInstanceTypes = Array.from(new Set((allL || []).map((p: any) => p.type)));
+      
+      const allPossibleTypes = Array.from(new Set([
+        ...dbTypes, 
+        ...propertyInstanceTypes,
+        ...filters.buy,
+        ...filters.commercial,
+        ...filters.rent,
+        ...filters.plots
+      ]));
+
+      const isKnownType = allPossibleTypes.some(t => t.toLowerCase().replace(/ /g, '-') === params.slug.toLowerCase());
+
+      if (isKnownType) {
+        const typeProperties = (allL || []).filter((p: any) => p.type.toLowerCase().replace(/ /g, '-') === params.slug.toLowerCase());
+        const foundType = allPossibleTypes.find(t => t.toLowerCase().replace(/ /g, '-') === params.slug.toLowerCase()) || params.slug;
+        
         return {
           isCategory: true,
-          categoryName: params.slug,
+          categoryName: foundType,
           properties: typeProperties,
           allL: allL || [],
           allAmenities: allAmenities || []
@@ -103,7 +120,7 @@ function PropertyDetail() {
                     <Link 
                       key={p} 
                       to="/property/$slug" 
-                      params={{ slug: p }}
+                      params={{ slug: p.toLowerCase().replace(/ /g, '-') }}
                       className={`text-left px-4 py-2 text-xs uppercase tracking-widest transition-colors ${categoryName.toLowerCase() === p.toLowerCase() ? "bg-brand text-white font-bold" : "text-muted-foreground hover:text-ink"}`}
                     >
                       {p}

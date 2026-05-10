@@ -36,7 +36,7 @@ export function PropertyCategories({ items = [] }: { items?: any[] }) {
             <Link 
               key={i} 
               to="/property/$slug" 
-              params={{ slug: c.slug }}
+              params={{ slug: c.slug.toLowerCase().replace(/ /g, '-') }}
               className="group relative h-96 overflow-hidden cursor-pointer block"
             >
               <img 

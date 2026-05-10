@@ -132,7 +132,7 @@ export function Header() {
                         <li key={t.id}>
                           <Link 
                             to="/property/$slug" 
-                            params={{ slug: t.name }}
+                            params={{ slug: t.name.toLowerCase().replace(/ /g, '-') }}
                             className="text-sm font-bold text-ink hover:text-brand transition-colors"
                           >
                             {t.name}
@@ -141,9 +141,9 @@ export function Header() {
                       ))
                     ) : (
                       <>
-                        <li><Link to="/property/$slug" params={{ slug: 'Apartments' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Apartments</Link></li>
-                        <li><Link to="/property/$slug" params={{ slug: 'Villas' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Villas</Link></li>
-                        <li><Link to="/property/$slug" params={{ slug: 'Townhouses' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Townhouses</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'apartments' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Apartments</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'villas' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Villas</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'townhouses' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Townhouses</Link></li>
                       </>
                     )}
                  </ul>
@@ -165,8 +165,8 @@ export function Header() {
                       ))
                     ) : (
                       <>
-                        <li><Link to="/property/$slug" params={{ slug: 'Office' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Modern Offices</Link></li>
-                        <li><Link to="/property/$slug" params={{ slug: 'Retail' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Retail Spaces</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'office' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Modern Offices</Link></li>
+                        <li><Link to="/property/$slug" params={{ slug: 'retail' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Retail Spaces</Link></li>
                       </>
                     )}
                  </ul>
