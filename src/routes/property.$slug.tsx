@@ -91,7 +91,7 @@ function PropertyDetail() {
         <Header />
         <section className="bg-ink text-white py-32 border-b border-white/5">
           <div className="container-realty text-center">
-            <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Golden Door Realty Portfolio</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">MoneyTree Realty Portfolio</p>
             <h1 className="text-4xl md:text-7xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>{categoryName}</h1>
           </div>
         </section>
@@ -448,7 +448,7 @@ function PropertyDetail() {
                  <h2 className="text-2xl font-serif font-bold mb-6 text-slate-900">Location Map</h2>
                  <div className="w-full h-[400px] bg-slate-100 rounded-[24px] overflow-hidden border border-slate-200">
                     <iframe 
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(l.location || 'Dubai')}&t=&z=13&ie=UTF8&iwloc=&output=embed`} 
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(l.location || 'Noida')}&t=&z=13&ie=UTF8&iwloc=&output=embed`} 
                       width="100%" 
                       height="100%" 
                       style={{ border: 0 }} 

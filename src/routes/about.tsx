@@ -7,8 +7,8 @@ import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Golden Door Realty — Shaping the Future of Living" },
-      { name: "description", content: "Discover Golden Door Realty's journey as Dubai's leading master-developer of iconic real estate, retail, and hospitality destinations." },
+      { title: "About MoneyTree Realty — Shaping the Future of Living" },
+      { name: "description", content: "Discover MoneyTree Realty's journey as Noida's leading master-developer of iconic real estate, retail, and hospitality destinations." },
     ],
   }),
   component: AboutPage,
@@ -37,8 +37,8 @@ function AboutPage() {
 
   const overviewSubtitle = content.overview_subtitle || "Global Legacy";
   const overviewTitle = content.overview_title || "SHAPING THE FUTURE <br /> OF LIFESTYLES";
-  const overviewDesc1 = content.overview_desc_1 || "Golden Door Realty is one of the world's most valuable and admired real estate development companies. With proven competencies in properties, shopping malls & retail and hospitality & leisure, Golden Door Realty shapes new lifestyles with a focus on design excellence, build quality and timely delivery.";
-  const overviewDesc2 = content.overview_desc_2 || "Founded in 1997, Golden Door Realty has built an incredible legacy of building iconic landmarks in Dubai and globally, most notably Burj Khalifa, the world's tallest building.";
+  const overviewDesc1 = content.overview_desc_1 || "MoneyTree Realty is one of the world's most valuable and admired real estate development companies. With proven competencies in properties, shopping malls & retail and hospitality & leisure, MoneyTree Realty shapes new lifestyles with a focus on design excellence, build quality and timely delivery.";
+  const overviewDesc2 = content.overview_desc_2 || "Founded in 1997, MoneyTree Realty has built an incredible legacy of building iconic landmarks in Noida and globally, most notably Burj Khalifa, the world's tallest building.";
 
   const missionTitle = content.mission_title || "Our Mission";
   const missionDesc = content.mission_desc || "To shape the future of urban living through innovative, premium and integrated lifestyle communities that redefine the standards of luxury and convenience.";
@@ -165,8 +165,8 @@ function AboutPage() {
 
           <div className="grid md:grid-cols-2 gap-12">
             {[
-              { t: "Golden Door Realty Announces Record Revenue for Q1 2026", d: "A 15% increase compared to previous year, driven by strong international sales.", date: "May 12, 2026" },
-              { t: "New Landmark Launch in Dubai Creek Harbour", d: "The latest residential tower promises a new standard of luxury living.", date: "April 28, 2026" }
+              { t: "MoneyTree Realty Announces Record Revenue for Q1 2026", d: "A 15% increase compared to previous year, driven by strong international sales.", date: "May 12, 2026" },
+              { t: "New Landmark Launch in Noida Creek Harbour", d: "The latest residential tower promises a new standard of luxury living.", date: "April 28, 2026" }
             ].map((n, i) => (
               <div key={i} className="p-10 border border-border hover:border-brand transition group cursor-pointer">
                 <p className="text-[10px] uppercase text-brand mb-4">{n.date}</p>

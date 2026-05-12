@@ -187,7 +187,7 @@ export function FeaturedProperties({ items = [] }: { items?: any[] }) {
         </div>
 
         <div className="mt-16 text-center">
-           <Link to="/launches" className="inline-flex items-center gap-2 text-sm font-black text-[#004037] hover:gap-4 transition-all uppercase tracking-widest">
+           <Link to="/properties" className="inline-flex items-center gap-2 text-sm font-black text-[#004037] hover:gap-4 transition-all uppercase tracking-widest">
               Explore more Premium Properties →
            </Link>
         </div>

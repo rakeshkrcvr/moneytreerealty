@@ -26,7 +26,7 @@ export function PropertyCategories() {
           {cities.map((city, i) => (
             <Link 
               key={i} 
-              to="/property/$slug" 
+              to="/properties/$slug" 
               params={{ slug: city.name.toLowerCase().replace(/ /g, '-') }}
               className="group relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-2xl cursor-pointer block shadow-lg hover:shadow-2xl transition-all duration-500"
             >
@@ -48,53 +48,70 @@ export function PropertyCategories() {
 }
 
 export function WhyChooseUs() {
-  const settings = useSiteSettings();
-  const content = settings?.page_content?.home || {};
-  
-  const whyImage = content.why_image || "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=1000";
-  const whySubtitle = content.why_subtitle || "Unrivaled Excellence";
-  const whyTitle = "Why Choose <br /> <span className=\"text-[#c5a35d]\">MoneyTree Realty</span>";
-  const whyDesc = "MoneyTree Realty is the top real estate property consultant in India, offering luxury apartments, commercial projects, and expert investment advice in Noida and Gurugram.";
-  
-  const features = [
-    { t: "Expert Guidance", d: "Professional real estate advice from seasoned market experts." },
-    { t: "Premium Selection", d: "Access to the most exclusive luxury and commercial properties." },
-    { t: "Client First", d: "A commitment to transparency and long-term relationships." },
-    { t: "Smooth Transitions", d: "Comprehensive support from site visits to final documentation." }
+  const team = [
+    { name: "Aman Sharma", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400" },
+    { name: "Garvit Sharma", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400" },
+    { name: "Monu Tyagi", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400" },
+    { name: "Nakul Tyagi", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" },
+  ];
+
+  const others = [
+    { name: "Neeraj Kataria", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100" },
+    { name: "Sachin Khurana", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?auto=format&fit=crop&q=80&w=100" },
+    { name: "Sharda Prasad Kushwaha", role: "Corporate Director - Sales", img: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=100" },
   ];
 
   return (
-    <section className="py-24 bg-surface border-y border-border overflow-hidden">
-      <div className="container-realty grid lg:grid-cols-2 gap-24 items-center">
-        <div className="relative">
-          <div className="aspect-[4/5] bg-muted relative z-10">
-            <img src={whyImage} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
-          </div>
-          <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-brand/5 -z-0" />
-          <div className="absolute -top-12 -left-12 w-64 h-64 bg-ink/5 -z-0" />
+    <section className="py-24 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 md:px-8">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-black text-[#1a1a1a] mb-6 tracking-tight">
+            Meet Your <span className="text-[#004037]">Real Estate Investment</span> Dream Team
+          </h2>
+          <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+            <span className="font-bold text-slate-800">Certified property experts</span> with deep market knowledge. From first consultation to keys in hand - we're with you every step.
+          </p>
         </div>
 
-        <div className="space-y-12">
-          <div>
-            <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">{whySubtitle}</p>
-            <h2 
-              className="text-3xl md:text-6xl text-ink uppercase leading-tight mb-8" 
-              style={{ fontFamily: "var(--font-serif)" }}
-              dangerouslySetInnerHTML={{ __html: whyTitle }}
-            />
-            <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
-              {whyDesc}
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-12">
-            {features.map((it, i) => (
-              <div key={i}>
-                <h4 className="text-sm font-bold uppercase tracking-widest text-ink mb-3">{it.t}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{it.d}</p>
+        <div className="relative group mb-12">
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {team.map((member, i) => (
+              <div key={i} className="group/card relative aspect-[3/4] rounded-2xl overflow-hidden bg-slate-100 shadow-xl border border-slate-100 transition-all duration-500 hover:shadow-2xl">
+                <img src={member.img} alt={member.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                <div className="absolute bottom-8 left-8 text-white">
+                  <h4 className="text-2xl font-bold mb-1">{member.name}</h4>
+                  <p className="text-xs text-white/70 font-medium">{member.role}</p>
+                </div>
               </div>
             ))}
           </div>
+
+          {/* Navigation Arrows */}
+          <button className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg border border-slate-200 text-[#004037] opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0">
+             <span className="sr-only">Previous</span>
+             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          <button className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg border border-slate-200 text-[#004037] opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+             <span className="sr-only">Next</span>
+             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </div>
+
+        {/* Thumbnail Navigation */}
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+           {[...team, ...others].map((m, i) => (
+             <div key={i} className={`flex items-center gap-3 px-4 py-2 rounded-full border transition-all cursor-pointer ${i === 0 ? "border-[#004037] bg-white shadow-md" : "border-slate-100 bg-slate-50/50 hover:bg-white hover:border-slate-300"}`}>
+               <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
+                  <img src={m.img} className="w-full h-full object-cover" />
+               </div>
+               <div className="hidden sm:block text-left">
+                  <p className="text-[10px] font-bold text-slate-800 leading-none">{m.name}</p>
+                  <p className="text-[8px] text-slate-400 mt-0.5">{m.role}</p>
+               </div>
+             </div>
+           ))}
         </div>
       </div>
     </section>

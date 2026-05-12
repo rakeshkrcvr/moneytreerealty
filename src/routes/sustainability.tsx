@@ -6,10 +6,10 @@ import hero from "@/assets/community-hills.jpg";
 export const Route = createFileRoute("/sustainability")({
   head: () => ({
     meta: [
-      { title: "Sustainability — Golden Door Realty" },
-      { name: "description", content: "Golden Door Realty's commitment to sustainable development — green communities, energy efficiency and responsible business practices." },
-      { property: "og:title", content: "Sustainability — Golden Door Realty" },
-      { property: "og:description", content: "Building a sustainable future for Dubai." },
+      { title: "Sustainability — MoneyTree Realty" },
+      { name: "description", content: "MoneyTree Realty's commitment to sustainable development — green communities, energy efficiency and responsible business practices." },
+      { property: "og:title", content: "Sustainability — MoneyTree Realty" },
+      { property: "og:description", content: "Building a sustainable future for Noida." },
     ],
   }),
   component: SustainabilityPage,

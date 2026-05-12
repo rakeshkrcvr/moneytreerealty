@@ -166,7 +166,7 @@ export function Header() {
                 {cityCounts.map(city => (
                   <li key={city.slug}>
                     <Link 
-                      to="/communities/$slug" 
+                      to="/properties/$slug" 
                       params={{ slug: city.slug }}
                       className="flex items-center justify-between group"
                     >
@@ -180,11 +180,11 @@ export function Header() {
             <div className="w-1/4 border-r border-slate-100 pr-12">
               <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Property Type</h4>
               <ul className="space-y-4">
-                <li><Link to="/launches" className="text-sm font-bold text-ink hover:text-brand transition-colors block">All Types</Link></li>
+                <li><Link to="/properties" className="text-sm font-bold text-ink hover:text-brand transition-colors block">All Types</Link></li>
                 {types.map(type => (
                   <li key={type.id}>
                     <Link 
-                      to="/launches" 
+                      to="/properties" 
                       search={{ type: type.name }}
                       className="text-sm font-bold text-ink hover:text-brand transition-colors block"
                     >
@@ -197,7 +197,7 @@ export function Header() {
             <div className="w-2/4 pl-4">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-sm font-bold text-ink">Properties in Gurugram</h4>
-                <Link to="/communities/gurugram" className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
+                <Link to="/properties/gurugram" className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
               </div>
               <div className="grid grid-cols-1 gap-6">
                 {properties.filter(p => p.location?.toLowerCase().includes('gurugram')).slice(0, 2).map(p => (

@@ -1,18 +1,25 @@
 import { Instagram, Youtube, Linkedin, Phone as Whatsapp, Heart } from "lucide-react";
 
 export function NewsTicker() {
+  const content = (
+    <>
+      <span className="text-[11px] font-bold uppercase tracking-widest mr-12 inline-flex items-center gap-3">
+        🔥 SE EXTENSION ROAD • ULTRA-LUXURY 3 & 4 BHK STARTING ₹5.69 CR* • Prime Location • Exclusive & Limited Units • <button className="bg-white text-[#002a24] px-3 py-1 rounded text-[9px] font-black hover:bg-white/90 transition-colors">GRAB THE DEAL</button>
+      </span>
+      <span className="text-[11px] font-bold uppercase tracking-widest mr-12 inline-flex items-center gap-3">
+        🔥 NOIDA SECTOR 150 • PREMIUM RESIDENTIAL PROJECTS • SPECIAL OFFERS FOR NEW LAUNCHES • <button className="bg-white text-[#002a24] px-3 py-1 rounded text-[9px] font-black hover:bg-white/90 transition-colors">ENQUIRE NOW</button>
+      </span>
+      <span className="text-[11px] font-bold uppercase tracking-widest mr-12 inline-flex items-center gap-3">
+        🔥 GURUGRAM SECTOR 71 • SIGNATURE GLOBAL CLOVERDALE • STARTING ₹3.88 CR* • <button className="bg-white text-[#002a24] px-3 py-1 rounded text-[9px] font-black hover:bg-white/90 transition-colors">BOOK NOW</button>
+      </span>
+    </>
+  );
+
   return (
-    <div className="fixed top-[72px] left-0 w-full bg-[#002a24] text-white py-1.5 z-[999] overflow-hidden whitespace-nowrap border-y border-white/5">
-      <div className="inline-block animate-marquee px-4">
-        <span className="text-[11px] font-bold uppercase tracking-widest mr-12 inline-flex items-center gap-2">
-          🔥 SE EXTENSION ROAD • ULTRA-LUXURY 3 & 4 BHK STARTING ₹5.69 CR* • Prime Location • Exclusive & Limited Units • <button className="bg-white text-[#002a24] px-3 py-0.5 rounded text-[9px] hover:bg-white/90 transition-colors">GRAB THE DEAL</button>
-        </span>
-        <span className="text-[11px] font-bold uppercase tracking-widest mr-12 inline-flex items-center gap-2">
-          🔥 NOIDA SECTOR 150 • PREMIUM RESIDENTIAL PROJECTS • SPECIAL OFFERS FOR NEW LAUNCHES • <button className="bg-white text-[#002a24] px-3 py-0.5 rounded text-[9px] hover:bg-white/90 transition-colors">ENQUIRE NOW</button>
-        </span>
-        <span className="text-[11px] font-bold uppercase tracking-widest mr-12 inline-flex items-center gap-2">
-          🔥 GURUGRAM SECTOR 71 • SIGNATURE GLOBAL CLOVERDALE • STARTING ₹3.88 CR* • <button className="bg-white text-[#002a24] px-3 py-0.5 rounded text-[9px] hover:bg-white/90 transition-colors">BOOK NOW</button>
-        </span>
+    <div className="fixed top-[84px] left-0 w-full bg-[#002a24] text-white py-2.5 z-[99] overflow-hidden whitespace-nowrap border-y border-white/10 flex items-center">
+      <div className="flex animate-marquee shrink-0">
+        <div className="flex shrink-0">{content}</div>
+        <div className="flex shrink-0">{content}</div>
       </div>
       <style>{`
         @keyframes marquee {
@@ -20,8 +27,10 @@ export function NewsTicker() {
           100% { transform: translateX(-50%); }
         }
         .animate-marquee {
-          display: inline-block;
-          animation: marquee 30s linear infinite;
+          animation: marquee 40s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
         }
       `}</style>
     </div>

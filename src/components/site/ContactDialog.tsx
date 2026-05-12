@@ -70,7 +70,7 @@ export function ContactDialogProvider({ children }: { children: React.ReactNode 
           <div className="grid md:grid-cols-5">
             <div className="hidden md:flex md:col-span-2 flex-col justify-between bg-ink text-white p-8">
               <div>
-                <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-3">Golden Door Realty</p>
+                <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-3">MoneyTree Realty</p>
                 <h3 className="text-2xl leading-tight" style={{ fontFamily: "var(--font-serif)" }}>
                   Get in touch with our property specialists
                 </h3>
@@ -82,7 +82,7 @@ export function ContactDialogProvider({ children }: { children: React.ReactNode 
               <div className="space-y-3 text-sm text-white/80 mt-8">
                 <p className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /> +971 800 36227</p>
                 <p className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /> sales@goldendoorrealty.com</p>
-                <p className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /> Sales Centre, Downtown Dubai</p>
+                <p className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /> Sales Centre, Downtown Noida</p>
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export function ContactDialogProvider({ children }: { children: React.ReactNode 
                   {submitting ? "Submitting..." : "Submit Enquiry"}
                 </button>
                 <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  By submitting this form you agree to Golden Door Realty's Privacy Policy and consent to be contacted.
+                  By submitting this form you agree to MoneyTree Realty's Privacy Policy and consent to be contacted.
                 </p>
               </form>
             </div>

@@ -11,6 +11,8 @@ import { Developers } from "@/components/site/Developers";
 import { TourBanner } from "@/components/site/TourBanner";
 import { Blog } from "@/components/site/Blog";
 import { Footer } from "@/components/site/Footer";
+import { TrustSection } from "@/components/site/TrustSection";
+import { CTABanner } from "@/components/site/CTABanner";
 
 import { getAllBlogs, getAllTestimonials, getAllFAQs, getAllProperties, getAllCommunities, getAllPropertyTypes } from "@/lib/server-functions";
 
@@ -55,9 +57,11 @@ function Index() {
         <WhyChooseUs />
         <TourBanner />
         <Testimonials reviews={testimonials} />
-        <Blog posts={blogs} />
         <Developers />
+        <TrustSection />
         <HomeFAQ items={faqs} />
+        <CTABanner />
+        <Blog posts={blogs} />
       </main>
       <Footer />
     </div>

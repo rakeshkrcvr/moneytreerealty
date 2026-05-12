@@ -6,10 +6,10 @@ import { completed } from "@/lib/site-data";
 export const Route = createFileRoute("/completed/")({
   head: () => ({
     meta: [
-      { title: "Recently Completed Projects — Golden Door Realty" },
-      { name: "description", content: "Tour Golden Door Realty's most recently handed-over residential and lifestyle projects across Dubai." },
-      { property: "og:title", content: "Recently Completed — Golden Door Realty" },
-      { property: "og:description", content: "Move-in ready homes from Dubai's leading developer." },
+      { title: "Recently Completed Projects — MoneyTree Realty" },
+      { name: "description", content: "Tour MoneyTree Realty's most recently handed-over residential and lifestyle projects across Noida." },
+      { property: "og:title", content: "Recently Completed — MoneyTree Realty" },
+      { property: "og:description", content: "Move-in ready homes from Noida's leading developer." },
     ],
   }),
   component: CompletedPage,

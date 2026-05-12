@@ -4,7 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { MapPin, ChevronRight, Building2, Sparkles, Navigation, Compass } from "lucide-react";
 import { getCommunityBySlug, getProjectsInCommunity } from "@/lib/server-functions";
 
-export const Route = createFileRoute("/communities/$slug")({
+export const Route = createFileRoute("/properties/$slug")({
   loader: async ({ params }) => {
     const community = await getCommunityBySlug(params.slug);
     if (!community) throw notFound();

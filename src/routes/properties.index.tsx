@@ -5,7 +5,7 @@ import { getAllLaunches } from "@/lib/server-functions";
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, ChevronRight, X, LayoutGrid, List } from "lucide-react";
 
-export const Route = createFileRoute("/launches/")({
+export const Route = createFileRoute("/properties/")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       type: (search.type as string) || undefined,
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/launches/")({
   },
   head: () => ({
     meta: [
-      { title: "Properties Portfolio — Golden Door Realty" },
+      { title: "Properties Portfolio — MoneyTree Realty" },
       { name: "description", content: "Explore our comprehensive portfolio of residential, commercial, and luxury properties." },
     ],
   }),
@@ -36,7 +36,7 @@ const filters = {
 import { useSearch } from "@tanstack/react-router";
 
 function LaunchesPage() {
-  const { type } = useSearch({ from: "/launches/" });
+  const { type } = useSearch({ from: "/properties/" });
   const { launches } = Route.useLoaderData();
   const [activePurpose, setActivePurpose] = useState("Buy");
   const [selectedSub, setSelectedSub] = useState<string | null>(type || null);
@@ -61,7 +61,7 @@ function LaunchesPage() {
       {/* Hero / Header Section */}
       <section className="bg-ink text-white py-20 border-b border-white/5">
         <div className="container-realty text-center">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Golden Door Realty Portfolio</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">MoneyTree Realty Portfolio</p>
           <h1 className="text-4xl md:text-6xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>Properties</h1>
         </div>
       </section>

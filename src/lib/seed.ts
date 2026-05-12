@@ -4,7 +4,7 @@ const launches = [
   { 
     slug: "aurora-heights", 
     title: "Aurora Heights", 
-    location: "Downtown Dubai", 
+    location: "Downtown Noida", 
     price: "From ₹ 2.4M", 
     type: "Apartments", // This is the old type field
     category: "Residential", // NEW: Main Category
