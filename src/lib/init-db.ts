@@ -13,8 +13,13 @@ async function init() {
   console.log("Seeding database with REAL MoneyTree Realty.com data...");
 
   // Create tables
-  await sql`CREATE TABLE IF NOT EXISTS communities (slug TEXT PRIMARY KEY, title TEXT, tag TEXT, img TEXT, description TEXT, highlights TEXT[])`;
-  // Create tables
+  await sql`DROP TABLE IF EXISTS communities CASCADE`;
+  await sql`DROP TABLE IF EXISTS properties CASCADE`;
+  await sql`DROP TABLE IF EXISTS completed CASCADE`;
+  await sql`DROP TABLE IF EXISTS property_types CASCADE`;
+  await sql`DROP TABLE IF EXISTS amenities CASCADE`;
+  await sql`DROP TABLE IF EXISTS developers CASCADE`;
+
   await sql`CREATE TABLE IF NOT EXISTS communities (slug TEXT PRIMARY KEY, title TEXT, tag TEXT, img TEXT, description TEXT, highlights TEXT[])`;
   await sql`CREATE TABLE IF NOT EXISTS properties (
     slug TEXT PRIMARY KEY, 
