@@ -55,13 +55,13 @@
 }
 
 :root {
-  --radius: 0.125rem;
+  --radius: 0.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.18 0.01 60);
-  --brand: oklch(0.45 0.15 25);
+  --brand: #004037;
   --brand-foreground: oklch(0.99 0 0);
-  --gold: oklch(0.72 0.13 75);
-  --ink: oklch(0.15 0.005 60);
+  --gold: #c5a35d;
+  --ink: #001a16;
   --surface: oklch(0.98 0.005 80);
   --shadow-elegant: 0 20px 60px -20px oklch(0.18 0.01 60 / 0.25);
   --gradient-overlay: linear-gradient(to bottom, transparent 40%, oklch(0 0 0 / 0.55) 100%);
@@ -166,9 +166,15 @@
   text-wrap: balance;
 }
 
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.animate-fade-up { animation: fade-up 0.9s var(--transition-smooth) both; }
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

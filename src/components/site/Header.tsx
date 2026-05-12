@@ -1,19 +1,51 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { ChevronDown, Menu, X, Globe } from "lucide-react";
-import { getAllPropertyTypes, getAllProperties, createLead } from "@/lib/server-functions";
+import { ChevronDown, Menu, X, Search, Phone } from "lucide-react";
+import { getAllPropertyTypes, getAllProperties, getAllBlogs, createLead, getAllCommunities } from "@/lib/server-functions";
 import { useSiteSettings } from "./SiteSettingsContext";
 import { toast } from "sonner";
+import { ImageWithFallback } from "./ImageWithFallback";
 
 export function Header() {
+// ... existing state ...
   const [scrolled, setScrolled] = useState(false);
-  const [showMega, setShowMega] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [activeMega, setActiveMega] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [types, setTypes] = useState<any[]>([]);
-  const [featured, setFeatured] = useState<any>(null);
+  const [properties, setProperties] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [communities, setCommunities] = useState<any[]>([]);
+  
   const settings = useSiteSettings();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    
+    const fetchData = async () => {
+      try {
+        const [t, p, b, c] = await Promise.all([
+          getAllPropertyTypes(),
+          getAllProperties(),
+          getAllBlogs(),
+          getAllCommunities()
+        ]);
+        setTypes(t || []);
+        setProperties(p || []);
+        setBlogs(b || []);
+        setCommunities(c || []);
+      } catch (e) {
+        console.error("Failed to fetch menu data", e);
+      }
+    };
+    fetchData();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +57,7 @@ export function Header() {
           name: formData.get("name"),
           email: formData.get("email"),
           phone: formData.get("phone"),
-          source: "Header Get In Touch"
+          source: "Header Contact Button"
         }
       });
       toast.success("Thank you! We will get in touch soon.");
@@ -37,199 +69,269 @@ export function Header() {
     }
   };
 
-  const location = useLocation();
-  const isHome = location.pathname === "/";
-  const forceDark = !isHome || scrolled || showMega;
-  const textColor = forceDark ? "text-ink" : "text-white";
+  const navLinks = [
+    { label: "Projects", type: "mega", id: "projects" },
+    { label: "CSR", path: "/csr" },
+    { label: "Blogs", type: "mega", id: "blogs" },
+    { label: "Career", path: "/career" },
+    { label: "Contact", path: "/contact" },
+    { label: "More", type: "mega", id: "more" },
+  ];
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    
-    // Fetch Menu Data
-    const fetchMenuData = async () => {
-      try {
-        const [t, p] = await Promise.all([
-          getAllPropertyTypes(),
-          getAllProperties()
-        ]);
-        setTypes(t || []);
-        if (p && p.length > 0) {
-           setFeatured(p[0]); // Show the latest property as featured
-        }
-      } catch (e) {
-        console.error("Failed to fetch menu data", e);
-      }
-    };
-    fetchMenuData();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const cityCounts = communities.map(c => ({
+    ...c,
+    count: properties.filter(p => p.location?.toLowerCase().includes(c.title.toLowerCase())).length
+  }));
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${
-        forceDark ? "bg-white shadow-xl py-4" : "bg-transparent py-8"
+      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 bg-[#004037] text-white py-4 ${
+        scrolled ? "shadow-2xl" : ""
       }`}
-      onMouseLeave={() => setShowMega(false)}
+      onMouseLeave={() => setActiveMega(null)}
     >
-      <div className="container mx-auto px-8 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
-          {settings?.logo_url ? (
-            <img src={settings.logo_url} alt="Logo" className="h-20 w-auto object-contain" />
-          ) : (
-            <>
-              <div className="w-10 h-10 bg-brand flex items-center justify-center text-white font-bold italic text-xl shadow-lg group-hover:scale-110 transition-transform">e</div>
-              <span className={`font-bold text-lg tracking-tighter transition-colors ${textColor}`}>
-                {settings?.email?.includes('emaar') ? 'GOLDEN DOOR REALTY' : (settings?.phone ? 'ESTATE' : 'GOLDEN DOOR REALTY')}
-              </span>
-            </>
-          )}
+      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <img 
+            src={settings?.logo_url || "/logo.png"} 
+            alt="MoneyTree" 
+            className="h-12 md:h-14 w-auto object-contain" 
+          />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-6">
-          <Link to="/" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Home</Link>
-          <div 
-            className="relative h-20 flex items-center group cursor-pointer"
-            onMouseEnter={() => setShowMega(true)}
-          >
-            <span className={`text-[11px] font-semibold tracking-[0.15em] uppercase flex items-center gap-1 ${textColor}`}>
-              Properties <ChevronDown className={`w-3 h-3 transition-transform ${showMega ? "rotate-180" : ""}`} />
-            </span>
-          </div>
-          <Link to="/communities" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Communities</Link>
-          <Link to="/services" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Services</Link>
-          <Link to="/blogs" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Blogs</Link>
-          <Link to="/about" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>About</Link>
-          <Link to="/contact" className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${textColor}`}>Contact Us</Link>
+        {/* Desktop Nav */}
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+          {navLinks.map((link) => (
+            <div 
+              key={link.label}
+              className="relative group"
+              onMouseEnter={() => link.type === "mega" ? setActiveMega(link.id) : setActiveMega(null)}
+            >
+              {link.path ? (
+                <Link 
+                  to={link.path as any} 
+                  className="text-[13px] font-medium tracking-wide hover:text-white/80 transition-colors py-2 block"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <button className="text-[13px] font-medium tracking-wide flex items-center gap-1.5 hover:text-white/80 transition-colors py-2">
+                  {link.label} {link.type === "mega" && <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeMega === link.id ? "rotate-180" : ""}`} />}
+                </button>
+              )}
+            </div>
+          ))}
         </nav>
 
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowContactModal(true)}
-            className="hidden md:inline-flex items-center bg-brand text-white px-6 py-3 text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-black transition-all rounded-sm shadow-lg shadow-brand/10"
-          >
-            Get in Touch
+        {/* Right Actions */}
+        <div className="flex items-center gap-3 md:gap-5">
+          <button className="p-2 hover:bg-white/10 rounded-full transition-colors hidden sm:block">
+            <Search className="w-5 h-5" />
           </button>
-          <button
-            className={`lg:hidden ${textColor}`}
-            onClick={() => setOpen((v) => !v)}
+          
+          <a 
+            href={`tel:${settings?.phone || "+919732300007"}`} 
+            className="hidden sm:flex items-center gap-2.5 px-4 py-2 border border-white/30 rounded-full hover:bg-white/10 transition-all group"
           >
-            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <Phone className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <span className="text-[13px] font-bold tracking-tight">{settings?.phone || "+91 97323 00007"}</span>
+          </a>
+
+          <button 
+            onClick={() => setShowContactModal(true)}
+            className="bg-white text-[#004037] px-5 py-2.5 rounded-lg text-[13px] font-bold hover:bg-white/90 transition-all shadow-lg"
+          >
+            Contact
+          </button>
+
+          <button 
+            className="lg:hidden p-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mega Menu Overlay */}
-      {showMega && (
-        <div className="absolute top-full left-0 w-full bg-white border-t border-slate-50 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-           <div className="container mx-auto p-12 grid grid-cols-4 gap-12">
-              <div>
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-300 mb-6">Residential</h4>
-                 <ul className="space-y-4">
-                    {types.filter(t => t.category === 'Residential').length > 0 ? (
-                      types.filter(t => t.category === 'Residential').map((t: any) => (
-                        <li key={t.id}>
-                          <Link 
-                            to="/property/$slug" 
-                            params={{ slug: t.name.toLowerCase().replace(/ /g, '-') }}
-                            className="text-sm font-bold text-ink hover:text-brand transition-colors"
-                          >
-                            {t.name}
-                          </Link>
-                        </li>
-                      ))
-                    ) : (
-                      <>
-                        <li><Link to="/property/$slug" params={{ slug: 'apartments' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Apartments</Link></li>
-                        <li><Link to="/property/$slug" params={{ slug: 'villas' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Villas</Link></li>
-                        <li><Link to="/property/$slug" params={{ slug: 'townhouses' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Townhouses</Link></li>
-                      </>
-                    )}
-                 </ul>
+      {/* Mega Menus */}
+      <div className={`absolute top-full left-0 w-full bg-white text-ink shadow-2xl border-t border-slate-100 transition-all duration-300 origin-top overflow-hidden ${
+        activeMega ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+      }`}>
+        {activeMega === "projects" && (
+          <div className="container mx-auto p-10 flex gap-12">
+            <div className="w-1/4 border-r border-slate-100 pr-12">
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Select City</h4>
+              <ul className="space-y-4">
+                {cityCounts.map(city => (
+                  <li key={city.slug}>
+                    <Link 
+                      to="/communities/$slug" 
+                      params={{ slug: city.slug }}
+                      className="flex items-center justify-between group"
+                    >
+                      <span className="text-sm font-bold text-ink group-hover:text-brand transition-colors">{city.title}</span>
+                      <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded-full text-slate-500">{city.count}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="w-1/4 border-r border-slate-100 pr-12">
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Property Type</h4>
+              <ul className="space-y-4">
+                <li><Link to="/launches" className="text-sm font-bold text-ink hover:text-brand transition-colors block">All Types</Link></li>
+                {types.map(type => (
+                  <li key={type.id}>
+                    <Link 
+                      to="/launches" 
+                      search={{ type: type.name }}
+                      className="text-sm font-bold text-ink hover:text-brand transition-colors block"
+                    >
+                      {type.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="w-2/4 pl-4">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-sm font-bold text-ink">Properties in Gurugram</h4>
+                <Link to="/communities/gurugram" className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
               </div>
-              <div>
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-300 mb-6">Commercial</h4>
-                 <ul className="space-y-4">
-                    {types.filter(t => t.category === 'Commercial').length > 0 ? (
-                      types.filter(t => t.category === 'Commercial').map((t: any) => (
-                        <li key={t.id}>
-                          <Link 
-                            to="/launches/" 
-                            search={{ type: t.name }}
-                            className="text-sm font-bold text-ink hover:text-brand transition-colors"
-                          >
-                            {t.name}
-                          </Link>
-                        </li>
-                      ))
-                    ) : (
-                      <>
-                        <li><Link to="/property/$slug" params={{ slug: 'office' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Modern Offices</Link></li>
-                        <li><Link to="/property/$slug" params={{ slug: 'retail' }} className="text-sm font-bold text-ink hover:text-brand transition-colors">Retail Spaces</Link></li>
-                      </>
-                    )}
-                 </ul>
+              <div className="grid grid-cols-1 gap-6">
+                {properties.filter(p => p.location?.toLowerCase().includes('gurugram')).slice(0, 2).map(p => (
+                  <Link key={p.id} to="/property/$slug" params={{ slug: p.slug }} className="flex gap-4 group">
+                    <div className="w-24 h-16 rounded-lg overflow-hidden bg-slate-100 shrink-0">
+                      <ImageWithFallback src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div>
+                      <h5 className="text-sm font-bold text-ink line-clamp-1 group-hover:text-brand transition-colors">{p.title}</h5>
+                      <p className="text-[11px] text-slate-500 mb-1">{p.location}</p>
+                      <p className="text-[12px] font-bold text-brand">{p.price}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <div className="col-span-2 bg-slate-50 p-8 rounded-3xl flex items-center justify-between">
-                 {featured ? (
-                   <>
-                     <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand mb-2">Featured Project</h4>
-                        <h3 className="text-2xl font-black text-ink mb-2">{featured.title}</h3>
-                        <p className="text-slate-500 text-sm mb-6 max-w-xs line-clamp-2">{featured.description}</p>
-                        <Link 
-                          to="/property/$slug" 
-                          params={{ slug: featured.slug }}
-                          className="text-xs font-bold uppercase tracking-widest text-brand flex items-center gap-2 hover:gap-4 transition-all"
-                        >
-                          Explore Project <ChevronDown className="-rotate-90 w-3 h-3" />
-                        </Link>
-                     </div>
-                     <div className="w-40 h-40 bg-white rounded-2xl shadow-sm overflow-hidden">
-                        <img src={featured.img} className="w-full h-full object-cover" />
-                     </div>
-                   </>
-                 ) : (
-                   <>
-                     <div>
-                        <h3 className="text-2xl font-black text-ink mb-2">Golden Door Realty Beachfront</h3>
-                        <p className="text-slate-500 text-sm mb-6 max-w-xs">Experience island living at its finest in Dubai's most exclusive coastal community.</p>
-                        <button className="text-xs font-bold uppercase tracking-widest text-brand flex items-center gap-2 hover:gap-4 transition-all">Explore Project <ChevronDown className="-rotate-90 w-3 h-3" /></button>
-                     </div>
-                     <div className="w-40 h-40 bg-white rounded-2xl shadow-sm overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80" className="w-full h-full object-cover" />
-                     </div>
-                   </>
-                 )}
+            </div>
+          </div>
+        )}
+
+        {activeMega === "blogs" && (
+          <div className="container mx-auto p-10 flex gap-12">
+            <div className="w-1/2 bg-slate-50 rounded-2xl p-8 flex gap-8">
+              <div className="w-2/5 aspect-[4/5] rounded-xl overflow-hidden shadow-lg">
+                <ImageWithFallback src={blogs[0]?.img} className="w-full h-full object-cover" />
               </div>
-           </div>
+              <div className="w-3/5 flex flex-col justify-center">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand mb-2">Featured</span>
+                <h3 className="text-xl font-black text-ink mb-3 leading-tight">{blogs[0]?.title}</h3>
+                <p className="text-sm text-slate-500 line-clamp-3 mb-6">{blogs[0]?.excerpt}</p>
+                <Link to="/blogs/$slug" params={{ slug: blogs[0]?.slug }} className="text-xs font-bold text-brand uppercase tracking-widest hover:underline">Read Now →</Link>
+              </div>
+            </div>
+            <div className="w-1/2">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-sm font-bold text-ink uppercase tracking-wide">More Articles</h4>
+                <Link to="/blogs" className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All →</Link>
+              </div>
+              <div className="space-y-6">
+                {blogs.slice(1, 4).map(b => (
+                  <Link key={b.id} to="/blogs/$slug" params={{ slug: b.slug }} className="flex gap-4 group">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 shrink-0">
+                      <ImageWithFallback src={b.img} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div>
+                      <h5 className="text-sm font-bold text-ink line-clamp-1 group-hover:text-brand transition-colors">{b.title}</h5>
+                      <span className="text-[11px] font-medium text-slate-400 mt-1 block group-hover:text-brand transition-colors">Read now</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeMega === "more" && (
+          <div className="container mx-auto py-10 px-8 flex justify-center">
+             <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 w-72">
+                <ul className="space-y-4">
+                  {[
+                    { label: "About Us", path: "/about" },
+                    { label: "Associated Developers", path: "/developers" },
+                    { label: "Real Estate", path: "/launches" },
+                    { label: "Converters", path: "/converters" },
+                    { label: "Events", path: "/events" },
+                    { label: "Testimonials", path: "/testimonials" },
+                    { label: "Vision & Mission", path: "/vision" },
+                    { label: "Awards & Recognition", path: "/awards" }
+                  ].map(item => (
+                    <li key={item.label}>
+                      <Link to={item.path as any} className="text-sm font-medium text-slate-600 hover:text-brand hover:pl-2 transition-all block">
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+             </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-[#004037] border-t border-white/10 p-6 animate-in slide-in-from-top-4">
+           <ul className="space-y-4 mb-8">
+              {navLinks.map(link => (
+                <li key={link.label}>
+                  {link.path ? (
+                    <Link to={link.path as any} className="text-lg font-bold block" onClick={() => setMobileMenuOpen(false)}>{link.label}</Link>
+                  ) : (
+                    <span className="text-lg font-bold block text-white/60">{link.label}</span>
+                  )}
+                </li>
+              ))}
+           </ul>
+           <a 
+              href={`tel:${settings?.phone || "+919732300007"}`} 
+              className="flex items-center gap-3 px-6 py-4 bg-white/10 rounded-xl mb-4"
+            >
+              <Phone className="w-5 h-5" />
+              <span className="font-bold">{settings?.phone || "+91 97323 00007"}</span>
+            </a>
+            <button 
+              onClick={() => { setShowContactModal(true); setMobileMenuOpen(false); }}
+              className="w-full bg-white text-[#004037] py-4 rounded-xl font-bold"
+            >
+              Contact Us
+            </button>
         </div>
       )}
+
       {/* Contact Modal */}
       {showContactModal && (
         <div className="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowContactModal(false)}>
-          <div className="bg-white rounded-3xl max-w-md w-full p-8 relative animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-3xl max-w-md w-full p-8 relative animate-in fade-in zoom-in-95 text-ink" onClick={e => e.stopPropagation()}>
             <button onClick={() => setShowContactModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-800 transition">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-2xl font-black text-ink mb-2">Get In Touch</h3>
+            <h3 className="text-2xl font-black mb-2">Get In Touch</h3>
             <p className="text-slate-500 text-sm mb-6">Leave your details and our property experts will contact you shortly.</p>
             
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Name</label>
-                <input required name="name" type="text" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand transition outline-none" placeholder="John Doe" />
+                <input required name="name" type="text" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-[#004037] transition outline-none" placeholder="John Doe" />
               </div>
               <div>
                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Email</label>
-                <input required name="email" type="email" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand transition outline-none" placeholder="john@example.com" />
+                <input required name="email" type="email" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-[#004037] transition outline-none" placeholder="john@example.com" />
               </div>
               <div>
                 <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Phone</label>
-                <input required name="phone" type="tel" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-brand transition outline-none" placeholder="+1234567890" />
+                <input required name="phone" type="tel" className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-[#004037] transition outline-none" placeholder="+91 12345 67890" />
               </div>
-              <button disabled={isSubmitting} type="submit" className="w-full bg-brand text-white font-bold tracking-[0.2em] uppercase text-xs py-4 rounded-xl hover:bg-black transition-colors disabled:opacity-50 mt-4">
+              <button disabled={isSubmitting} type="submit" className="w-full bg-[#004037] text-white font-bold tracking-[0.2em] uppercase text-xs py-4 rounded-xl hover:bg-black transition-colors disabled:opacity-50 mt-4">
                 {isSubmitting ? "Submitting..." : "Submit Enquiry"}
               </button>
             </form>

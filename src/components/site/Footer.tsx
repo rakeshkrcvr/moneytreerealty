@@ -45,12 +45,11 @@ export function Footer() {
               {settings?.logo_url ? (
                 <img src={settings.logo_url} alt="Logo" className="h-16 w-auto object-contain mb-4" />
               ) : (
-                <>E<span className="text-brand">M</span>AAR</>
+                <>MoneyTree</>
               )}
             </Link>
             <p className="mt-6 text-sm leading-relaxed text-white/60 max-w-xs">
-              Shaping skylines and lifestyles since 1997 — Dubai's leading
-              master-developer.
+              Leading Real Estate Consultant in India, providing expert guidance for premium property investments across Noida, Gurugram, and beyond.
             </p>
           </div>
           {cols.map((c) => (
@@ -64,7 +63,7 @@ export function Footer() {
               <ul className="space-y-3 text-sm">
                 {c.links.map((l) => (
                   <li key={l.label}>
-                    <Link to={l.to} className="hover:text-white transition">
+                    <Link to={l.to as any} className="hover:text-white transition">
                       {l.label}
                     </Link>
                   </li>
@@ -75,10 +74,10 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between gap-4 text-xs text-white/50">
-          <p>© {new Date().getFullYear()} Golden Door Realty. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} MoneyTree Realty. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link to="/terms" className="hover:text-white">Terms</Link>
-            <Link to="/privacy" className="hover:text-white">Privacy</Link>
+            <Link to="/privacy-policy" className="hover:text-white">Terms</Link>
+            <Link to="/privacy-policy" className="hover:text-white">Privacy</Link>
             <Link to="/cookies" className="hover:text-white">Cookies</Link>
           </div>
         </div>

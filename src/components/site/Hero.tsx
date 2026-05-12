@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, MapPin, Building2, Home } from "lucide-react";
 import { useSiteSettings } from "./SiteSettingsContext";
+import { ImageWithFallback } from "./ImageWithFallback";
 
 export function Hero() {
   const [activeTab, setActiveTab] = useState("buy");
@@ -27,9 +28,9 @@ export function Hero() {
             className="w-full h-full object-cover"
           />
         ) : (
-          <img
+          <ImageWithFallback
             src={heroImage}
-            alt="Dubai Skyline"
+            alt="Property Background"
             className="w-full h-full object-cover"
           />
         )}
@@ -48,57 +49,21 @@ export function Hero() {
         />
 
         {/* Search Bar Container */}
-        <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md p-2 rounded-sm shadow-2xl animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">
-          {/* Tabs */}
-          <div className="flex gap-4 mb-2 ml-2">
-            {["buy", "rent", "off-plan"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`text-[10px] uppercase tracking-widest font-bold py-2 px-4 transition-all ${
-                  activeTab === tab ? "bg-brand text-white" : "text-white/70 hover:text-white"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+        <div className="max-w-3xl mx-auto mt-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-400">
+          <div className="bg-black/20 backdrop-blur-xl p-4 rounded-full flex items-center border border-white/10 shadow-2xl">
+             <div className="flex-1 px-6 border-r border-white/10 flex items-center gap-3">
+                <Search className="w-5 h-5 text-white/60" />
+                <input 
+                  type="text" 
+                  placeholder="Search for properties..." 
+                  className="bg-transparent border-none outline-none text-white w-full placeholder:text-white/40 text-sm font-medium"
+                />
+             </div>
+             <button className="bg-white text-[#004037] px-8 py-3 rounded-full text-sm font-bold hover:bg-white/90 transition-all flex items-center gap-2">
+                Search
+             </button>
           </div>
-
-          {/* Search Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 bg-white p-2 text-ink">
-            <div className="flex items-center gap-3 px-4 border-r border-border py-3">
-              <MapPin className="w-4 h-4 text-brand shrink-0" />
-              <input 
-                placeholder="Location" 
-                className="w-full text-xs font-semibold focus:outline-none placeholder:text-muted-foreground uppercase tracking-widest"
-              />
-            </div>
-            <div className="flex items-center gap-3 px-4 border-r border-border py-3">
-              <Building2 className="w-4 h-4 text-brand shrink-0" />
-              <select className="w-full text-xs font-semibold focus:outline-none appearance-none bg-transparent uppercase tracking-widest">
-                <option>Property Type</option>
-                <option>Apartment</option>
-                <option>Villa</option>
-                <option>Townhouse</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-3 px-4 py-3">
-              <Home className="w-4 h-4 text-brand shrink-0" />
-              <select className="w-full text-xs font-semibold focus:outline-none appearance-none bg-transparent uppercase tracking-widest">
-                <option>Bedrooms</option>
-                <option>1 BR</option>
-                <option>2 BR</option>
-                <option>3 BR</option>
-                <option>4+ BR</option>
-              </select>
-            </div>
-            <Link 
-              to="/launches"
-              className="bg-ink text-white w-full h-full py-4 flex items-center justify-center gap-2 hover:bg-brand transition uppercase text-[10px] font-bold tracking-[0.2em]"
-            >
-              <Search className="w-4 h-4" /> Search
-            </Link>
-          </div>
+          <p className="mt-4 text-xs text-white/60 tracking-widest uppercase">Popular: Residential in Noida, Commercial in Gurugram</p>
         </div>
       </div>
     </section>

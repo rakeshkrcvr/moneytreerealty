@@ -13,6 +13,7 @@ import { ContactDialogProvider } from "@/components/site/ContactDialog";
 import { Toaster } from "sonner";
 import { getSiteSettings } from "../lib/server-functions";
 import { SiteSettingsProvider } from "@/components/site/SiteSettingsContext";
+import { NewsTicker, SocialSidebar } from "@/components/site/ExtraUI";
 
 function NotFoundComponent() {
   return (
@@ -84,18 +85,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Golden Door Realty" },
-      { name: "description", content: "A web application for Golden Door Realty, showcasing premium real estate projects and amenities in India." },
-      { name: "author", content: "Golden Door Realty" },
-      { property: "og:title", content: "Golden Door Realty" },
-      { property: "og:description", content: "A web application for Golden Door Realty, showcasing premium real estate projects and amenities in India." },
+      { title: "MoneyTree Realty | Top Real Estate Consultant in India" },
+      { name: "description", content: "MoneyTree Realty is India's leading real estate consultant, offering premium property investments, luxury apartments, and commercial spaces in Noida, Gurugram, and Mumbai." },
+      { name: "author", content: "MoneyTree Realty" },
+      { property: "og:title", content: "MoneyTree Realty | Top Real Estate Consultant in India" },
+      { property: "og:description", content: "Explore premium real estate projects and luxury investments with MoneyTree Realty - India's most trusted property consultant." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@GoldenDoorRealty" },
-      { name: "twitter:title", content: "Golden Door Realty" },
-      { name: "twitter:description", content: "A web application for Golden Door Realty, showcasing premium real estate projects and amenities in India." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70e189dd-f3ed-424a-b759-469d2593b751/id-preview-726928e1--e609add8-929e-43c9-8df2-4bf0f0b64cf5.lovable.app-1778222462340.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/70e189dd-f3ed-424a-b759-469d2593b751/id-preview-726928e1--e609add8-929e-43c9-8df2-4bf0f0b64cf5.lovable.app-1778222462340.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "MoneyTree Realty" },
+      { name: "twitter:description", content: "Leading Real Estate Consultant in India for Luxury Apartments & Commercial Projects." },
+      { property: "og:image", content: "https://moneytreerealty.com/assets/img/logo.png" },
+      { name: "twitter:image", content: "https://moneytreerealty.com/assets/img/logo.png" },
     ],
     links: [
       {
@@ -146,7 +146,11 @@ function RootComponent() {
             }
           `}</style>
         )}
-        <Outlet />
+        <NewsTicker />
+        <SocialSidebar />
+        <div className="pt-[105px]">
+          <Outlet />
+        </div>
         <Toaster richColors position="top-center" />
       </ContactDialogProvider>
       </SiteSettingsProvider>

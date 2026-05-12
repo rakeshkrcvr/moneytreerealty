@@ -1,57 +1,43 @@
-import { Building2, Home, TreePine, Warehouse, LayoutGrid } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useSiteSettings } from "./SiteSettingsContext";
 
-export function PropertyCategories({ items = [] }: { items?: any[] }) {
-  const displayCategories = items.length > 0 ? items.map((it: any, i: number) => ({
-    icon: [Building2, Home, Warehouse, TreePine][i % 4] || LayoutGrid,
-    label: it.name,
-    count: "Explore Collection",
-    img: it.img || [
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000"
-    ][i % 4],
-    slug: it.name
-  })) : [
-    { icon: Building2, label: "Apartments", count: "120+ Listings", img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1000", slug: "Apartments" },
-    { icon: Home, label: "Villas", count: "45+ Listings", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000", slug: "Villas" },
-    { icon: Warehouse, label: "Townhouses", count: "30+ Listings", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000", slug: "Townhouses" },
-    { icon: TreePine, label: "Land Plots", count: "12+ Listings", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000", slug: "Land Plots" },
+export function PropertyCategories() {
+  const cities = [
+    { name: "Noida", img: "https://images.unsplash.com/photo-1588417631561-268393910c66?auto=format&fit=crop&q=80&w=800" },
+    { name: "Greater Noida West", img: "https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?auto=format&fit=crop&q=80&w=800" },
+    { name: "Gurugram", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800" },
+    { name: "Pune", img: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?auto=format&fit=crop&q=80&w=800" },
+    { name: "Greater Noida", img: "https://images.unsplash.com/photo-1623101170068-0720a4449842?auto=format&fit=crop&q=80&w=800" },
+    { name: "Meerut", img: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=800" },
   ];
 
   return (
-    <section className="py-24 bg-background">
-      <div className="container-realty">
-        <div className="text-center mb-16">
-          <p className="text-xs tracking-[0.4em] uppercase text-brand mb-4">Discovery</p>
-          <h2 className="text-3xl md:text-5xl text-ink uppercase" style={{ fontFamily: "var(--font-serif)" }}>
-            PROPERTY CATEGORIES
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4 md:px-8">
+        <div className="mb-12">
+          <h2 className="text-3xl font-[900] text-[#004037] uppercase tracking-tight flex items-center gap-3">
+             <span className="w-1.5 h-8 bg-[#004037] inline-block"></span>
+             EXPLORE BY CITY
           </h2>
+          <p className="text-slate-400 text-sm mt-2 ml-4 font-medium">Find projects in India's top real estate markets</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {displayCategories.map((c: any, i: number) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+          {cities.map((city, i) => (
             <Link 
               key={i} 
               to="/property/$slug" 
-              params={{ slug: c.slug.toLowerCase().replace(/ /g, '-') }}
-              className="group relative h-96 overflow-hidden cursor-pointer block"
+              params={{ slug: city.name.toLowerCase().replace(/ /g, '-') }}
+              className="group relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-2xl cursor-pointer block shadow-lg hover:shadow-2xl transition-all duration-500"
             >
               <img 
-                src={c.img} 
+                src={city.img} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" 
               />
-              <div className="absolute inset-0 bg-ink/40 group-hover:bg-ink/20 transition-colors" />
-              <div className="absolute inset-0 p-8 flex flex-col justify-between text-white">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
-                  <c.icon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-2xl uppercase tracking-wider mb-1 font-light">{c.label}</h3>
-                  <p className="text-[10px] uppercase tracking-widest text-white/60">{c.count}</p>
-                </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-6 left-6 text-white transition-transform duration-500 group-hover:-translate-y-2">
+                <h3 className="text-xl font-bold mb-1">{city.name}</h3>
+                <p className="text-xs text-white/70 font-medium">View projects</p>
               </div>
             </Link>
           ))}
@@ -67,14 +53,14 @@ export function WhyChooseUs() {
   
   const whyImage = content.why_image || "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=1000";
   const whySubtitle = content.why_subtitle || "Unrivaled Excellence";
-  const whyTitle = content.why_title || "Why Choose <br /> <span className=\"text-gold\">Golden Door Realty</span>";
-  const whyDesc = content.why_desc || "As one of the world's most valuable and admired real estate development companies, Golden Door Realty shapes new lifestyles with a focus on design excellence and build quality.";
+  const whyTitle = "Why Choose <br /> <span className=\"text-[#c5a35d]\">MoneyTree Realty</span>";
+  const whyDesc = "MoneyTree Realty is the top real estate property consultant in India, offering luxury apartments, commercial projects, and expert investment advice in Noida and Gurugram.";
   
   const features = [
-    { t: content.why_f1_t || "Global Legacy", d: content.why_f1_d || "Developing iconic landmarks like Burj Khalifa since 1997." },
-    { t: content.why_f2_t || "Build Quality", d: content.why_f2_d || "Premium materials and meticulous attention to every detail." },
-    { t: content.why_f3_t || "Smart Integration", d: content.why_f3_d || "Cutting-edge technology integrated into every home." },
-    { t: content.why_f4_t || "After-Sales", d: content.why_f4_d || "Dedicated 24/7 community management and support." }
+    { t: "Expert Guidance", d: "Professional real estate advice from seasoned market experts." },
+    { t: "Premium Selection", d: "Access to the most exclusive luxury and commercial properties." },
+    { t: "Client First", d: "A commitment to transparency and long-term relationships." },
+    { t: "Smooth Transitions", d: "Comprehensive support from site visits to final documentation." }
   ];
 
   return (
