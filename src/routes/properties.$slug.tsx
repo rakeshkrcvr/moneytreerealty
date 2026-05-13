@@ -3,6 +3,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { MapPin, ChevronRight, Building2, Sparkles, Navigation, Compass } from "lucide-react";
 import { getCommunityBySlug, getProjectsInCommunity } from "@/lib/server-functions";
+import { PropertyCard } from "@/components/site/PropertyCard";
 
 export const Route = createFileRoute("/properties/$slug")({
   loader: async ({ params }) => {
@@ -75,14 +76,7 @@ function CommunityDetail() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
              {projects.active.map((p: any) => (
-               <Link key={p.slug} to="/property/$slug" params={{ slug: p.slug }} className="group">
-                  <div className="aspect-[4/5] overflow-hidden mb-6 bg-white/5 relative">
-                     <img src={p.img} className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
-                     <div className="absolute top-4 left-4 bg-brand text-white px-4 py-2 text-[9px] font-bold uppercase tracking-widest">Active</div>
-                  </div>
-                  <h4 className="text-xl uppercase tracking-widest group-hover:text-gold transition-colors">{p.title}</h4>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/50 mt-2 font-bold">{p.type} · {p.location}</p>
-               </Link>
+               <PropertyCard key={p.slug} property={p} />
              ))}
           </div>
 
@@ -95,7 +89,7 @@ function CommunityDetail() {
                 {projects.handedOver.map((p: any) => (
                   <div key={p.slug} className="group cursor-default">
                     <div className="aspect-square bg-white/5 overflow-hidden mb-4 grayscale hover:grayscale-0 transition-all duration-700">
-                      <img src={p.img} className="w-full h-full object-cover opacity-60" />
+                      <ImageWithFallback src={p.img} className="w-full h-full object-cover opacity-60" alt={p.title} />
                     </div>
                     <p className="text-xs uppercase font-bold tracking-widest text-white/40">{p.title}</p>
                   </div>

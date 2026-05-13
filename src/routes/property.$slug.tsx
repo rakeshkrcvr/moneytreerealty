@@ -9,6 +9,7 @@ import {
 import { getLaunchBySlug, getAllLaunches, getAllCommunities, createLead, getAllAmenitiesMaster, getAllPropertyTypes } from "@/lib/server-functions";
 import { toast } from "sonner";
 import { useState, useMemo, useEffect } from "react";
+import { PropertyCard } from "@/components/site/PropertyCard";
 
 const filters = {
   purpose: ["Buy", "Rent", "Commercial", "Plots & Land"],
@@ -91,7 +92,7 @@ function PropertyDetail() {
         <Header />
         <section className="bg-ink text-white py-32 border-b border-white/5">
           <div className="container-realty text-center">
-            <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">MoneyTree Realty Portfolio</p>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Golden Door Realty Portfolio</p>
             <h1 className="text-4xl md:text-7xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>{categoryName}</h1>
           </div>
         </section>
@@ -182,30 +183,10 @@ function PropertyDetail() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredItems.map((it: any) => (
-                  <Link key={it.slug} to="/property/$slug" params={{ slug: it.slug }} className="group block border border-border bg-white p-4 hover:border-brand transition shadow-sm animate-fade-up">
-                    <div className="overflow-hidden aspect-[4/5] mb-5 relative">
-                      <img src={it.img} alt={it.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
-                      <div className="absolute top-4 left-4 bg-ink/80 text-white text-[9px] px-3 py-1 uppercase tracking-widest backdrop-blur-sm">
-                        {it.type}
-                      </div>
-                    </div>
-                      <h3 className="text-lg text-ink group-hover:text-brand transition-colors uppercase tracking-widest mb-4 line-clamp-1">{it.title}</h3>
-                    <div className="flex justify-between items-center mb-6">
-                      <p className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground flex items-center gap-2">
-                        <MapPin className="w-3 h-3 text-brand" /> {it.location}
-                      </p>
-                      <div className="bg-brand/5 border border-brand/10 px-3 py-1.5 rounded-lg">
-                        <p className="text-[10px] font-bold text-brand uppercase tracking-wider">{it.price}</p>
-                      </div>
-                    </div>
-                    <div className="pt-4 border-t border-border flex justify-between items-center group/btn">
-                      <span className="text-[10px] uppercase tracking-widest font-bold text-ink">View Details</span>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover/btn:text-brand group-hover/btn:translate-x-1 transition-all" />
-                    </div>
-                  </Link>
-                ))}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                 {filteredItems.map((it: any) => (
+                   <PropertyCard key={it.slug} property={it} />
+                 ))}
                 
                 {filteredItems.length === 0 && (
                   <div className="col-span-full py-24 text-center border border-dashed border-border rounded-3xl">
@@ -294,7 +275,7 @@ function PropertyDetail() {
            <div className="lg:col-span-2 space-y-12">
               {/* Main Image */}
               <div className="w-full h-[500px] rounded-[24px] overflow-hidden shadow-sm">
-                 <img src={l.img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" alt={l.title} />
+                  <ImageWithFallback src={l.img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" alt={l.title} />
               </div>
 
               {/* Quick Info Box (4 Icons) */}
@@ -408,7 +389,9 @@ function PropertyDetail() {
                                       <div className="w-[1px] h-8 bg-slate-200"></div>
                                       <div className="text-center">
                                          <Compass className="w-6 h-6 mx-auto mb-1 text-slate-400" />
-                                         <p className="text-xl font-bold">{activePlan.size}</p>
+                                         <p className="text-[#004037] text-[15px] font-black leading-none mb-1">
+                                            {activePlan.size}
+                                         </p>
                                          <p className="text-[9px] uppercase tracking-wider text-slate-500">SQ FT</p>
                                       </div>
                                    </div>
@@ -527,7 +510,7 @@ function PropertyDetail() {
                   <div className="space-y-5">
                     {others.map((p: any) => (
                        <Link key={p.slug} to="/property/$slug" params={{ slug: p.slug }} className="flex gap-5 group items-center bg-white p-3 rounded-2xl border border-slate-100 hover:border-brand/30 hover:shadow-md transition-all">
-                          <img src={p.img} className="w-20 h-20 object-cover rounded-xl group-hover:scale-105 transition-transform" />
+                          <ImageWithFallback src={p.img} className="w-20 h-20 object-cover rounded-xl group-hover:scale-105 transition-transform" alt={p.title} />
                           <div className="flex-1">
                              <h5 className="font-serif font-bold text-sm text-slate-900 group-hover:text-brand transition-colors line-clamp-1">{p.title}</h5>
                              <p className="text-[10px] text-slate-500 mb-2 mt-1 uppercase tracking-wider">From <span className="font-bold text-slate-900">{p.price}</span></p>

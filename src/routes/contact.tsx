@@ -10,8 +10,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/contact")({
   head: () => ({ 
     meta: [
-      { title: "Contact Us — MoneyTree Realty" }, 
-      { name: "description", content: "Get in touch with MoneyTree Realty — sales, customer care and corporate enquiries." }
+      { title: "Contact Us — Golden Door Realty" }, 
+      { name: "description", content: "Get in touch with Golden Door Realty — sales, customer care and corporate enquiries." }
     ] 
   }),
   component: ContactPage,
@@ -26,7 +26,7 @@ function ContactPage() {
   const heroImage = content.hero_image || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000";
   const heroSubtitle = content.hero_subtitle || "Get in Touch";
   const heroTitle = content.hero_title || "CONTACT US";
-  const address = content.address || "MoneyTree Realty Square, Building 3\nSheikh Mohammed Bin Rashid Boulevard\nDowntown Noida, United Arab Emirates";
+  const address = content.address || "Golden Door Realty Square, Building 3\nSheikh Mohammed Bin Rashid Boulevard\nDowntown Noida, United Arab Emirates";
   const phone = content.phone || "+971 4 366 1688";
   const email = content.email || "contactus@goldendoorrealty.com";
   const hours = content.hours || "Sunday – Thursday: 9:00 AM – 6:00 PM";

@@ -5,8 +5,8 @@ import { completed } from "@/lib/site-data";
 export const Route = createFileRoute("/completed/$slug")({
   head: ({ params }) => {
     const p = completed.find((x) => x.slug === params.slug);
-    const title = p ? `${p.title} — ${p.location} | MoneyTree Realty` : "Completed Project — MoneyTree Realty";
-    const desc = p?.description ?? "Move-in ready homes from MoneyTree Realty.";
+    const title = p ? `${p.title} — ${p.location} | Golden Door Realty` : "Completed Project — Golden Door Realty";
+    const desc = p?.description ?? "Move-in ready homes from Golden Door Realty.";
     return {
       meta: [
         { title },
@@ -44,7 +44,7 @@ function CompletedDetail() {
             <h2 className="text-3xl md:text-4xl text-ink mb-6" style={{ fontFamily: "var(--font-serif)" }}>{p.title}</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">{p.description}</p>
             <p className="text-muted-foreground leading-relaxed">
-              Located in {p.location}, this MoneyTree Realty development was handed over in {p.year} and forms part of a
+              Located in {p.location}, this Golden Door Realty development was handed over in {p.year} and forms part of a
               thriving, fully serviced community with retail, leisure and connectivity built in.
             </p>
           </div>

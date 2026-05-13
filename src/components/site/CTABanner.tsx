@@ -15,7 +15,7 @@ export function CTABanner() {
               Ready to <span className="text-[#c5a35d]">Stop Dreaming</span> and <span className="text-[#c5a35d]">Start Living</span>?
             </h2>
             <p className="text-white/80 text-lg md:text-xl mb-12 font-medium">
-              Join <span className="text-white font-bold underline decoration-[#c5a35d] underline-offset-4">25,000+ families</span> who found their dream homes with MoneyTree Realty.
+              Join <span className="text-white font-bold underline decoration-[#c5a35d] underline-offset-4">25,000+ families</span> who found their dream homes with Golden Door Realty.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">

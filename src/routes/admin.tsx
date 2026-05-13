@@ -198,6 +198,7 @@ function AdminDashboard() {
     const formData = new FormData(e.target as HTMLFormElement);
     const p = {
       title: formData.get("title") as string,
+      city: formData.get("city") as string,
       location: formData.get("location") as string,
       price: formData.get("price") as string,
       type: formData.get("type") as string,
@@ -278,6 +279,7 @@ function AdminDashboard() {
           data: {
             id: editingItem.id,
             title: formData.get("title") as string,
+            city: formData.get("city") as string,
             location: formData.get("location") as string,
             price: formData.get("price") as string,
             type: formData.get("type") as string,
@@ -1056,12 +1058,12 @@ function AdminDashboard() {
                           </div>
                           <div>
                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title (HTML Allowed)</label>
-                             <input name="why_title" defaultValue={data.settings?.page_content?.home?.why_title || "Why Choose <br /> <span className=\"text-gold\">MoneyTree Realty</span>"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                             <input name="why_title" defaultValue={data.settings?.page_content?.home?.why_title || "Why Choose <br /> <span className=\"text-gold\">Golden Door Realty</span>"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                           </div>
                         </div>
                         <div>
                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Main Description</label>
-                           <textarea name="why_desc" rows={3} defaultValue={data.settings?.page_content?.home?.why_desc || "As one of the world's most valuable and admired real estate development companies, MoneyTree Realty shapes new lifestyles with a focus on design excellence and build quality."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <textarea name="why_desc" rows={3} defaultValue={data.settings?.page_content?.home?.why_desc || "As one of the world's most valuable and admired real estate development companies, Golden Door Realty shapes new lifestyles with a focus on design excellence and build quality."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
@@ -1204,11 +1206,11 @@ function AdminDashboard() {
                         </div>
                         <div>
                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">First Paragraph</label>
-                           <textarea name="overview_desc_1" rows={3} defaultValue={data.settings?.page_content?.about?.overview_desc_1 || "MoneyTree Realty is one of the world's most valuable and admired real estate development companies. With proven competencies in properties, shopping malls & retail and hospitality & leisure, MoneyTree Realty shapes new lifestyles with a focus on design excellence, build quality and timely delivery."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <textarea name="overview_desc_1" rows={3} defaultValue={data.settings?.page_content?.about?.overview_desc_1 || "Golden Door Realty is one of the world's most valuable and admired real estate development companies. With proven competencies in properties, shopping malls & retail and hospitality & leisure, Golden Door Realty shapes new lifestyles with a focus on design excellence, build quality and timely delivery."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                         </div>
                         <div>
                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Second Paragraph</label>
-                           <textarea name="overview_desc_2" rows={2} defaultValue={data.settings?.page_content?.about?.overview_desc_2 || "Founded in 1997, MoneyTree Realty has built an incredible legacy of building iconic landmarks in Noida and globally, most notably Burj Khalifa, the world's tallest building."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <textarea name="overview_desc_2" rows={2} defaultValue={data.settings?.page_content?.about?.overview_desc_2 || "Founded in 1997, Golden Door Realty has built an incredible legacy of building iconic landmarks in Noida and globally, most notably Burj Khalifa, the world's tallest building."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                         </div>
                       </div>
 
@@ -1307,7 +1309,7 @@ function AdminDashboard() {
                         <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Contact Details</h3>
                         <div>
                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Address</label>
-                           <textarea name="address" rows={3} defaultValue={data.settings?.page_content?.contact?.address || "MoneyTree Realty Square, Building 3\nSheikh Mohammed Bin Rashid Boulevard\nDowntown Noida, United Arab Emirates"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <textarea name="address" rows={3} defaultValue={data.settings?.page_content?.contact?.address || "Golden Door Realty Square, Building 3\nSheikh Mohammed Bin Rashid Boulevard\nDowntown Noida, United Arab Emirates"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                            <div>
@@ -1481,7 +1483,7 @@ function AdminDashboard() {
                         </div>
                         <div>
                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Description</label>
-                           <textarea name="hero_desc" rows={3} defaultValue={data.settings?.page_content?.communities?.hero_desc || "Explore the iconic districts that define Noida's skyline. From waterfront marinas to serene golf estates, each MoneyTree Realty community offers a unique lifestyle and unparalleled investment value."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <textarea name="hero_desc" rows={3} defaultValue={data.settings?.page_content?.communities?.hero_desc || "Explore the iconic districts that define Noida's skyline. From waterfront marinas to serene golf estates, each Golden Door Realty community offers a unique lifestyle and unparalleled investment value."} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                         </div>
                       </div>
 
@@ -1535,6 +1537,7 @@ function AdminDashboard() {
                     try {
                       await updateSiteSettings({
                         data: {
+                          ...data.settings,
                           logo_url: formData.get("logo_url") as string,
                           theme_color: formData.get("theme_color") as string,
                           email: formData.get("email") as string,
@@ -1630,6 +1633,13 @@ function AdminDashboard() {
                         <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Title</label>
                           <input name="title" defaultValue={editingItem.title} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">City</label>
+                          <select name="city" defaultValue={editingItem.city || ""} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition">
+                             <option value="">Select City</option>
+                             {(data.communities || []).map((c: any) => <option key={c.id} value={c.title}>{c.title}</option>)}
+                          </select>
                         </div>
                         <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Location</label>
@@ -2021,6 +2031,13 @@ function AdminDashboard() {
                        <input name="title" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Burj Crown Apartments" />
                     </div>
                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">City</label>
+                        <select name="city" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition">
+                           <option value="">Select City</option>
+                           {(data.communities || []).map((c: any) => <option key={c.id} value={c.title}>{c.title}</option>)}
+                        </select>
+                     </div>
+                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Location</label>
                        <input name="location" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Downtown Noida" />
                     </div>

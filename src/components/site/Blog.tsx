@@ -38,6 +38,9 @@ export function Blog({ posts = [] }: { posts?: any[] }) {
                   alt={p.title} 
                   loading="lazy" 
                   className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=800&auto=format&fit=crop";
+                  }}
                 />
                 <div className="absolute top-4 left-4">
                    <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-sm">{p.cat}</span>

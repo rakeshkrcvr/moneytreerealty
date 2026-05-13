@@ -1,4 +1,4 @@
-import { Instagram, Youtube, Linkedin, Phone as Whatsapp, Heart } from "lucide-react";
+import { Instagram, Youtube, Linkedin, Phone as Whatsapp, Facebook, Twitter } from "lucide-react";
 
 export function NewsTicker() {
   const content = (
@@ -39,11 +39,12 @@ export function NewsTicker() {
 
 export function SocialSidebar() {
   const socials = [
-    { icon: Heart, color: "bg-slate-400", path: "#" },
-    { icon: Instagram, color: "bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600", path: "#" },
-    { icon: Youtube, color: "bg-red-600", path: "#" },
-    { icon: Linkedin, color: "bg-blue-600", path: "#" },
-    { icon: Whatsapp, color: "bg-green-500", path: "https://wa.me/919732300007" },
+    { icon: Facebook, path: "#" },
+    { icon: Twitter, path: "#" },
+    { icon: Instagram, path: "#" },
+    { icon: Youtube, path: "#" },
+    { icon: Linkedin, path: "#" },
+    { icon: Whatsapp, path: "https://wa.me/919732300007" },
   ];
 
   return (
@@ -54,14 +55,11 @@ export function SocialSidebar() {
           href={s.path} 
           target="_blank" 
           rel="noopener noreferrer"
-          className={`w-10 h-10 ${s.color} text-white flex items-center justify-center rounded-full shadow-lg hover:scale-110 transition-transform active:scale-95`}
+          className="w-10 h-10 bg-[#003029]/80 backdrop-blur-md text-white flex items-center justify-center rounded-full border border-white/10 hover:bg-[#c5a35d] hover:border-[#c5a35d] transition-all group shadow-xl"
         >
-          <s.icon className="w-5 h-5" />
+          <s.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
         </a>
       ))}
-      <div className="w-10 h-10 bg-[#004037] text-white flex items-center justify-center rounded-full shadow-lg border-2 border-white/20 animate-bounce cursor-pointer">
-        <img src="https://moneytreerealty.com/assets/img/logo.png" className="w-6 h-6 object-contain brightness-0 invert" alt="logo" />
-      </div>
     </div>
   );
 }

@@ -7,8 +7,8 @@ import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services — MoneyTree Realty" },
-      { name: "description", content: "Explore premium real estate services offered by MoneyTree Realty, including property management, mortgage advisory, and luxury concierge services." },
+      { title: "Services — Golden Door Realty" },
+      { name: "description", content: "Explore premium real estate services offered by Golden Door Realty, including property management, mortgage advisory, and luxury concierge services." },
     ],
   }),
   component: ServicesPage,

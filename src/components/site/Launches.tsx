@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { MapPin, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { PropertyCard } from "./PropertyCard";
 import { ImageWithFallback } from "./ImageWithFallback";
 
 export function Launches({ items = [] }: { items?: any[] }) {
@@ -74,46 +75,8 @@ export function Launches({ items = [] }: { items?: any[] }) {
                const item = displayItems[(activeIdx + offset) % displayItems.length];
                if (!item) return null;
                return (
-                 <div key={item.slug} className="relative rounded-3xl overflow-hidden aspect-[4/3] group/card">
-                    <ImageWithFallback 
-                      src={item.img} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" 
-                      alt={item.title}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    
-                    {/* New Launch Tag */}
-                    <div className="absolute top-6 left-0 bg-red-600 text-white text-[10px] font-black px-4 py-1.5 rounded-r-lg uppercase tracking-wider shadow-lg">
-                      New Launch
-                    </div>
-
-                    {/* Info Card */}
-                    <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm p-6 rounded-3xl shadow-2xl animate-in slide-in-from-bottom-4 duration-500">
-                       <h3 className="text-lg font-black text-[#1a365d] mb-1">{item.title}</h3>
-                       <div className="flex items-center gap-1.5 text-slate-400 text-[11px] mb-4">
-                          <MapPin className="w-3 h-3" /> {item.location}
-                       </div>
-                       
-                       <div className="flex flex-wrap items-center justify-between gap-4">
-                          <div>
-                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Starting From</p>
-                             <p className="text-xl font-black text-[#004037]">{item.price}</p>
-                          </div>
-                          <div className="flex gap-2">
-                             {(item.tags || ["2 BHK Flats", "3 BHK Flats"]).map((tag: string) => (
-                               <span key={tag} className="text-[9px] font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full uppercase">{tag}</span>
-                             ))}
-                          </div>
-                       </div>
-
-                       <Link 
-                          to="/property/$slug" 
-                          params={{ slug: item.slug }}
-                          className="mt-6 w-full bg-[#004037] text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-[#002a24] transition-colors"
-                       >
-                          Know More →
-                       </Link>
-                    </div>
+                 <div key={item.slug} className="flex-1">
+                   <PropertyCard property={item} />
                  </div>
                );
              })}

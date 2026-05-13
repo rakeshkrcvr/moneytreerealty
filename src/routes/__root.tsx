@@ -85,17 +85,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "MoneyTree Realty | Top Real Estate Consultant in India" },
-      { name: "description", content: "MoneyTree Realty is India's leading real estate consultant, offering premium property investments, luxury apartments, and commercial spaces in Noida, Gurugram, and Mumbai." },
-      { name: "author", content: "MoneyTree Realty" },
-      { property: "og:title", content: "MoneyTree Realty | Top Real Estate Consultant in India" },
-      { property: "og:description", content: "Explore premium real estate projects and luxury investments with MoneyTree Realty - India's most trusted property consultant." },
+      { title: "Golden Door Realty | Top Real Estate Consultant in India" },
+      { name: "description", content: "Golden Door Realty is India's leading real estate consultant, offering premium property investments, luxury apartments, and commercial spaces in Noida, Gurugram, and Mumbai." },
+      { name: "author", content: "Golden Door Realty" },
+      { property: "og:title", content: "Golden Door Realty | Top Real Estate Consultant in India" },
+      { property: "og:description", content: "Explore premium real estate projects and luxury investments with Golden Door Realty - India's most trusted property consultant." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "MoneyTree Realty" },
+      { name: "twitter:title", content: "Golden Door Realty" },
       { name: "twitter:description", content: "Leading Real Estate Consultant in India for Luxury Apartments & Commercial Projects." },
-      { property: "og:image", content: "https://moneytreerealty.com/assets/img/logo.png" },
-      { name: "twitter:image", content: "https://moneytreerealty.com/assets/img/logo.png" },
+      { property: "og:image", content: "https://goldendoorrealty.com/assets/img/logo.png" },
+      { name: "twitter:image", content: "https://goldendoorrealty.com/assets/img/logo.png" },
     ],
     links: [
       {
@@ -131,6 +131,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { settings } = Route.useLoaderData();
+  const router = useRouter();
+  const isAdmin = router.state.location.pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -146,9 +148,12 @@ function RootComponent() {
             }
           `}</style>
         )}
-        <NewsTicker />
-        <SocialSidebar />
-        <div className="pt-[105px]">
+        {!isAdmin && (
+          <>
+            <SocialSidebar />
+          </>
+        )}
+        <div className={isAdmin ? "" : "pt-[84px]"}>
           <Outlet />
         </div>
         <Toaster richColors position="top-center" />

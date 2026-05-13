@@ -71,16 +71,16 @@ export function Header() {
 
   const navLinks = [
     { label: "Projects", type: "mega", id: "projects" },
-    { label: "CSR", path: "/csr" },
+    { label: "About", path: "/about" },
     { label: "Blogs", type: "mega", id: "blogs" },
+    { label: "Events", path: "/events" },
     { label: "Career", path: "/career" },
     { label: "Contact", path: "/contact" },
-    { label: "More", type: "mega", id: "more" },
   ];
 
   const cityCounts = communities.map(c => ({
     ...c,
-    count: properties.filter(p => p.location?.toLowerCase().includes(c.title.toLowerCase())).length
+    count: properties.filter(p => p.city === c.title).length
   }));
 
   return (
@@ -95,7 +95,7 @@ export function Header() {
         <Link to="/" className="flex items-center">
           <img 
             src={settings?.logo_url || "/logo.png"} 
-            alt="MoneyTree" 
+            alt="Golden Door" 
             className="h-12 md:h-14 w-auto object-contain" 
           />
         </Link>
@@ -200,7 +200,7 @@ export function Header() {
                 <Link to="/properties/gurugram" className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
               </div>
               <div className="grid grid-cols-1 gap-6">
-                {properties.filter(p => p.location?.toLowerCase().includes('gurugram')).slice(0, 2).map(p => (
+                {properties.filter(p => p.city === 'Gurugram').slice(0, 2).map(p => (
                   <Link key={p.id} to="/property/$slug" params={{ slug: p.slug }} className="flex gap-4 group">
                     <div className="w-24 h-16 rounded-lg overflow-hidden bg-slate-100 shrink-0">
                       <ImageWithFallback src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -252,30 +252,7 @@ export function Header() {
           </div>
         )}
 
-        {activeMega === "more" && (
-          <div className="container mx-auto py-10 px-8 flex justify-center">
-             <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 w-72">
-                <ul className="space-y-4">
-                  {[
-                    { label: "About Us", path: "/about" },
-                    { label: "Associated Developers", path: "/developers" },
-                    { label: "Real Estate", path: "/launches" },
-                    { label: "Converters", path: "/converters" },
-                    { label: "Events", path: "/events" },
-                    { label: "Testimonials", path: "/testimonials" },
-                    { label: "Vision & Mission", path: "/vision" },
-                    { label: "Awards & Recognition", path: "/awards" }
-                  ].map(item => (
-                    <li key={item.label}>
-                      <Link to={item.path as any} className="text-sm font-medium text-slate-600 hover:text-brand hover:pl-2 transition-all block">
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-             </div>
-          </div>
-        )}
+
       </div>
 
       {/* Mobile Menu */}

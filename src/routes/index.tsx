@@ -19,11 +19,11 @@ import { getAllBlogs, getAllTestimonials, getAllFAQs, getAllProperties, getAllCo
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "MoneyTree Realty | Real Estate Property Consultant in India" },
+      { title: "Golden Door Realty | Real Estate Property Consultant in India" },
       {
         name: "description",
         content:
-          "MoneyTree Realty is a top real estate property consultant in India, offering luxury apartments, commercial projects, and expert investment advice in Noida and Gurugram.",
+          "Golden Door Realty is a top real estate property consultant in India, offering luxury apartments, commercial projects, and expert investment advice in Noida and Gurugram.",
       },
     ],
   }),
@@ -52,7 +52,6 @@ function Index() {
         <Intro />
         <FeaturedProperties items={properties} />
         <PropertyCategories items={propertyTypes} />
-        <Communities items={communities} />
         <Launches items={properties} />
         <WhyChooseUs />
         <TourBanner />

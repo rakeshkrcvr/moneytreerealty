@@ -4,6 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { getAllLaunches } from "@/lib/server-functions";
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, ChevronRight, X, LayoutGrid, List } from "lucide-react";
+import { PropertyCard } from "@/components/site/PropertyCard";
 
 export const Route = createFileRoute("/properties/")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/properties/")({
   },
   head: () => ({
     meta: [
-      { title: "Properties Portfolio — MoneyTree Realty" },
+      { title: "Properties Portfolio — Golden Door Realty" },
       { name: "description", content: "Explore our comprehensive portfolio of residential, commercial, and luxury properties." },
     ],
   }),
@@ -61,7 +62,7 @@ function LaunchesPage() {
       {/* Hero / Header Section */}
       <section className="bg-ink text-white py-20 border-b border-white/5">
         <div className="container-realty text-center">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">MoneyTree Realty Portfolio</p>
+          <p className="text-[10px] tracking-[0.4em] uppercase text-gold mb-4">Golden Door Realty Portfolio</p>
           <h1 className="text-4xl md:text-6xl uppercase" style={{ fontFamily: "var(--font-serif)" }}>Properties</h1>
         </div>
       </section>
@@ -160,26 +161,7 @@ function LaunchesPage() {
             {/* Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredItems.map((it) => (
-                <Link key={it.slug} to="/property/$slug" params={{ slug: it.slug }} className="group block border border-border bg-white p-4 hover:border-brand transition shadow-sm">
-                  <div className="overflow-hidden aspect-[4/5] mb-5 relative">
-                    <img src={it.img} alt={it.title} loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" />
-                    <div className="absolute top-4 left-4 bg-ink/80 text-white text-[9px] px-3 py-1 uppercase tracking-widest backdrop-blur-sm">
-                      {it.type}
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl text-ink group-hover:text-brand transition-colors uppercase tracking-widest">{it.title}</h3>
-                    <p className="text-sm font-bold text-brand">{it.price}</p>
-                  </div>
-                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground flex items-center gap-2 mb-4">
-                    <Search className="w-3 h-3" /> {it.location}
-                  </p>
-                  <div className="pt-4 border-t border-border flex justify-between items-center group/btn">
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-ink">View Details</span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover/btn:text-brand group-hover/btn:translate-x-1 transition-all" />
-                  </div>
-                </Link>
+                <PropertyCard key={it.slug} property={it} />
               ))}
             </div>
 

@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Twitter, Instagram, Youtube, Linkedin, Phone, Mail, MapPin, Eye, ChevronRight } from "lucide-react";
 import { useSiteSettings } from "./SiteSettingsContext";
+import { useState } from "react";
+import { createLead } from "../../lib/server-functions";
+import { toast } from "sonner";
 
 export function Footer() {
   const settings = useSiteSettings();
@@ -20,9 +23,6 @@ export function Footer() {
   const legalLinks = [
     { label: "Privacy Policy", to: "/privacy" },
     { label: "Terms & Conditions", to: "/terms" },
-    { label: "CSR Policy", to: "/csr" },
-    { label: "Sitemap", to: "/sitemap" },
-    { label: "PinCode Finder", to: "/pincode-finder" },
   ];
 
   return (
@@ -36,7 +36,7 @@ export function Footer() {
           {/* Column 1: Brand & Contact */}
           <div className="space-y-8">
             <Link to="/">
-               <img src={settings?.logo_url || "https://moneytreerealty.com/assets/img/logo.png"} alt="MoneyTree" className="h-16 w-auto object-contain" />
+               <img src={settings?.logo_url || "https://goldendoorrealty.com/assets/img/logo.png"} alt="Golden Door" className="h-16 w-auto object-contain" />
             </Link>
             <div className="space-y-4">
               <div className="flex gap-3 items-start">
@@ -51,7 +51,7 @@ export function Footer() {
               </div>
               <div className="flex gap-3 items-center">
                 <Mail className="w-5 h-5 text-[#c5a35d] shrink-0" />
-                <a href="mailto:customercare@moneytreerealty.com" className="text-sm hover:text-[#c5a35d] transition-colors">customercare@moneytreerealty.com</a>
+                <a href="mailto:customercare@goldendoorrealty.com" className="text-sm hover:text-[#c5a35d] transition-colors">customercare@goldendoorrealty.com</a>
               </div>
             </div>
             <div className="flex gap-4">
@@ -101,35 +101,45 @@ export function Footer() {
 
           {/* Column 4: Newsletter & Visitor */}
           <div className="space-y-10">
-            {/* Visitor Counter */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-               <div className="flex items-center gap-2 mb-4">
-                  <Eye className="w-4 h-4 text-[#c5a35d]" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-white/60">Visitor No.</span>
-               </div>
-               <div className="flex gap-1.5 justify-center">
-                  {"000944288".split('').map((num, i) => (
-                    <div key={i} className="w-7 h-10 bg-white text-[#003029] rounded-lg flex items-center justify-center font-black text-xl shadow-inner">
-                      {num}
-                    </div>
-                  ))}
-               </div>
-            </div>
 
-            {/* Newsletter */}
+
+            {/* Lead Form */}
             <div className="space-y-6">
               <div>
-                <h4 className="text-xl font-bold mb-2">Stay Updated</h4>
-                <p className="text-xs text-white/50 leading-relaxed">Get exclusive property insights, market trends & investment opportunities delivered to your inbox.</p>
+                <h4 className="text-xl font-bold mb-2">Get Expert Advice</h4>
+                <p className="text-xs text-white/50 leading-relaxed">Leave your details and our property experts will contact you shortly.</p>
               </div>
-              <div className="space-y-3">
-                <input type="email" placeholder="Enter your email" className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#c5a35d] transition-all" />
-                <button className="w-full bg-[#f37e01] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg active:scale-95">
-                  Subscribe
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.target as HTMLFormElement;
+                  const formData = new FormData(form);
+                  try {
+                    await createLead({
+                      data: {
+                        name: formData.get("name") as string,
+                        phone: formData.get("phone") as string,
+                        email: formData.get("email") as string,
+                        source: "Footer Form"
+                      }
+                    });
+                    toast.success("Thank you! Our experts will call you soon.");
+                    form.reset();
+                  } catch (err) {
+                    toast.error("Failed to send enquiry. Please try again.");
+                  }
+                }}
+                className="space-y-3"
+              >
+                <input required name="name" type="text" placeholder="Your Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-[#c5a35d] transition-all" />
+                <input required name="phone" type="tel" placeholder="Phone Number" className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-[#c5a35d] transition-all" />
+                <input required name="email" type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-[#c5a35d] transition-all" />
+                <button type="submit" className="w-full bg-[#f37e01] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg active:scale-95">
+                  Send Enquiry
                   <ChevronRight className="w-4 h-4" />
                 </button>
-              </div>
-              <p className="text-[10px] text-white/30 text-center">We respect your privacy. Unsubscribe anytime.</p>
+              </form>
+              <p className="text-[10px] text-white/30 text-center uppercase tracking-widest">Expert consultation is just a click away</p>
             </div>
           </div>
         </div>
@@ -137,7 +147,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-10 border-t border-white/5 flex flex-col items-center gap-6 text-center">
            <p className="text-sm text-white/60">
-              © {new Date().getFullYear()}, All rights reserved. <span className="font-bold text-white">Moneytree Realty Services Limited</span>
+              © {new Date().getFullYear()}, All rights reserved. <span className="font-bold text-white">Golden Door Realty Services Limited</span>
            </p>
            <p className="text-[10px] text-white/40 max-w-4xl leading-relaxed uppercase tracking-widest">
               RERA: UP - UPRERAAGT25048 | Haryana - RC/HARERA/GGM/2569/2164/2024/282 | Maharashtra - A041172401062

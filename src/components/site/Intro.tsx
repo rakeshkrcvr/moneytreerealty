@@ -13,7 +13,7 @@ export function Intro() {
               Buying or investing in property isn't easy. Between <span className="italic">hidden charges, legal complexities, shifting prices, and market noise</span>, most people feel overwhelmed – and unsure if they’re making the right move. That's why you need a trusted property consultant.
             </p>
             <p>
-              At <span className="font-bold text-[#004037]">MoneyTree Realty</span>, the best real estate consultant in India, we turn that chaos into clarity. Backed by seasoned market experts, we protect you from costly mistakes, and unlock exclusive pre-launch deals, VIP pricing, and strategic insights that the normal buyer never gets access to.
+              At <span className="font-bold text-[#004037]">Golden Door Realty</span>, the best real estate consultant in India, we turn that chaos into clarity. Backed by seasoned market experts, we protect you from costly mistakes, and unlock exclusive pre-launch deals, VIP pricing, and strategic insights that the normal buyer never gets access to.
             </p>
           </div>
           

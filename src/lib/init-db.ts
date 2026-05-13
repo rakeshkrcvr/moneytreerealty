@@ -10,7 +10,7 @@ if (!connectionString) {
 const sql = postgres(connectionString, { ssl: "require" });
 
 async function init() {
-  console.log("Seeding database with REAL MoneyTree Realty.com data...");
+  console.log("Seeding database with REAL Golden Door Realty.com data...");
 
   // Create tables
   await sql`DROP TABLE IF EXISTS communities CASCADE`;
@@ -175,7 +175,7 @@ async function init() {
     `;
   }
 
-  console.log("Real MoneyTree Realty data seeded successfully!");
+  console.log("Real Golden Door Realty data seeded successfully!");
   process.exit(0);
 }
 

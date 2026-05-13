@@ -103,9 +103,10 @@ export const updateSiteSettings = createServerFn({ method: "POST" }).handler(asy
     logo_url_light = ${data.logo_url_light}, 
     theme_color = ${data.theme_color}, 
     email = ${data.email}, 
+    phone = ${data.phone},
     whatsapp = ${data.whatsapp},
-    page_templates = ${data.page_templates},
-    page_content = ${data.page_content}
+    page_templates = ${data.page_templates || {}},
+    page_content = ${data.page_content || {}}
     WHERE id = 1`;
   return { success: true };
 });
@@ -137,14 +138,14 @@ export const createProperty = createServerFn({ method: "POST" }).handler(async (
   if (!db) throw new Error("DB Error");
   const slug = p.title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
   await db`INSERT INTO properties (
-             title, slug, location, price, type, category, img, description,
+             title, slug, city, location, price, type, category, img, description,
              status, gallery, video_url, bedrooms, bathrooms, area, 
              floor_number, furnishing, amenities_ids, map_location, 
              nearby_places, agent_name, agent_phone, agent_image, floor_plan_img, floor_plans,
              developer_id
            ) 
            VALUES (
-             ${p.title}, ${slug}, ${p.location}, ${p.price}, ${p.type}, ${p.category || 'Residential'}, ${p.img}, ${p.description},
+             ${p.title}, ${slug}, ${p.city || ''}, ${p.location}, ${p.price}, ${p.type}, ${p.category || 'Residential'}, ${p.img}, ${p.description},
              ${p.status || 'Sale'}, ${JSON.stringify(p.gallery || [])}, ${p.video_url || ''}, ${p.bedrooms || 0}, ${p.bathrooms || 0}, ${p.area || ''},
              ${p.floor_number || ''}, ${p.furnishing || 'Unfurnished'}, ${p.amenities_ids || []}, ${p.map_location || ''},
              ${JSON.stringify(p.nearby_places || [])}, ${p.agent_name || ''}, ${p.agent_phone || ''}, ${p.agent_image || ''},
@@ -162,6 +163,7 @@ export const updateProperty = createServerFn({ method: "POST" }).handler(async (
   try {
     await db`UPDATE properties SET 
              title = ${p.title}, 
+             city = ${p.city || ""},
              location = ${p.location}, 
              price = ${p.price}, 
              type = ${p.type}, 
@@ -392,6 +394,13 @@ export const createLead = createServerFn({ method: "POST" }).handler(async ({ da
   const db = await getSql();
   if (!db) throw new Error("Offline");
   try {
+    // Duplicate check: Check if phone already exists
+    const existing = await db`SELECT id FROM leads WHERE phone = ${data.phone} LIMIT 1`;
+    if (existing.length > 0) {
+      console.log("Duplicate lead blocked for:", data.phone);
+      return { success: true, message: "Duplicate" };
+    }
+
     await db`INSERT INTO leads (name, email, phone, property_slug, message) 
              VALUES (${data.name}, ${data.email}, ${data.phone}, ${data.source || data.property_slug || 'General'}, ${data.message || ''})`;
     return { success: true };
@@ -432,8 +441,8 @@ export const getProjectsInCommunity = createServerFn({ method: "GET" }).handler(
     const comm = await db`SELECT title FROM communities WHERE slug = ${slug} LIMIT 1`;
     if (!comm.length) return { active: [], handedOver: [] };
     
-    // 2. Fetch properties in this community (location = title)
-    const res = await db`SELECT * FROM properties WHERE location = ${comm[0].title}`;
+    // 2. Fetch properties in this community (city = title)
+    const res = await db`SELECT * FROM properties WHERE city = ${comm[0].title}`;
     const all = res.map((r: any) => ({ ...r }));
     
     return {

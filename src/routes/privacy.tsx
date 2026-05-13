@@ -3,7 +3,7 @@ import { InfoPage } from "@/components/site/InfoPage";
 import hero from "@/assets/community-downtown.jpg";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({ meta: [{ title: "Privacy Policy — MoneyTree Realty" }, { name: "description", content: "How MoneyTree Realty collects, uses and protects your personal data." }] }),
+  head: () => ({ meta: [{ title: "Privacy Policy — Golden Door Realty" }, { name: "description", content: "How Golden Door Realty collects, uses and protects your personal data." }] }),
   component: () => (
     <InfoPage eyebrow="Legal" title="Privacy Policy" heroImg={hero}
       intro="Your privacy is important to us. This policy explains how we handle personal data."

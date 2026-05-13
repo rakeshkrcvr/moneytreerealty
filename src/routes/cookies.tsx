@@ -3,7 +3,7 @@ import { InfoPage } from "@/components/site/InfoPage";
 import hero from "@/assets/community-marina.jpg";
 
 export const Route = createFileRoute("/cookies")({
-  head: () => ({ meta: [{ title: "Cookie Policy — MoneyTree Realty" }, { name: "description", content: "How and why MoneyTree Realty uses cookies on its websites." }] }),
+  head: () => ({ meta: [{ title: "Cookie Policy — Golden Door Realty" }, { name: "description", content: "How and why Golden Door Realty uses cookies on its websites." }] }),
   component: () => (
     <InfoPage eyebrow="Legal" title="Cookie Policy" heroImg={hero}
       intro="We use cookies to improve your experience. You can manage preferences at any time."
