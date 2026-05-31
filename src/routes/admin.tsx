@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { 
-  LayoutDashboard, Building2, Eye, Trash2, X, Plus, Layers, Tags, Search, User, Database, AlertCircle, CheckCircle2, Settings, FileText, AppWindow, ChevronDown, ChevronRight, Compass
+  LayoutDashboard, Building2, Eye, EyeOff, Trash2, X, Plus, Layers, Tags, Search, User, Database, AlertCircle, CheckCircle2, Settings, FileText, AppWindow, ChevronDown, ChevronRight, Compass, Lock, LogIn, LogOut
 } from "lucide-react";
 import { 
   getAllProperties, getAllPropertyTypes, getAllAmenitiesMaster, 
@@ -26,6 +26,9 @@ export const Route = createFileRoute("/admin")({
 function AdminDashboard() {
   const { tab } = useSearch({ from: "/admin" });
   const navigate = useNavigate({ from: "/admin" });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
   
   const [showAddModal, setShowAddModal] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -98,6 +101,10 @@ function AdminDashboard() {
   const [dbStatus, setDbStatus] = useState<"checking" | "connected" | "failed">("checking");
 
   useEffect(() => {
+    setIsAuthenticated(window.localStorage.getItem("moneytree_admin_auth") === "true");
+  }, []);
+
+  useEffect(() => {
     if (editingItem && (editingItem._type === undefined || editingItem._type === 'property')) {
       let parsedGallery = editingItem.gallery;
       if (typeof parsedGallery === 'string') {
@@ -141,8 +148,32 @@ function AdminDashboard() {
 
   useEffect(() => {
     setSearchTerm("");
-    refreshData();
-  }, [tab]);
+    if (isAuthenticated) refreshData();
+  }, [tab, isAuthenticated]);
+
+  function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    if (username === "admin" && password === "admin@123") {
+      window.localStorage.setItem("moneytree_admin_auth", "true");
+      setIsAuthenticated(true);
+      setLoginError("");
+      toast.success("Welcome back, admin!");
+      return;
+    }
+
+    setLoginError("Invalid username or password.");
+  }
+
+  function handleLogout() {
+    window.localStorage.removeItem("moneytree_admin_auth");
+    setIsAuthenticated(false);
+    setLoginError("");
+    setDbStatus("checking");
+  }
 
   async function refreshData() {
     try {
@@ -424,6 +455,82 @@ function AdminDashboard() {
     }
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-6 font-sans text-slate-800 antialiased">
+        <div className="w-full max-w-md bg-white rounded-[36px] border border-white shadow-xl shadow-slate-200/70 p-8">
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-5 w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-100">
+              <Lock className="w-6 h-6" />
+            </div>
+            <h1 className="text-2xl font-black tracking-tight text-slate-900">Admin Login</h1>
+            <p className="mt-2 text-sm font-medium text-slate-400">Sign in to manage MoneyTree Realty.</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label htmlFor="admin-username" className="block mb-2 text-[11px] font-black uppercase tracking-widest text-slate-400">
+                Username
+              </label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <input
+                  id="admin-username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
+                  className="w-full bg-slate-50 border border-transparent rounded-2xl pl-12 pr-4 py-4 text-sm font-bold text-slate-700 outline-none transition focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-50"
+                  placeholder="admin"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="admin-password" className="block mb-2 text-[11px] font-black uppercase tracking-widest text-slate-400">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <input
+                  id="admin-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  className="w-full bg-slate-50 border border-transparent rounded-2xl pl-12 pr-12 py-4 text-sm font-bold text-slate-700 outline-none transition focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-50"
+                  placeholder="admin@123"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {loginError && (
+              <div className="flex items-center gap-2 rounded-2xl bg-red-50 px-4 py-3 text-xs font-bold text-red-600">
+                <AlertCircle className="w-4 h-4" />
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full h-12 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, count: data.properties.length },
     { id: "manage_property", label: "Properties", icon: Building2, count: data.properties.length },
@@ -517,6 +624,13 @@ function AdminDashboard() {
               DB: {dbStatus === "connected" ? "SYNCED" : "OFFLINE"}
            </div>
         </div>
+        <button
+          onClick={handleLogout}
+          className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
       </aside>
 
       {/* Main Content */}
