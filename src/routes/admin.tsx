@@ -1649,6 +1649,7 @@ function AdminDashboard() {
                     setIsSubmitting(true);
                     const formData = new FormData(e.currentTarget);
                     try {
+                      const pageContent = data.settings?.page_content || {};
                       await updateSiteSettings({
                         data: {
                           ...data.settings,
@@ -1657,6 +1658,22 @@ function AdminDashboard() {
                           email: formData.get("email") as string,
                           phone: formData.get("phone") as string,
                           whatsapp: formData.get("whatsapp") as string,
+                          page_content: {
+                            ...pageContent,
+                            contact_info: {
+                              ...(pageContent.contact_info || {}),
+                              location: formData.get("contact_location") as string,
+                            },
+                            social_links: {
+                              ...(pageContent.social_links || {}),
+                              facebook: formData.get("social_facebook") as string,
+                              twitter: formData.get("social_twitter") as string,
+                              instagram: formData.get("social_instagram") as string,
+                              youtube: formData.get("social_youtube") as string,
+                              linkedin: formData.get("social_linkedin") as string,
+                              whatsapp: formData.get("social_whatsapp") as string,
+                            },
+                          },
                         }
                       });
                       toast.success("Settings updated globally!");
@@ -1675,21 +1692,21 @@ function AdminDashboard() {
                                  <input type="file" accept="image/*" onChange={(e) => {
                                     const file = e.target.files?.[0];
                                     if (!file) return;
+                                    if (file.size > 2 * 1024 * 1024) {
+                                      toast.error("Logo image should be under 2 MB.");
+                                      return;
+                                    }
                                     const reader = new FileReader();
-                                    reader.onload = async () => {
-                                       try {
-                                          const { url } = await uploadImage({ data: { base64: reader.result as string, fileName: file.name } });
-                                          const logoInput = document.getElementById("settings_logo_input") as HTMLInputElement;
-                                          if (logoInput) logoInput.value = url;
-                                          const logoPreview = document.getElementById("settings_logo_preview") as HTMLImageElement;
-                                          if (logoPreview) {
-                                            logoPreview.src = url;
-                                            logoPreview.style.display = 'block';
-                                          }
-                                          toast.success("Logo uploaded successfully!");
-                                       } catch (error) { 
-                                          toast.error("Upload failed"); 
-                                       }
+                                    reader.onload = () => {
+                                      const logoDataUrl = reader.result as string;
+                                      const logoInput = document.getElementById("settings_logo_input") as HTMLInputElement;
+                                      if (logoInput) logoInput.value = logoDataUrl;
+                                      const logoPreview = document.getElementById("settings_logo_preview") as HTMLImageElement;
+                                      if (logoPreview) {
+                                        logoPreview.src = logoDataUrl;
+                                        logoPreview.style.display = 'block';
+                                      }
+                                      toast.success("Logo selected. Click Save Settings to publish it.");
                                     };
                                     reader.readAsDataURL(file);
                                  }} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
@@ -1719,6 +1736,39 @@ function AdminDashboard() {
                         <div className="space-y-2">
                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">WhatsApp Number (No +)</label>
                            <input name="whatsapp" defaultValue={data.settings?.whatsapp || ""} placeholder="971501234567" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Office Location</label>
+                           <input name="contact_location" defaultValue={data.settings?.page_content?.contact_info?.location || ""} placeholder="Sales Centre, Downtown Noida" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                        </div>
+                     </div>
+                     <div className="pt-8 border-t border-slate-100">
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight mb-5">Social Media Links</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                           <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Facebook</label>
+                              <input name="social_facebook" defaultValue={data.settings?.page_content?.social_links?.facebook || ""} placeholder="https://facebook.com/..." className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Twitter</label>
+                              <input name="social_twitter" defaultValue={data.settings?.page_content?.social_links?.twitter || ""} placeholder="https://twitter.com/..." className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Instagram</label>
+                              <input name="social_instagram" defaultValue={data.settings?.page_content?.social_links?.instagram || ""} placeholder="https://instagram.com/..." className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">YouTube</label>
+                              <input name="social_youtube" defaultValue={data.settings?.page_content?.social_links?.youtube || ""} placeholder="https://youtube.com/..." className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">LinkedIn</label>
+                              <input name="social_linkedin" defaultValue={data.settings?.page_content?.social_links?.linkedin || ""} placeholder="https://linkedin.com/company/..." className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                           </div>
+                           <div className="space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">WhatsApp Link</label>
+                              <input name="social_whatsapp" defaultValue={data.settings?.page_content?.social_links?.whatsapp || ""} placeholder="https://wa.me/919540954069" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" />
+                           </div>
                         </div>
                      </div>
                      <button type="submit" disabled={isSubmitting} className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all disabled:opacity-50">

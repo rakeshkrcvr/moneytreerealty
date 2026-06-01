@@ -153,7 +153,7 @@ function RootComponent() {
             <SocialSidebar />
           </>
         )}
-        <div className={isAdmin ? "" : "pt-[84px]"}>
+        <div className={isAdmin ? "" : "pt-[128px]"}>
           <Outlet />
         </div>
         <Toaster richColors position="top-center" />

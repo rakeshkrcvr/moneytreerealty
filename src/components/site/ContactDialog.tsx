@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Phone, MapPin, Mail } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Mail } from "lucide-react";
+import { useSiteSettings } from "./SiteSettingsContext";
 
 interface Ctx {
   open: (subject?: string) => void;
@@ -22,15 +23,16 @@ const schema = z.object({
   lastName: z.string().trim().min(1, "Last name is required").max(60),
   email: z.string().trim().email("Invalid email").max(255),
   phone: z.string().trim().min(6, "Phone is required").max(30),
-  country: z.string().trim().min(1, "Select a country").max(80),
   message: z.string().trim().max(1000).optional(),
 });
 
 export function ContactDialogProvider({ children }: { children: React.ReactNode }) {
+  const settings = useSiteSettings();
   const [isOpen, setOpen] = useState(false);
   const [subject, setSubject] = useState<string | undefined>();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const contactLocation = settings?.page_content?.contact_info?.location || "";
 
   const open = useCallback((s?: string) => {
     setSubject(s);
@@ -80,9 +82,18 @@ export function ContactDialogProvider({ children }: { children: React.ReactNode 
                 </p>
               </div>
               <div className="space-y-3 text-sm text-white/80 mt-8">
-                <p className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /> +971 800 36227</p>
-                <p className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /> sales@goldendoorrealty.com</p>
-                <p className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /> Sales Centre, Downtown Noida</p>
+                {settings?.phone && (
+                  <p className="flex items-center gap-3"><Phone className="w-4 h-4 text-gold" /> {settings.phone}</p>
+                )}
+                {settings?.whatsapp && (
+                  <p className="flex items-center gap-3"><MessageCircle className="w-4 h-4 text-gold" /> {settings.whatsapp}</p>
+                )}
+                {settings?.email && (
+                  <p className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold" /> {settings.email}</p>
+                )}
+                {contactLocation && (
+                  <p className="flex items-center gap-3"><MapPin className="w-4 h-4 text-gold" /> {contactLocation}</p>
+                )}
               </div>
             </div>
 
@@ -103,22 +114,6 @@ export function ContactDialogProvider({ children }: { children: React.ReactNode 
                 </div>
                 <Field name="email" type="email" placeholder="Email Address" error={errors.email} maxLength={255} />
                 <Field name="phone" type="tel" placeholder="Phone Number" error={errors.phone} maxLength={30} />
-                <div>
-                  <select
-                    name="country"
-                    defaultValue=""
-                    className="w-full border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:border-brand"
-                  >
-                    <option value="" disabled>Country of Residence</option>
-                    <option>United Arab Emirates</option>
-                    <option>Saudi Arabia</option>
-                    <option>India</option>
-                    <option>United Kingdom</option>
-                    <option>United States</option>
-                    <option>Other</option>
-                  </select>
-                  {errors.country && <p className="text-xs text-destructive mt-1">{errors.country}</p>}
-                </div>
                 <div>
                   <textarea
                     name="message"

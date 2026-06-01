@@ -1,12 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { Heart, Share2, Image as ImageIcon, Phone, MessageCircle, MapPin, Building2 } from "lucide-react";
 import { ImageWithFallback } from "./ImageWithFallback";
+import { useContactDialog } from "./ContactDialog";
+import { useSiteSettings } from "./SiteSettingsContext";
 
 interface PropertyCardProps {
   property: any;
 }
 
 export function PropertyCard({ property: p }: PropertyCardProps) {
+  const settings = useSiteSettings();
+  const { open } = useContactDialog();
   const rawPrice = p.price?.toString() || "On Request";
   let formattedPrice = rawPrice;
   
@@ -20,6 +24,9 @@ export function PropertyCard({ property: p }: PropertyCardProps) {
   }
 
   const configs = p.config ? (Array.isArray(p.config) ? p.config : [p.config]) : ["3 BHK Flats", "4 BHK Flats"];
+  const whatsappNumber = (settings?.whatsapp || settings?.phone || "919732300007").replace(/\D/g, "");
+  const whatsappText = encodeURIComponent(`Hi, I am interested in ${p.title}`);
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
 
   return (
     <div className="group relative rounded-[24px] overflow-hidden bg-slate-200 aspect-[4/5] shadow-md hover:shadow-xl transition-all duration-700 border border-slate-100 h-full">
@@ -82,8 +89,23 @@ export function PropertyCard({ property: p }: PropertyCardProps) {
            >
              View Details
            </Link>
-           <button className="w-[38px] h-[38px] rounded-lg bg-[#4285F4] text-white flex items-center justify-center hover:bg-blue-600 transition-all shadow-md shadow-blue-500/10"><Phone className="w-4 h-4" /></button>
-           <button className="w-[38px] h-[38px] rounded-lg bg-[#25D366] text-white flex items-center justify-center hover:bg-[#128C7E] transition-all shadow-md shadow-green-500/10"><MessageCircle className="w-4 h-4" /></button>
+           <a
+             href={whatsappUrl}
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label={`WhatsApp about ${p.title}`}
+             className="w-[38px] h-[38px] rounded-lg bg-[#25D366] text-white flex items-center justify-center hover:bg-[#128C7E] transition-all shadow-md shadow-[#25D366]/20"
+           >
+             <Phone className="w-4 h-4" />
+           </a>
+           <button
+             type="button"
+             aria-label={`Enquire about ${p.title}`}
+             onClick={() => open(p.title)}
+             className="w-[38px] h-[38px] rounded-lg bg-[#4285F4] text-white flex items-center justify-center hover:bg-blue-600 transition-all shadow-md shadow-blue-500/10"
+           >
+             <MessageCircle className="w-4 h-4" />
+           </button>
         </div>
      </div>
     </div>

@@ -1,12 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Twitter, Instagram, Youtube, Linkedin, Phone, Mail, MapPin, Eye, ChevronRight } from "lucide-react";
 import { useSiteSettings } from "./SiteSettingsContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createLead } from "../../lib/server-functions";
 import { toast } from "sonner";
 
 export function Footer() {
   const settings = useSiteSettings();
+  const [logoFailed, setLogoFailed] = useState(false);
+  const logoUrl = settings?.logo_url || "";
+
+  useEffect(() => {
+    setLogoFailed(false);
+  }, [logoUrl]);
   
   const quickLinks = [
     { label: "Home", to: "/" },
@@ -36,7 +42,18 @@ export function Footer() {
           {/* Column 1: Brand & Contact */}
           <div className="space-y-8">
             <Link to="/">
-               <img src={settings?.logo_url || "https://goldendoorrealty.com/assets/img/logo.png"} alt="Golden Door" className="h-16 w-auto object-contain" />
+              {logoUrl && !logoFailed ? (
+                <img
+                  src={logoUrl}
+                  alt="Golden Door"
+                  className="h-16 w-auto max-w-[220px] object-contain"
+                  onError={() => setLogoFailed(true)}
+                />
+              ) : (
+                <span className="text-xl font-semibold tracking-tight text-white">
+                  Golden Door
+                </span>
+              )}
             </Link>
             <div className="space-y-4">
               <div className="flex gap-3 items-start">

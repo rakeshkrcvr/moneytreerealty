@@ -13,6 +13,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
   
   const [types, setTypes] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
@@ -21,6 +22,11 @@ export function Header() {
   
   const settings = useSiteSettings();
   const location = useLocation();
+  const logoUrl = settings?.logo_url || "";
+
+  useEffect(() => {
+    setLogoFailed(false);
+  }, [logoUrl]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -85,19 +91,26 @@ export function Header() {
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 bg-[#004037] text-white py-4 ${
+      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 bg-[#004037] text-white py-1.5 md:py-2 ${
         scrolled ? "shadow-2xl" : ""
       }`}
       onMouseLeave={() => setActiveMega(null)}
     >
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
-          <img 
-            src={settings?.logo_url || "/logo.png"} 
-            alt="Golden Door" 
-            className="h-12 md:h-14 w-auto object-contain" 
-          />
+        <Link to="/" className="flex items-center min-w-0">
+          {logoUrl && !logoFailed ? (
+            <img
+              src={logoUrl}
+              alt="Golden Door"
+              className="h-20 md:h-28 w-auto max-w-[260px] md:max-w-[340px] object-contain"
+              onError={() => setLogoFailed(true)}
+            />
+          ) : (
+            <span className="text-lg md:text-xl font-semibold tracking-tight text-white">
+              Golden Door
+            </span>
+          )}
         </Link>
 
         {/* Desktop Nav */}

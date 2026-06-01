@@ -1,4 +1,5 @@
 import { Instagram, Youtube, Linkedin, Phone as Whatsapp, Facebook, Twitter } from "lucide-react";
+import { useSiteSettings } from "./SiteSettingsContext";
 
 export function NewsTicker() {
   const content = (
@@ -38,13 +39,16 @@ export function NewsTicker() {
 }
 
 export function SocialSidebar() {
+  const settings = useSiteSettings();
+  const socialLinks = settings?.page_content?.social_links || {};
+  const whatsappNumber = (settings?.whatsapp || "919732300007").replace(/\D/g, "");
   const socials = [
-    { icon: Facebook, path: "#" },
-    { icon: Twitter, path: "#" },
-    { icon: Instagram, path: "#" },
-    { icon: Youtube, path: "#" },
-    { icon: Linkedin, path: "#" },
-    { icon: Whatsapp, path: "https://wa.me/919732300007" },
+    { icon: Facebook, path: socialLinks.facebook || "#", color: "#1877F2" },
+    { icon: Twitter, path: socialLinks.twitter || "#", color: "#1DA1F2" },
+    { icon: Instagram, path: socialLinks.instagram || "#", color: "linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FCAF45 100%)" },
+    { icon: Youtube, path: socialLinks.youtube || "#", color: "#FF0000" },
+    { icon: Linkedin, path: socialLinks.linkedin || "#", color: "#0A66C2" },
+    { icon: Whatsapp, path: socialLinks.whatsapp || `https://wa.me/${whatsappNumber}`, color: "#25D366" },
   ];
 
   return (
@@ -55,7 +59,8 @@ export function SocialSidebar() {
           href={s.path} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="w-10 h-10 bg-[#003029]/80 backdrop-blur-md text-white flex items-center justify-center rounded-full border border-white/10 hover:bg-[#c5a35d] hover:border-[#c5a35d] transition-all group shadow-xl"
+          className="w-10 h-10 backdrop-blur-md text-white flex items-center justify-center rounded-full border border-white/10 hover:scale-110 transition-all group shadow-xl"
+          style={{ background: s.color }}
         >
           <s.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
         </a>
