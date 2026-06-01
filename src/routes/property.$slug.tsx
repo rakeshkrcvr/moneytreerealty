@@ -4,12 +4,13 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import {
   MapPin, BedDouble, Building2, Compass, User, Star, ArrowRight,
-  Search, SlidersHorizontal, LayoutGrid, List
+  Search, SlidersHorizontal, LayoutGrid, List, Images, X, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { getLaunchBySlug, getAllLaunches, getAllCommunities, createLead, getAllAmenitiesMaster, getAllPropertyTypes } from "@/lib/server-functions";
 import { toast } from "sonner";
 import { useState, useMemo, useEffect } from "react";
 import { PropertyCard } from "@/components/site/PropertyCard";
+import { ImageWithFallback } from "@/components/site/ImageWithFallback";
 
 const filters = {
   purpose: ["Buy", "Rent", "Commercial", "Plots & Land"],
@@ -77,6 +78,7 @@ function PropertyDetail() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [search, setSearch] = useState("");
   const [activePurpose, setActivePurpose] = useState("Buy");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   // --- Category View ---
   if (data.isCategory) {
@@ -219,6 +221,42 @@ function PropertyDetail() {
     }
     return Array.isArray(l.floor_plans) ? l.floor_plans : [];
   }, [l.floor_plans]);
+
+  const galleryImages = useMemo(() => {
+    const rawGallery = l.gallery;
+    let parsedGallery: any[] = [];
+
+    if (typeof rawGallery === "string") {
+      try {
+        const parsed = JSON.parse(rawGallery);
+        parsedGallery = Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        parsedGallery = rawGallery.split(",");
+      }
+    } else if (Array.isArray(rawGallery)) {
+      parsedGallery = rawGallery;
+    }
+
+    return parsedGallery
+      .map((item: any) => typeof item === "string" ? item : item?.url || item?.src)
+      .filter((url: any) => typeof url === "string" && url.trim().length > 0)
+      .map((url: string) => url.trim());
+  }, [l.gallery]);
+
+  const openLightbox = (index: number) => setLightboxIndex(index);
+  const closeLightbox = () => setLightboxIndex(null);
+  const showPreviousImage = () => {
+    setLightboxIndex((current) => {
+      if (current === null || galleryImages.length === 0) return current;
+      return current === 0 ? galleryImages.length - 1 : current - 1;
+    });
+  };
+  const showNextImage = () => {
+    setLightboxIndex((current) => {
+      if (current === null || galleryImages.length === 0) return current;
+      return current === galleryImages.length - 1 ? 0 : current + 1;
+    });
+  };
   
   const [activePlan, setActivePlan] = useState<any>(null);
 
@@ -277,6 +315,46 @@ function PropertyDetail() {
               <div className="w-full h-[500px] rounded-[24px] overflow-hidden shadow-sm">
                   <ImageWithFallback src={l.img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" alt={l.title} />
               </div>
+
+              {/* Gallery */}
+              {galleryImages.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                    <h2 className="text-2xl font-serif font-bold text-slate-900">Gallery</h2>
+                    <button
+                      type="button"
+                      onClick={() => openLightbox(0)}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600 transition hover:border-brand hover:text-brand"
+                    >
+                      <Images className="w-4 h-4" />
+                      View All
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {galleryImages.slice(0, 5).map((image, index) => (
+                      <button
+                        key={`${image}-${index}`}
+                        type="button"
+                        onClick={() => openLightbox(index)}
+                        className={`group relative overflow-hidden rounded-[18px] bg-slate-100 shadow-sm ${index === 0 ? "col-span-2 row-span-2 h-[300px] md:h-[420px]" : "h-[145px] md:h-[204px]"}`}
+                      >
+                        <ImageWithFallback
+                          src={image}
+                          alt={`${l.title} gallery ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <span className="absolute inset-0 bg-black/0 transition group-hover:bg-black/15" />
+                        {index === 4 && galleryImages.length > 5 && (
+                          <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-white text-sm font-bold uppercase tracking-[0.2em]">
+                            +{galleryImages.length - 5} More
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Quick Info Box (4 Icons) */}
               <div className="grid grid-cols-2 md:grid-cols-4 border border-slate-200 rounded-[20px] divide-x divide-slate-200 text-center py-8 bg-[#FAFAFA]">
@@ -523,6 +601,51 @@ function PropertyDetail() {
            </div>
         </div>
       </div>
+      {lightboxIndex !== null && galleryImages[lightboxIndex] && (
+        <div className="fixed inset-0 z-[2000] bg-black/95 flex items-center justify-center px-4 py-6">
+          <button
+            type="button"
+            onClick={closeLightbox}
+            className="absolute right-5 top-5 w-11 h-11 rounded-full bg-white/10 text-white flex items-center justify-center transition hover:bg-white/20"
+            aria-label="Close gallery"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {galleryImages.length > 1 && (
+            <button
+              type="button"
+              onClick={showPreviousImage}
+              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center transition hover:bg-white/20"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-7 h-7" />
+            </button>
+          )}
+
+          <div className="w-full max-w-6xl">
+            <img
+              src={galleryImages[lightboxIndex]}
+              alt={`${l.title} gallery image ${lightboxIndex + 1}`}
+              className="mx-auto max-h-[82vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
+            />
+            <div className="mt-5 text-center text-white/70 text-[11px] font-bold uppercase tracking-[0.2em]">
+              {lightboxIndex + 1} / {galleryImages.length}
+            </div>
+          </div>
+
+          {galleryImages.length > 1 && (
+            <button
+              type="button"
+              onClick={showNextImage}
+              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center transition hover:bg-white/20"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-7 h-7" />
+            </button>
+          )}
+        </div>
+      )}
       <Footer />
     </div>
   );

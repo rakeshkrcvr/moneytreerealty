@@ -4,6 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { MapPin, ChevronRight, Building2, Sparkles, Navigation, Compass } from "lucide-react";
 import { getCommunityBySlug, getProjectsInCommunity } from "@/lib/server-functions";
 import { PropertyCard } from "@/components/site/PropertyCard";
+import { ImageWithFallback } from "@/components/site/ImageWithFallback";
 
 export const Route = createFileRoute("/properties/$slug")({
   loader: async ({ params }) => {

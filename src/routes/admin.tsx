@@ -43,6 +43,7 @@ function AdminDashboard() {
   const [floorPlans, setFloorPlans] = useState<any[]>([]);
   const [developerLogoUrl, setDeveloperLogoUrl] = useState("");
   const [blogImgUrl, setBlogImgUrl] = useState("");
+  const [propertyImageUrl, setPropertyImageUrl] = useState("");
   const [editingPageContent, setEditingPageContent] = useState<string | null>(null);
   const [isPagesExpanded, setIsPagesExpanded] = useState(false);
 
@@ -111,6 +112,7 @@ function AdminDashboard() {
         try { parsedGallery = JSON.parse(parsedGallery); } catch(e) { parsedGallery = []; }
       }
       setGalleryUrls(Array.isArray(parsedGallery) ? parsedGallery : []);
+      setPropertyImageUrl(editingItem.img || "");
       setFloorPlanUrl(editingItem.floor_plan_img || "");
       let parsedAmenities = editingItem.amenities_ids;
       if (typeof parsedAmenities === 'string') {
@@ -127,6 +129,7 @@ function AdminDashboard() {
       setDeveloperLogoUrl(editingItem.logo_url || "");
     } else {
       setGalleryUrls([]);
+      setPropertyImageUrl("");
       setFloorPlanUrl("");
       setSelectedAmenities([]);
       setFloorPlans([]);
@@ -137,6 +140,7 @@ function AdminDashboard() {
   useEffect(() => {
     if (showAddModal) {
       setGalleryUrls([]);
+      setPropertyImageUrl("");
       setFloorPlanUrl("");
       setSelectedAmenities([]);
       setFloorPlans([]);
@@ -234,7 +238,7 @@ function AdminDashboard() {
       price: formData.get("price") as string,
       type: formData.get("type") as string,
       category: formData.get("category") as string || 'Residential',
-      img: formData.get("img") as string,
+      img: propertyImageUrl || (formData.get("img") as string),
       description: formData.get("description") as string,
       status: formData.get("status") as string,
       gallery: galleryUrls.length > 0 ? galleryUrls : (formData.get("gallery") as string)?.split(",").map(s => s.trim()).filter(Boolean),
@@ -315,7 +319,7 @@ function AdminDashboard() {
             price: formData.get("price") as string,
             type: formData.get("type") as string,
             category: formData.get("category") as string,
-            img: formData.get("img") as string,
+            img: propertyImageUrl || (formData.get("img") as string),
             description: formData.get("description") as string,
             status: formData.get("status") as string,
             gallery: galleryUrls.length > 0 ? galleryUrls : (formData.get("gallery") as string)?.split(",").map(s => s.trim()).filter(Boolean),
@@ -1873,7 +1877,29 @@ function AdminDashboard() {
 
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Featured Image URL</label>
-                        <input name="img" defaultValue={editingItem.img} className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                        <div className="flex items-center gap-4">
+                          <div className="w-20 h-20 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+                            {propertyImageUrl ? (
+                              <img src={propertyImageUrl} className="w-full h-full object-cover" />
+                            ) : (
+                              <Building2 className="w-6 h-6 text-slate-300" />
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-3">
+                            <input
+                              name="img"
+                              value={propertyImageUrl}
+                              onChange={(e) => setPropertyImageUrl(e.target.value)}
+                              className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition"
+                            />
+                            <div className="relative">
+                              <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, setPropertyImageUrl)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                              <div className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-600 text-center">
+                                {isUploading ? "Uploading..." : "Upload Image"}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="bg-slate-50 p-6 rounded-3xl space-y-4">
@@ -2252,7 +2278,30 @@ function AdminDashboard() {
 
                  <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Featured Image URL</label>
-                    <input name="img" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="https://..." />
+                    <div className="flex items-center gap-4">
+                       <div className="w-20 h-20 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+                          {propertyImageUrl ? (
+                             <img src={propertyImageUrl} className="w-full h-full object-cover" />
+                          ) : (
+                             <Building2 className="w-6 h-6 text-slate-300" />
+                          )}
+                       </div>
+                       <div className="flex-1 space-y-3">
+                          <input
+                            name="img"
+                            value={propertyImageUrl}
+                            onChange={(e) => setPropertyImageUrl(e.target.value)}
+                            className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition"
+                            placeholder="https://..."
+                          />
+                          <div className="relative">
+                             <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, setPropertyImageUrl)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                             <div className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-600 text-center">
+                                {isUploading ? "Uploading..." : "Upload Image"}
+                             </div>
+                          </div>
+                       </div>
+                    </div>
                  </div>
 
                  <div className="bg-slate-50 p-6 rounded-3xl space-y-4">
