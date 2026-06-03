@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { Users, Briefcase, Newspaper, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 
 export const Route = createFileRoute("/about")({
@@ -115,64 +114,6 @@ function AboutPage() {
                 </div>
                 <h4 className="text-xl text-ink uppercase tracking-widest">{t.name}</h4>
                 <p className="text-xs uppercase tracking-widest text-brand mt-2">{t.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Careers */}
-      <section className="py-24 bg-surface border-y border-border">
-        <div className="container-realty grid lg:grid-cols-2 gap-24 items-center">
-          <div>
-            <h2 className="text-3xl md:text-5xl text-ink uppercase mb-8" style={{ fontFamily: "var(--font-serif)" }}>CAREERS AT GOLDEN DOOR REALTY</h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              Join a team of visionaries and innovators. We are always looking for passionate individuals who want to help us shape the future of real estate.
-            </p>
-            <ul className="space-y-4 mb-12">
-              <li className="flex items-center gap-3 text-ink"><CheckCircle2 className="w-5 h-5 text-brand" /> Inclusive Work Environment</li>
-              <li className="flex items-center gap-3 text-ink"><CheckCircle2 className="w-5 h-5 text-brand" /> Global Growth Opportunities</li>
-              <li className="flex items-center gap-3 text-ink"><CheckCircle2 className="w-5 h-5 text-brand" /> Professional Development</li>
-            </ul>
-            <button className="bg-ink text-white px-10 py-5 text-[10px] font-bold uppercase tracking-widest hover:bg-brand transition flex items-center gap-2">
-              Explore Openings <Briefcase className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="relative">
-             <div className="aspect-video bg-muted">
-                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000" className="w-full h-full object-cover" />
-             </div>
-             <div className="absolute -bottom-8 -left-8 bg-brand p-8 text-white">
-                <p className="text-4xl font-light">500+</p>
-                <p className="text-[10px] uppercase tracking-widest">Active Employees</p>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Press & Media */}
-      <section className="py-24 bg-background">
-        <div className="container-realty">
-          <div className="flex items-end justify-between mb-16">
-            <div>
-              <p className="text-xs tracking-[0.4em] uppercase text-brand mb-4">Latest Updates</p>
-              <h2 className="text-3xl md:text-5xl text-ink uppercase" style={{ fontFamily: "var(--font-serif)" }}>PRESS & MEDIA</h2>
-            </div>
-            <button className="text-[11px] font-bold tracking-[0.18em] uppercase text-ink border-b border-ink pb-1 flex items-center gap-2 hover:text-brand hover:border-brand transition">
-              Media Centre <Newspaper className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12">
-            {[
-              { t: "Golden Door Realty Announces Record Revenue for Q1 2026", d: "A 15% increase compared to previous year, driven by strong international sales.", date: "May 12, 2026" },
-              { t: "New Landmark Launch in Noida Creek Harbour", d: "The latest residential tower promises a new standard of luxury living.", date: "April 28, 2026" }
-            ].map((n, i) => (
-              <div key={i} className="p-10 border border-border hover:border-brand transition group cursor-pointer">
-                <p className="text-[10px] uppercase text-brand mb-4">{n.date}</p>
-                <h3 className="text-2xl text-ink uppercase tracking-wider mb-6 group-hover:text-brand transition-colors">{n.t}</h3>
-                <p className="text-muted-foreground leading-relaxed mb-6">{n.d}</p>
-                <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink group-hover:gap-4 transition-all">Read More <ArrowRight className="w-4 h-4" /></span>
               </div>
             ))}
           </div>

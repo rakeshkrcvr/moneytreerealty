@@ -6,6 +6,7 @@ import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
 import { createLead } from "@/lib/server-functions";
 import { toast } from "sonner";
+import { normalizeGoogleMapsEmbedUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({ 
@@ -30,7 +31,7 @@ function ContactPage() {
   const phone = content.phone || "+971 4 366 1688";
   const email = content.email || "contactus@goldendoorrealty.com";
   const hours = content.hours || "Sunday – Thursday: 9:00 AM – 6:00 PM";
-  const mapUrl = content.map_iframe_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1785100234475!2d55.27138287607738!3d25.19719693170799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f4334adcc6279%3A0xc3c5443e0160b73b!2sBurj%20Khalifa!5e0!3m2!1sen!2sae!4v1715360000000!5m2!1sen!2sae";
+  const mapUrl = normalizeGoogleMapsEmbedUrl(content.map_iframe_url);
   const formTitle = content.form_title || "Send us a Message";
   const formDesc = content.form_desc || "Our team will get back to you within 24 hours.";
 

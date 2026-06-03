@@ -15,6 +15,7 @@ import {
   getAllCommunities, createCommunity, updateCommunity, deleteCommunity
 } from "../lib/server-functions";
 import { toast } from "sonner";
+import { DEFAULT_GOOGLE_MAP_EMBED_URL, normalizeGoogleMapsEmbedUrl } from "../lib/utils";
 
 export const Route = createFileRoute("/admin")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -1682,7 +1683,7 @@ function AdminDashboard() {
                           phone: formData.get("phone"),
                           email: formData.get("email"),
                           hours: formData.get("hours"),
-                          map_iframe_url: formData.get("map_iframe_url"),
+                          map_iframe_url: normalizeGoogleMapsEmbedUrl(formData.get("map_iframe_url")),
                           form_title: formData.get("form_title"),
                           form_desc: formData.get("form_desc"),
                         }
@@ -1748,7 +1749,7 @@ function AdminDashboard() {
                         <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Map & Form</h3>
                         <div>
                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Google Map Iframe URL (Embed Link)</label>
-                           <input name="map_iframe_url" defaultValue={data.settings?.page_content?.contact?.map_iframe_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1785100234475!2d55.27138287607738!3d25.19719693170799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f4334adcc6279%3A0xc3c5443e0160b73b!2sBurj%20Khalifa!5e0!3m2!1sen!2sae!4v1715360000000!5m2!1sen!2sae"} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                           <input name="map_iframe_url" defaultValue={normalizeGoogleMapsEmbedUrl(data.settings?.page_content?.contact?.map_iframe_url || DEFAULT_GOOGLE_MAP_EMBED_URL)} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                            <div>

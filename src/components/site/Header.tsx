@@ -11,6 +11,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeMega, setActiveMega] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpenMega, setMobileOpenMega] = useState<string | null>(null);
   const [showContactModal, setShowContactModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
@@ -76,9 +77,9 @@ export function Header() {
   };
 
   const navLinks = [
-    { label: "Projects", type: "mega", id: "projects" },
+    { label: "Projects", path: "/properties", type: "mega", id: "projects" },
     { label: "About", path: "/about" },
-    { label: "Blogs", type: "mega", id: "blogs" },
+    { label: "Blogs", path: "/blogs", type: "mega", id: "blogs" },
     { label: "Events", path: "/events" },
     { label: "Career", path: "/career" },
     { label: "Contact", path: "/contact" },
@@ -91,7 +92,7 @@ export function Header() {
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 bg-[#004037] text-white py-1.5 md:py-2 ${
+      className={`fixed top-0 left-0 w-full z-[1100] transition-all duration-300 bg-[#004037] text-white py-1.5 md:py-2 ${
         scrolled ? "shadow-2xl" : ""
       }`}
       onMouseLeave={() => setActiveMega(null)}
@@ -121,10 +122,17 @@ export function Header() {
               className="relative group"
               onMouseEnter={() => link.type === "mega" ? setActiveMega(link.id) : setActiveMega(null)}
             >
-              {link.path ? (
+              {link.type === "mega" ? (
+                <Link
+                  to={link.path as any}
+                  className="text-sm font-medium tracking-wide flex items-center gap-1.5 hover:text-white/80 transition-colors py-2"
+                >
+                  {link.label} <ChevronDown className={`w-3.5 h-3.5 transition-transform ${activeMega === link.id ? "rotate-180" : ""}`} />
+                </Link>
+              ) : link.path ? (
                 <Link 
                   to={link.path as any} 
-                  className="text-[13px] font-medium tracking-wide hover:text-white/80 transition-colors py-2 block"
+                  className="text-sm font-medium tracking-wide hover:text-white/80 transition-colors py-2 block"
                 >
                   {link.label}
                 </Link>
@@ -160,7 +168,10 @@ export function Header() {
 
           <button 
             className="lg:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              setMobileMenuOpen(!mobileMenuOpen);
+              if (mobileMenuOpen) setMobileOpenMega(null);
+            }}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -183,8 +194,8 @@ export function Header() {
                       search={{ city: city.title }}
                       className="flex items-center justify-between group"
                     >
-                      <span className="text-sm font-bold text-ink group-hover:text-brand transition-colors">{city.title}</span>
-                      <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded-full text-slate-500">{city.count}</span>
+                      <span className="text-base font-bold text-ink group-hover:text-brand transition-colors">{city.title}</span>
+                      <span className="text-xs bg-slate-100 px-2 py-0.5 rounded-full text-slate-500">{city.count}</span>
                     </Link>
                   </li>
                 ))}
@@ -193,13 +204,13 @@ export function Header() {
             <div className="w-1/4 border-r border-slate-100 pr-12">
               <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-6">Property Type</h4>
               <ul className="space-y-4">
-                <li><Link to="/properties" className="text-sm font-bold text-ink hover:text-brand transition-colors block">All Types</Link></li>
+                <li><Link to="/properties" className="text-base font-bold text-ink hover:text-brand transition-colors block">All Types</Link></li>
                 {types.map(type => (
                   <li key={type.id}>
                     <Link 
                       to="/properties" 
                       search={{ type: type.name }}
-                      className="text-sm font-bold text-ink hover:text-brand transition-colors block"
+                      className="text-base font-bold text-ink hover:text-brand transition-colors block"
                     >
                       {type.name}
                     </Link>
@@ -209,8 +220,8 @@ export function Header() {
             </div>
             <div className="w-2/4 pl-4">
               <div className="flex items-center justify-between mb-6">
-                <h4 className="text-sm font-bold text-ink">Properties in Gurugram</h4>
-                <Link to="/properties" search={{ city: "Gurugram" }} className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
+                <h4 className="text-base font-bold text-ink">Properties in Gurugram</h4>
+                <Link to="/properties" search={{ city: "Gurugram" }} className="text-xs font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
               </div>
               <div className="grid grid-cols-1 gap-6">
                 {properties.filter(p => p.city === 'Gurugram').slice(0, 2).map(p => (
@@ -219,9 +230,9 @@ export function Header() {
                       <ImageWithFallback src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div>
-                      <h5 className="text-sm font-bold text-ink line-clamp-1 group-hover:text-brand transition-colors">{p.title}</h5>
-                      <p className="text-[11px] text-slate-500 mb-1">{p.location}</p>
-                      <p className="text-[12px] font-bold text-brand">{p.price}</p>
+                      <h5 className="text-[15px] font-bold text-ink line-clamp-1 group-hover:text-brand transition-colors">{p.title}</h5>
+                      <p className="text-xs text-slate-500 mb-1">{p.location}</p>
+                      <p className="text-[13px] font-bold text-brand">{p.price}</p>
                     </div>
                   </Link>
                 ))}
@@ -270,14 +281,129 @@ export function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-[#004037] border-t border-white/10 p-6 animate-in slide-in-from-top-4">
-           <ul className="space-y-4 mb-8">
+        <div className="lg:hidden absolute top-full left-0 z-[1100] w-full bg-[#004037] border-t border-white/10 p-6 animate-in slide-in-from-top-4 max-h-[calc(100vh-96px)] overflow-y-auto">
+           <ul className="space-y-2 mb-8">
               {navLinks.map(link => (
-                <li key={link.label}>
-                  {link.path ? (
-                    <Link to={link.path as any} className="text-lg font-bold block" onClick={() => setMobileMenuOpen(false)}>{link.label}</Link>
-                  ) : (
-                    <span className="text-lg font-bold block text-white/60">{link.label}</span>
+                <li key={link.label} className="border-b border-white/10 last:border-b-0">
+                  <div className="flex items-center justify-between gap-3 py-3">
+                    {link.path ? (
+                      <Link
+                        to={link.path as any}
+                        className="text-lg font-bold block flex-1"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setMobileOpenMega(null);
+                        }}
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <span className="text-lg font-bold block flex-1 text-white/60">{link.label}</span>
+                    )}
+                    {link.type === "mega" && (
+                      <button
+                        type="button"
+                        aria-label={`Toggle ${link.label} menu`}
+                        aria-expanded={mobileOpenMega === link.id}
+                        onClick={() => setMobileOpenMega(mobileOpenMega === link.id ? null : link.id || null)}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                      >
+                        <ChevronDown className={`h-5 w-5 transition-transform ${mobileOpenMega === link.id ? "rotate-180" : ""}`} />
+                      </button>
+                    )}
+                  </div>
+
+                  {link.id === "projects" && mobileOpenMega === "projects" && (
+                    <div className="pb-5 pl-2 pr-1">
+                      <div className="mb-4">
+                        <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">Select City</p>
+                        <ul className="space-y-2">
+                          {cityCounts.map(city => (
+                            <li key={city.slug}>
+                              <Link
+                                to="/properties"
+                                search={{ city: city.title }}
+                                className="flex items-center justify-between rounded-lg bg-white/5 px-4 py-3 text-sm font-bold text-white"
+                                onClick={() => {
+                                  setMobileMenuOpen(false);
+                                  setMobileOpenMega(null);
+                                }}
+                              >
+                                <span>{city.title}</span>
+                                <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/75">{city.count}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">Property Type</p>
+                        <ul className="space-y-2">
+                          <li>
+                            <Link
+                              to="/properties"
+                              className="block rounded-lg bg-white/5 px-4 py-3 text-sm font-bold text-white"
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                setMobileOpenMega(null);
+                              }}
+                            >
+                              All Types
+                            </Link>
+                          </li>
+                          {types.map(type => (
+                            <li key={type.id}>
+                              <Link
+                                to="/properties"
+                                search={{ type: type.name }}
+                                className="block rounded-lg bg-white/5 px-4 py-3 text-sm font-bold text-white"
+                                onClick={() => {
+                                  setMobileMenuOpen(false);
+                                  setMobileOpenMega(null);
+                                }}
+                              >
+                                {type.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
+                  {link.id === "blogs" && mobileOpenMega === "blogs" && (
+                    <div className="pb-5 pl-2 pr-1">
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            to="/blogs"
+                            className="block rounded-lg bg-white/5 px-4 py-3 text-sm font-bold text-white"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileOpenMega(null);
+                            }}
+                          >
+                            All Blogs
+                          </Link>
+                        </li>
+                        {blogs.slice(0, 4).map(blog => (
+                          <li key={blog.id}>
+                            <Link
+                              to="/blogs/$slug"
+                              params={{ slug: blog.slug }}
+                              className="block rounded-lg bg-white/5 px-4 py-3 text-sm font-bold text-white"
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                setMobileOpenMega(null);
+                              }}
+                            >
+                              {blog.title}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </li>
               ))}
