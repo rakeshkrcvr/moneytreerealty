@@ -653,12 +653,12 @@ function AdminDashboard() {
     <div className="min-h-screen bg-[#F0F2F5] flex font-sans text-slate-800 antialiased overflow-hidden">
       
       {/* Sidebar */}
-      <aside className="w-60 bg-white border-r border-slate-100 flex flex-col p-6 shrink-0 h-screen sticky top-0 z-[100] shadow-xl">
-        <div className="flex items-center gap-3 mb-8 px-2">
+      <aside className="w-60 bg-white border-r border-slate-100 flex flex-col p-6 shrink-0 h-screen sticky top-0 z-[100] shadow-xl overflow-hidden">
+        <div className="flex items-center gap-3 mb-8 px-2 shrink-0">
            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold italic shadow-lg shadow-blue-100">e</div>
            <span className="font-bold text-lg tracking-tight text-slate-900">The Estate</span>
         </div>
-        <nav className="flex-1 space-y-1">
+        <nav className="flex-1 min-h-0 space-y-1 overflow-y-auto pr-2 -mr-2 pb-4">
            {sidebarItems.map((item) => (
              <div key={item.id}>
                <button 
@@ -685,7 +685,7 @@ function AdminDashboard() {
                  </div>
                </button>
                {item.subItems && isPagesExpanded && (
-                 <div className="mt-1 mb-2 ml-10 space-y-1">
+                 <div className="mt-1 mb-2 ml-10 space-y-0.5">
                    {item.subItems.map(sub => {
                      const pageMeta = adminPages.find(page => page.key === sub);
                      return (
@@ -695,7 +695,7 @@ function AdminDashboard() {
                          navigate({ search: { tab: "pages" } });
                          setEditingPageContent(sub);
                        }}
-                       className={`w-full text-left px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                       className={`w-full text-left px-4 py-1.5 text-xs font-bold rounded-xl transition-all ${
                          tab === "pages" && editingPageContent === sub
                          ? "text-blue-600 bg-blue-50"
                          : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
@@ -712,7 +712,7 @@ function AdminDashboard() {
         </nav>
         
         {/* DB Connection Badge */}
-        <div className={`mt-auto p-4 rounded-2xl flex items-center gap-3 border ${dbStatus === "connected" ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-red-50 border-red-100 text-red-700"}`}>
+        <div className={`mt-4 p-4 rounded-2xl flex items-center gap-3 border shrink-0 ${dbStatus === "connected" ? "bg-emerald-50 border-emerald-100 text-emerald-700" : "bg-red-50 border-red-100 text-red-700"}`}>
            {dbStatus === "connected" ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
            <div className="text-[10px] font-black uppercase tracking-widest">
               DB: {dbStatus === "connected" ? "SYNCED" : "OFFLINE"}
@@ -720,7 +720,7 @@ function AdminDashboard() {
         </div>
         <button
           onClick={handleLogout}
-          className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
+          className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0"
         >
           <LogOut className="w-4 h-4" />
           Logout
