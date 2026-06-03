@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getAllLaunches } from "@/lib/server-functions";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, SlidersHorizontal, ChevronRight, X, LayoutGrid, List } from "lucide-react";
 import { PropertyCard } from "@/components/site/PropertyCard";
 
@@ -10,6 +10,7 @@ export const Route = createFileRoute("/properties/")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       type: (search.type as string) || undefined,
+      city: (search.city as string) || undefined,
     };
   },
   head: () => ({
@@ -34,15 +35,18 @@ const filters = {
   tags: ["New Launch", "Ready To Move", "Luxury Projects", "Affordable Housing", "RERA Approved", "Verified"]
 };
 
-import { useSearch } from "@tanstack/react-router";
-
 function LaunchesPage() {
-  const { type } = useSearch({ from: "/properties/" });
+  const { type, city } = useSearch({ from: "/properties/" });
+  const navigate = useNavigate({ from: "/properties/" });
   const { launches } = Route.useLoaderData();
   const [activePurpose, setActivePurpose] = useState("Buy");
   const [selectedSub, setSelectedSub] = useState<string | null>(type || null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    setSelectedSub(type || null);
+  }, [type]);
 
   const filteredItems = useMemo(() => {
     return launches.filter(it => {
@@ -50,10 +54,11 @@ function LaunchesPage() {
                           it.location.toLowerCase().includes(search.toLowerCase());
       
       const matchSub = selectedSub ? it.type === selectedSub : true;
+      const matchCity = city ? it.city?.toLowerCase() === city.toLowerCase() : true;
       
-      return matchSearch && matchSub;
+      return matchSearch && matchSub && matchCity;
     });
-  }, [search, selectedSub, launches]);
+  }, [search, selectedSub, city, launches]);
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -144,7 +149,9 @@ function LaunchesPage() {
           <div className="flex-1">
             {/* Toolbar */}
             <div className="flex justify-between items-center mb-8 pb-6 border-b border-border">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">Showing {filteredItems.length} results</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">
+                Showing {filteredItems.length} results{city ? ` in ${city}` : ""}
+              </p>
               <div className="flex items-center gap-4">
                 <select className="text-[10px] uppercase tracking-widest font-bold bg-transparent focus:outline-none border-none cursor-pointer">
                   <option>Newest First</option>
@@ -170,7 +177,17 @@ function LaunchesPage() {
                 <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-xl uppercase tracking-widest text-ink mb-2">No properties found</h3>
                 <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms.</p>
-                <button onClick={() => { setSearch(""); setSelectedSub(null); setSelectedTags([]); }} className="mt-6 text-[10px] font-bold uppercase tracking-widest text-brand border-b border-brand pb-1">Clear all filters</button>
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setSelectedSub(null);
+                    setSelectedTags([]);
+                    navigate({ search: {} });
+                  }}
+                  className="mt-6 text-[10px] font-bold uppercase tracking-widest text-brand border-b border-brand pb-1"
+                >
+                  Clear all filters
+                </button>
               </div>
             )}
           </div>

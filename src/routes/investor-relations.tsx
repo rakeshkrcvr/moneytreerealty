@@ -5,7 +5,7 @@ import hero from "@/assets/community-marina.jpg";
 export const Route = createFileRoute("/investor-relations")({
   head: () => ({ meta: [{ title: "Investor Relations — Golden Door Realty" }, { name: "description", content: "Financial reports, disclosures and shareholder information." }] }),
   component: () => (
-    <InfoPage eyebrow="Shareholders" title="Investor Relations" heroImg={hero}
+    <InfoPage pageKey="investor-relations" eyebrow="Shareholders" title="Investor Relations" heroImg={hero}
       intro="Transparent reporting and value creation for our shareholders."
       sections={[
         { heading: "Financial Highlights", body: "Golden Door Realty continues to deliver record revenue and profitability driven by strong real estate sales and recurring income." },

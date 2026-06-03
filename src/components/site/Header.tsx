@@ -86,7 +86,7 @@ export function Header() {
 
   const cityCounts = communities.map(c => ({
     ...c,
-    count: properties.filter(p => p.city === c.title).length
+    count: properties.filter(p => p.city?.toLowerCase() === c.title?.toLowerCase()).length
   }));
 
   return (
@@ -179,8 +179,8 @@ export function Header() {
                 {cityCounts.map(city => (
                   <li key={city.slug}>
                     <Link 
-                      to="/properties/$slug" 
-                      params={{ slug: city.slug }}
+                      to="/properties" 
+                      search={{ city: city.title }}
                       className="flex items-center justify-between group"
                     >
                       <span className="text-sm font-bold text-ink group-hover:text-brand transition-colors">{city.title}</span>
@@ -210,7 +210,7 @@ export function Header() {
             <div className="w-2/4 pl-4">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-sm font-bold text-ink">Properties in Gurugram</h4>
-                <Link to="/properties/gurugram" className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
+                <Link to="/properties" search={{ city: "Gurugram" }} className="text-[11px] font-bold text-brand uppercase tracking-wider hover:underline">View All in Gurugram →</Link>
               </div>
               <div className="grid grid-cols-1 gap-6">
                 {properties.filter(p => p.city === 'Gurugram').slice(0, 2).map(p => (

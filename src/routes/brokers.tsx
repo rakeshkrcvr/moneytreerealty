@@ -5,7 +5,7 @@ import hero from "@/assets/launch-2.jpg";
 export const Route = createFileRoute("/brokers")({
   head: () => ({ meta: [{ title: "Brokers — Golden Door Realty" }, { name: "description", content: "Become a registered Golden Door Realty broker — programme details and registration." }] }),
   component: () => (
-    <InfoPage eyebrow="Partners" title="Brokers" heroImg={hero}
+    <InfoPage pageKey="brokers" eyebrow="Partners" title="Brokers" heroImg={hero}
       intro="Partner with Noida's leading developer and unlock unmatched commission structures."
       sections={[
         { heading: "Broker Registration", body: "Register your agency to gain exclusive access to project launches, inventory and marketing materials." },

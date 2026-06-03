@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
+import { useSiteSettings } from "@/components/site/SiteSettingsContext";
 import { Leaf, Sun, Droplets, Building2 } from "lucide-react";
 import hero from "@/assets/community-hills.jpg";
 
@@ -23,22 +24,24 @@ const pillars = [
 ];
 
 function SustainabilityPage() {
+  const settings = useSiteSettings();
+  const content = settings?.page_content?.sustainability || {};
+  const firstSection = content.sections?.[0] || {};
+
   return (
     <PageShell
-      eyebrow="Our Commitment"
-      title="Sustainability"
-      intro="Designing communities that respect the environment and elevate quality of life."
-      heroImg={hero}
+      eyebrow={content.eyebrow || "Our Commitment"}
+      title={content.title || "Sustainability"}
+      intro={content.intro || "Designing communities that respect the environment and elevate quality of life."}
+      heroImg={content.heroImg || hero}
     >
       <section className="py-24 bg-background">
         <div className="container-realty grid md:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">2030 Vision</p>
-            <h2 className="text-3xl md:text-5xl text-ink mb-6">Building a Better Tomorrow</h2>
+            <h2 className="text-3xl md:text-5xl text-ink mb-6">{firstSection.heading || "Building a Better Tomorrow"}</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Sustainability is at the heart of how we plan, build and operate. Aligned with the UN Sustainable
-              Development Goals and the UAE Net Zero 2050 strategy, we're creating communities that prove luxury
-              and responsibility can co-exist.
+              {firstSection.body || "Sustainability is at the heart of how we plan, build and operate. Aligned with the UN Sustainable Development Goals and the UAE Net Zero 2050 strategy, we're creating communities that prove luxury and responsibility can co-exist."}
             </p>
           </div>
           <div className="grid grid-cols-3 gap-6 text-center">

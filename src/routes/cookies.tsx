@@ -5,7 +5,7 @@ import hero from "@/assets/community-marina.jpg";
 export const Route = createFileRoute("/cookies")({
   head: () => ({ meta: [{ title: "Cookie Policy — Golden Door Realty" }, { name: "description", content: "How and why Golden Door Realty uses cookies on its websites." }] }),
   component: () => (
-    <InfoPage eyebrow="Legal" title="Cookie Policy" heroImg={hero}
+    <InfoPage pageKey="cookies" eyebrow="Legal" title="Cookie Policy" heroImg={hero}
       intro="We use cookies to improve your experience. You can manage preferences at any time."
       sections={[
         { heading: "What are cookies?", body: "Cookies are small text files stored on your device that help websites remember your preferences and usage." },

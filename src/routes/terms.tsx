@@ -5,7 +5,7 @@ import hero from "@/assets/community-hills.jpg";
 export const Route = createFileRoute("/terms")({
   head: () => ({ meta: [{ title: "Terms of Use — Golden Door Realty" }, { name: "description", content: "Terms governing the use of Golden Door Realty websites and digital services." }] }),
   component: () => (
-    <InfoPage eyebrow="Legal" title="Terms of Use" heroImg={hero}
+    <InfoPage pageKey="terms" eyebrow="Legal" title="Terms of Use" heroImg={hero}
       intro="Please read these terms carefully before using our digital services."
       sections={[
         { heading: "Acceptance", body: "By accessing this website you agree to be bound by these Terms of Use and all applicable laws." },

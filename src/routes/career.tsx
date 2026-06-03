@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/site/InfoPage";
 import hero from "@/assets/community-downtown.jpg";
 
-export const Route = createFileRoute("/careers")({
-  head: () => ({ meta: [{ title: "Careers — Golden Door Realty" }, { name: "description", content: "Join Golden Door Realty and help shape the future of premium living." }] }),
+export const Route = createFileRoute("/career")({
+  head: () => ({ meta: [{ title: "Career — Golden Door Realty" }, { name: "description", content: "Join Golden Door Realty and help shape the future of premium living." }] }),
   component: () => (
     <InfoPage pageKey="careers" eyebrow="Join Us" title="Careers" heroImg={hero}
       intro="Build your career with the company shaping the world's most iconic destinations."

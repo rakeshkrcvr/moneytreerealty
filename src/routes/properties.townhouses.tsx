@@ -5,7 +5,7 @@ import hero from "@/assets/launch-2.jpg";
 export const Route = createFileRoute("/properties/townhouses")({
   head: () => ({ meta: [{ title: "Townhouses — Golden Door Realty" }, { name: "description", content: "Modern townhouses combining villa-style living with community amenities." }] }),
   component: () => (
-    <InfoPage eyebrow="Modern Living" title="Townhouses" heroImg={hero}
+    <InfoPage pageKey="properties-townhouses" eyebrow="Modern Living" title="Townhouses" heroImg={hero}
       intro="Three- and four-bedroom townhouses set within green, walkable neighbourhoods."
       sections={[
         { heading: "Lifestyle Communities", body: "Curated parks, retail boulevards, schools and clinics within walking distance." },

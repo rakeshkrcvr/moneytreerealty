@@ -16,11 +16,14 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NewsroomRouteImport } from './routes/newsroom'
 import { Route as InvestorRelationsRouteImport } from './routes/investor-relations'
 import { Route as FaqsRouteImport } from './routes/faqs'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as CustomerServiceRouteImport } from './routes/customer-service'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareersRouteImport } from './routes/careers'
+import { Route as CareerRouteImport } from './routes/career'
 import { Route as BrokersRouteImport } from './routes/brokers'
+import { Route as AwardsRouteImport } from './routes/awards'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -72,6 +75,11 @@ const FaqsRoute = FaqsRouteImport.update({
   path: '/faqs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomerServiceRoute = CustomerServiceRouteImport.update({
   id: '/customer-service',
   path: '/customer-service',
@@ -92,9 +100,19 @@ const CareersRoute = CareersRouteImport.update({
   path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareerRoute = CareerRouteImport.update({
+  id: '/career',
+  path: '/career',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrokersRoute = BrokersRouteImport.update({
   id: '/brokers',
   path: '/brokers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AwardsRoute = AwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -177,11 +195,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/awards': typeof AwardsRoute
   '/brokers': typeof BrokersRoute
+  '/career': typeof CareerRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/customer-service': typeof CustomerServiceRoute
+  '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
   '/investor-relations': typeof InvestorRelationsRoute
   '/newsroom': typeof NewsroomRoute
@@ -206,11 +227,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/awards': typeof AwardsRoute
   '/brokers': typeof BrokersRoute
+  '/career': typeof CareerRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/customer-service': typeof CustomerServiceRoute
+  '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
   '/investor-relations': typeof InvestorRelationsRoute
   '/newsroom': typeof NewsroomRoute
@@ -236,11 +260,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/awards': typeof AwardsRoute
   '/brokers': typeof BrokersRoute
+  '/career': typeof CareerRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/customer-service': typeof CustomerServiceRoute
+  '/events': typeof EventsRoute
   '/faqs': typeof FaqsRoute
   '/investor-relations': typeof InvestorRelationsRoute
   '/newsroom': typeof NewsroomRoute
@@ -267,11 +294,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/awards'
     | '/brokers'
+    | '/career'
     | '/careers'
     | '/contact'
     | '/cookies'
     | '/customer-service'
+    | '/events'
     | '/faqs'
     | '/investor-relations'
     | '/newsroom'
@@ -296,11 +326,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/awards'
     | '/brokers'
+    | '/career'
     | '/careers'
     | '/contact'
     | '/cookies'
     | '/customer-service'
+    | '/events'
     | '/faqs'
     | '/investor-relations'
     | '/newsroom'
@@ -325,11 +358,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/awards'
     | '/brokers'
+    | '/career'
     | '/careers'
     | '/contact'
     | '/cookies'
     | '/customer-service'
+    | '/events'
     | '/faqs'
     | '/investor-relations'
     | '/newsroom'
@@ -355,11 +391,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  AwardsRoute: typeof AwardsRoute
   BrokersRoute: typeof BrokersRoute
+  CareerRoute: typeof CareerRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   CustomerServiceRoute: typeof CustomerServiceRoute
+  EventsRoute: typeof EventsRoute
   FaqsRoute: typeof FaqsRoute
   InvestorRelationsRoute: typeof InvestorRelationsRoute
   NewsroomRoute: typeof NewsroomRoute
@@ -432,6 +471,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaqsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customer-service': {
       id: '/customer-service'
       path: '/customer-service'
@@ -460,11 +506,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CareersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/career': {
+      id: '/career'
+      path: '/career'
+      fullPath: '/career'
+      preLoaderRoute: typeof CareerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/brokers': {
       id: '/brokers'
       path: '/brokers'
       fullPath: '/brokers'
       preLoaderRoute: typeof BrokersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/awards': {
+      id: '/awards'
+      path: '/awards'
+      fullPath: '/awards'
+      preLoaderRoute: typeof AwardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -579,11 +639,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  AwardsRoute: AwardsRoute,
   BrokersRoute: BrokersRoute,
+  CareerRoute: CareerRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   CustomerServiceRoute: CustomerServiceRoute,
+  EventsRoute: EventsRoute,
   FaqsRoute: FaqsRoute,
   InvestorRelationsRoute: InvestorRelationsRoute,
   NewsroomRoute: NewsroomRoute,

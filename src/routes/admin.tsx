@@ -23,6 +23,93 @@ export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
 });
 
+const adminPages = [
+  { key: "home", label: "Home Page", editor: "custom" },
+  { key: "about", label: "About Page", editor: "custom" },
+  { key: "contact", label: "Contact Page", editor: "custom" },
+  { key: "services", label: "Services Page", editor: "custom" },
+  { key: "communities", label: "Communities Page", editor: "custom" },
+  { key: "careers", label: "Careers Page", editor: "info", defaults: { eyebrow: "Join Us", title: "Careers", intro: "Build your career with the company shaping the world's most iconic destinations.", heroImg: "/assets/community-downtown.jpg", sections: [
+    { heading: "Why Golden Door Realty", body: "We attract and retain the best talent by offering meaningful work, world-class projects, and an environment where creativity and entrepreneurship thrive." },
+    { heading: "Open Roles", body: "Explore opportunities across Real Estate, Hospitality, Retail, Technology, Design and Corporate functions." },
+    { heading: "Graduate Programme", body: "Our two-year structured programme accelerates high-potential graduates into leadership tracks across the group." },
+  ] } },
+  { key: "events", label: "Events Page", editor: "info", defaults: { eyebrow: "What's On", title: "Events", intro: "Explore upcoming project launches, open houses, investor meets and community experiences.", heroImg: "/assets/launch-2.jpg", sections: [
+    { heading: "Project Launches", body: "Join our launch events to preview new residences, payment plans and inventory before public release." },
+    { heading: "Open Houses", body: "Visit ready-to-move homes and sample apartments with our property consultants." },
+    { heading: "Investor Meets", body: "Attend curated sessions on market trends, high-growth locations and portfolio planning." },
+  ] } },
+  { key: "awards", label: "Awards & Recognition Page", editor: "info", defaults: { eyebrow: "Recognition", title: "Awards & Recognition", intro: "A record of excellence across development, design, service and customer trust.", heroImg: "/assets/community-marina.jpg", sections: [
+    { heading: "Industry Recognition", body: "Our projects and teams are recognised for quality, innovation and customer-first delivery." },
+    { heading: "Design Excellence", body: "Golden Door Realty communities are shaped by thoughtful architecture, planning and placemaking." },
+    { heading: "Customer Trust", body: "Awards matter most when they reflect the confidence of homebuyers, investors and partners." },
+  ] } },
+  { key: "newsroom", label: "Newsroom Page", editor: "info", defaults: { eyebrow: "Press", title: "Newsroom", intro: "Press releases, announcements and stories from across Golden Door Realty.", heroImg: "", sections: [
+    { heading: "Latest News", body: "Stay up to date with our launches, milestones and corporate announcements." },
+    { heading: "Media Enquiries", body: "Journalists may contact our communications team at media@goldendoorrealty.com for interviews and information requests." },
+    { heading: "Brand Assets", body: "Approved logos, imagery and brand guidelines are available on request from the press team." },
+  ] } },
+  { key: "sustainability", label: "Sustainability Page", editor: "info", defaults: { eyebrow: "Our Commitment", title: "Sustainability", intro: "Designing communities that respect the environment and elevate quality of life.", heroImg: "", sections: [
+    { heading: "Building a Better Tomorrow", body: "Sustainability is at the heart of how we plan, build and operate. Aligned with the UN Sustainable Development Goals and the UAE Net Zero 2050 strategy, we're creating communities that prove luxury and responsibility can co-exist." },
+  ] } },
+  { key: "investor-relations", label: "Investor Relations Page", editor: "info", defaults: { eyebrow: "Shareholders", title: "Investor Relations", intro: "Transparent reporting and value creation for our shareholders.", heroImg: "", sections: [
+    { heading: "Financial Highlights", body: "Golden Door Realty continues to deliver record revenue and profitability driven by strong real estate sales and recurring income." },
+    { heading: "Annual Reports", body: "Access annual reports, quarterly results, investor presentations and audited financial statements." },
+    { heading: "Corporate Governance", body: "Our governance framework ensures accountability, transparency and ethical conduct at every level." },
+  ] } },
+  { key: "brokers", label: "Brokers Page", editor: "info", defaults: { eyebrow: "Partners", title: "Brokers", intro: "Partner with Noida's leading developer and unlock unmatched commission structures.", heroImg: "", sections: [
+    { heading: "Broker Registration", body: "Register your agency to gain exclusive access to project launches, inventory and marketing materials." },
+    { heading: "Commissions & Incentives", body: "Industry-leading commission tiers, performance bonuses and quarterly broker awards." },
+    { heading: "Training & Support", body: "Dedicated relationship managers, project briefings and showroom access for registered partners." },
+  ] } },
+  { key: "customer-service", label: "Customer Service Page", editor: "info", defaults: { eyebrow: "Owners", title: "Customer Service", intro: "Dedicated support throughout your ownership journey.", heroImg: "", sections: [
+    { heading: "Owner Portal", body: "Manage payments, raise service requests and access community updates through the Golden Door Realty One app." },
+    { heading: "Maintenance", body: "24/7 maintenance support for snagging, repairs and community facilities." },
+    { heading: "Handover & Move-In", body: "End-to-end handover support including key collection, snagging walkthroughs and utilities setup." },
+  ] } },
+  { key: "faqs", label: "FAQs Page", editor: "info", defaults: { eyebrow: "Help", title: "Frequently Asked Questions", intro: "Quick answers to the questions our customers ask most.", heroImg: "", sections: [
+    { heading: "How do I buy a property?", body: "Reserve through our website, sales centre or a registered broker. Pay the booking fee, sign the SPA and follow the published payment plan." },
+    { heading: "What payment plans are available?", body: "Most off-plan projects offer flexible 60/40, 70/30 or post-handover plans. Specifics are confirmed at booking." },
+    { heading: "Can non-residents buy?", body: "Yes - Golden Door Realty properties are located in Noida freehold areas, allowing 100% foreign ownership." },
+  ] } },
+  { key: "privacy", label: "Privacy Policy Page", editor: "info", defaults: { eyebrow: "Legal", title: "Privacy Policy", intro: "Your privacy is important to us. This policy explains how we handle personal data.", heroImg: "", sections: [
+    { heading: "Information We Collect", body: "We collect contact information, property preferences, transaction history and website usage data to provide our services." },
+    { heading: "How We Use Data", body: "Personal data is used to fulfil contracts, provide customer support, send marketing with consent and meet legal obligations." },
+    { heading: "Your Rights", body: "You have the right to access, correct, delete or restrict processing of your personal data." },
+  ] } },
+  { key: "terms", label: "Terms of Use Page", editor: "info", defaults: { eyebrow: "Legal", title: "Terms of Use", intro: "Please read these terms carefully before using our digital services.", heroImg: "", sections: [
+    { heading: "Acceptance", body: "By accessing this website you agree to be bound by these Terms of Use and all applicable laws." },
+    { heading: "Intellectual Property", body: "All content, trademarks and designs on this site are owned by or licensed to Golden Door Realty." },
+    { heading: "Limitation of Liability", body: "Information is provided as-is without warranty." },
+  ] } },
+  { key: "cookies", label: "Cookie Policy Page", editor: "info", defaults: { eyebrow: "Legal", title: "Cookie Policy", intro: "We use cookies to improve your experience. You can manage preferences at any time.", heroImg: "", sections: [
+    { heading: "What are cookies?", body: "Cookies are small text files stored on your device that help websites remember your preferences and usage." },
+    { heading: "How we use them", body: "We use essential, performance, functional and marketing cookies to deliver, measure and personalise our services." },
+    { heading: "Managing cookies", body: "You can accept, reject or customise cookie categories using our consent banner or your browser settings." },
+  ] } },
+  { key: "properties-apartments", label: "Apartments Page", editor: "info", defaults: { eyebrow: "Residences", title: "Apartments", intro: "One- to four-bedroom residences in landmark towers across Noida.", heroImg: "", sections: [
+    { heading: "Iconic Addresses", body: "From Downtown Noida to Golden Door Realty Beachfront, our apartments offer breathtaking views and best-in-class amenities." },
+    { heading: "Smart Investment", body: "Strong rental yields and sustained capital appreciation make our apartments a premier investment choice." },
+  ] } },
+  { key: "properties-villas", label: "Villas Page", editor: "info", defaults: { eyebrow: "Family Living", title: "Villas", intro: "Spacious villas with private gardens, pools and resort-style amenities.", heroImg: "", sections: [
+    { heading: "Premier Communities", body: "Villas across premium communities with comfort, privacy and green surroundings." },
+    { heading: "Designed for Family", body: "Open-plan layouts, smart home technology and easy access to schools, parks and lifestyle amenities." },
+  ] } },
+  { key: "properties-townhouses", label: "Townhouses Page", editor: "info", defaults: { eyebrow: "Modern Living", title: "Townhouses", intro: "Three- and four-bedroom townhouses set within green, walkable neighbourhoods.", heroImg: "", sections: [
+    { heading: "Lifestyle Communities", body: "Curated parks, retail boulevards, schools and clinics within walking distance." },
+    { heading: "Best of Both", body: "The privacy of a villa with the affordability and convenience of community living." },
+  ] } },
+  { key: "properties-commercial", label: "Commercial Properties Page", editor: "info", defaults: { eyebrow: "Business", title: "Commercial Properties", intro: "Premium office and retail spaces in Noida's most prestigious business hubs.", heroImg: "", sections: [
+    { heading: "Grade-A Spaces", body: "Iconic commercial towers with unmatched connectivity and prestige." },
+    { heading: "Retail & F&B", body: "High-footfall retail spaces in landmark destinations and growing corridors." },
+  ] } },
+  { key: "properties-hospitality", label: "Hospitality Page", editor: "info", defaults: { eyebrow: "Stay", title: "Hospitality", intro: "Award-winning hotels and resorts under premium hospitality brands.", heroImg: "", sections: [
+    { heading: "Luxury Hospitality", body: "Premium hospitality experiences redefining the art of stay across key destinations." },
+    { heading: "Contemporary Hotels", body: "Upscale hotels for the next generation of urban travellers." },
+    { heading: "Refined Experiences", body: "Elegant stays inspired by local culture, comfort and service." },
+  ] } },
+];
+
 function AdminDashboard() {
   const { tab } = useSearch({ from: "/admin" });
   const navigate = useNavigate({ from: "/admin" });
@@ -308,7 +395,7 @@ function AdminDashboard() {
             img: formData.get("img") as string
           }
         });
-        toast.success("Community updated!");
+        toast.success("City updated!");
       } else {
         await updateProperty({
           data: {
@@ -449,11 +536,11 @@ function AdminDashboard() {
     setIsSubmitting(true);
     try {
       await createCommunity({ data: c });
-      toast.success("Community added!");
+      toast.success("City added!");
       setShowAddModal(null);
       refreshData();
     } catch (error) {
-      toast.error("Failed to add community.");
+      toast.error("Failed to add city.");
     } finally {
       setIsSubmitting(false);
     }
@@ -539,12 +626,12 @@ function AdminDashboard() {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, count: data.properties.length },
     { id: "manage_property", label: "Properties", icon: Building2, count: data.properties.length },
     { id: "property_types", label: "Types", icon: Layers, count: data.types.length },
+    { id: "manage_communities", label: "Cities", icon: Compass, count: data.communities?.length || 0 },
     { id: "amenities", label: "Amenities", icon: Tags, count: data.amenities.length },
     { id: "developers", label: "Developers", icon: Building2, count: data.developers.length },
     { id: "blogs", label: "Blogs", icon: FileText, count: data.blogs.length },
     { id: "leads", label: "Leads", icon: User, count: data.leads.length },
-    { id: "manage_communities", label: "Communities", icon: Compass, count: data.communities?.length || 0 },
-    { id: "pages", label: "Pages", icon: AppWindow, subItems: ["home", "about", "contact", "services", "communities"] },
+    { id: "pages", label: "Pages", icon: AppWindow, subItems: adminPages.map(page => page.key) },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -599,7 +686,9 @@ function AdminDashboard() {
                </button>
                {item.subItems && isPagesExpanded && (
                  <div className="mt-1 mb-2 ml-10 space-y-1">
-                   {item.subItems.map(sub => (
+                   {item.subItems.map(sub => {
+                     const pageMeta = adminPages.find(page => page.key === sub);
+                     return (
                      <button
                        key={sub}
                        onClick={() => {
@@ -612,9 +701,10 @@ function AdminDashboard() {
                          : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
                        }`}
                      >
-                       {sub.replace("-", " ")}
+                       {pageMeta?.label.replace(" Page", "") || sub.replace("-", " ")}
                      </button>
-                   ))}
+                     );
+                   })}
                  </div>
                )}
              </div>
@@ -657,6 +747,9 @@ function AdminDashboard() {
             )}
             {tab === "amenities" && (
                <button onClick={() => setShowAddModal("amenity")} className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2"><Plus className="w-5 h-5" /> Add Amenity</button>
+            )}
+            {tab === "manage_communities" && (
+               <button onClick={() => setShowAddModal("community")} className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2"><Plus className="w-5 h-5" /> Add City</button>
             )}
          </header>
 
@@ -1023,8 +1116,8 @@ function AdminDashboard() {
             {tab === "manage_communities" && (
               <div className="space-y-6">
                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-black">Communities</h2>
-                    <button onClick={() => setShowAddModal("community")} className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-700 transition shadow-sm">Add Community</button>
+                    <h2 className="text-2xl font-black">Cities</h2>
+                    <button onClick={() => setShowAddModal("community")} className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-700 transition shadow-sm">Add City</button>
                  </div>
                  <div className="grid grid-cols-3 gap-5">
                     {(data.communities || []).map((c: any) => (
@@ -1613,26 +1706,107 @@ function AdminDashboard() {
                     </form>
                  </div>
                ) : editingPageContent ? (
-                 <div className="bg-white rounded-[40px] p-16 text-center shadow-sm border border-white">
-                    <AppWindow className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-slate-400 mb-2">Content Editor Coming Soon</h3>
-                    <p className="text-sm text-slate-400 max-w-sm mx-auto">The content editor for {editingPageContent} is currently under development.</p>
+                 <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
+                    {(() => {
+                      const pageMeta = adminPages.find(page => page.key === editingPageContent);
+                      const saved = data.settings?.page_content?.[editingPageContent] || {};
+                      const defaults = pageMeta?.defaults || {};
+                      const sections = saved.sections || defaults.sections || [
+                        { heading: "Section 1", body: "Add page content here." },
+                        { heading: "Section 2", body: "Add page content here." },
+                        { heading: "Section 3", body: "Add page content here." },
+                      ];
+
+                      return (
+                        <form onSubmit={async (e) => {
+                          e.preventDefault();
+                          setIsSubmitting(true);
+                          const formData = new FormData(e.currentTarget);
+                          const nextSections = [0, 1, 2].map((idx) => ({
+                            heading: formData.get(`section_${idx}_heading`) as string,
+                            body: formData.get(`section_${idx}_body`) as string,
+                          })).filter(section => section.heading || section.body);
+
+                          try {
+                            await updateSiteSettings({
+                              data: {
+                                ...data.settings,
+                                page_content: {
+                                  ...(data.settings?.page_content || {}),
+                                  [editingPageContent]: {
+                                    eyebrow: formData.get("eyebrow"),
+                                    title: formData.get("title"),
+                                    intro: formData.get("intro"),
+                                    heroImg: formData.get("heroImg"),
+                                    sections: nextSections,
+                                  }
+                                }
+                              }
+                            });
+                            toast.success(`${pageMeta?.label || "Page"} updated!`);
+                            refreshData();
+                          } catch (err) {
+                            toast.error("Failed to update page content");
+                          } finally {
+                            setIsSubmitting(false);
+                          }
+                        }} className="space-y-6">
+                          <div>
+                            <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">{pageMeta?.label || "Page Content"}</h3>
+                            <p className="text-xs text-slate-400 mt-1">Update the page hero and text sections.</p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Eyebrow</label>
+                              <input name="eyebrow" defaultValue={saved.eyebrow || defaults.eyebrow || ""} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Title</label>
+                              <input name="title" defaultValue={saved.title || defaults.title || pageMeta?.label?.replace(" Page", "") || ""} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Intro</label>
+                            <textarea name="intro" rows={3} defaultValue={saved.intro || defaults.intro || ""} className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Hero Image URL</label>
+                            <input name="heroImg" defaultValue={saved.heroImg || defaults.heroImg || ""} placeholder="https://..." className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                          </div>
+
+                          <div className="space-y-4 pt-4 border-t border-slate-100">
+                            <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Content Sections</h3>
+                            {[0, 1, 2].map((idx) => (
+                              <div key={idx} className="p-4 bg-slate-50 rounded-2xl space-y-3">
+                                <input name={`section_${idx}_heading`} defaultValue={sections[idx]?.heading || ""} placeholder={`Section ${idx + 1} heading`} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm font-bold focus:bg-white focus:border-blue-500 transition outline-none" />
+                                <textarea name={`section_${idx}_body`} rows={4} defaultValue={sections[idx]?.body || ""} placeholder={`Section ${idx + 1} content`} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                              </div>
+                            ))}
+                          </div>
+
+                          <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
+                            {isSubmitting ? "Saving..." : "Update Page"}
+                          </button>
+                        </form>
+                      );
+                    })()}
                  </div>
                ) : (
                  <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white space-y-4">
-                     {["home", "about", "contact", "services", "communities"].map(page => (
-                        <div key={page} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-100 transition-all group">
+                     {adminPages.map(page => (
+                        <div key={page.key} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-100 transition-all group">
                            <div className="flex items-center gap-4">
                               <div className="w-12 h-12 bg-white border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center group-hover:text-blue-600 group-hover:border-blue-100 transition-all">
                                  <AppWindow className="w-5 h-5" />
                               </div>
                               <div>
-                                 <p className="font-bold uppercase tracking-widest text-sm text-slate-700 group-hover:text-blue-600 transition-colors">{page.replace("-", " ")} Page</p>
+                                 <p className="font-bold uppercase tracking-widest text-sm text-slate-700 group-hover:text-blue-600 transition-colors">{page.label}</p>
                                  <p className="text-[10px] text-slate-400">Manage templates and content sections</p>
                               </div>
                            </div>
                            <button 
-                             onClick={() => setEditingPageContent(page)}
+                             onClick={() => setEditingPageContent(page.key)}
                              className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2"
                            >
                               <Plus className="w-3.5 h-3.5 rotate-45" /> Edit Content
@@ -1791,7 +1965,7 @@ function AdminDashboard() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
            <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
               <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-                 <h3 className="text-xl font-black">Edit {editingItem._type === 'type' ? 'Category' : editingItem._type === 'amenity' ? 'Amenity' : 'Listing'}</h3>
+                 <h3 className="text-xl font-black">Edit {editingItem._type === 'type' ? 'Category' : editingItem._type === 'amenity' ? 'Amenity' : editingItem._type === 'community' ? 'City' : 'Listing'}</h3>
                  <button onClick={() => setEditingItem(null)} className="p-2 hover:bg-slate-50 rounded-full transition-colors"><X className="w-6 h-6" /></button>
               </div>
               <form onSubmit={handleUpdate} className="p-10 space-y-6 max-h-[85vh] overflow-y-auto">
@@ -2179,7 +2353,7 @@ function AdminDashboard() {
                       {editingItem._type === 'community' && (
                         <div className="space-y-6">
                            <div className="mt-4 space-y-2">
-                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Community Title</label>
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">City Name</label>
                               <input name="title" defaultValue={editingItem.title} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
                            </div>
                            <div className="mt-4 space-y-2">
@@ -2627,12 +2801,12 @@ function AdminDashboard() {
          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
             <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
                <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-                  <h3 className="text-xl font-black">Add Community</h3>
+                  <h3 className="text-xl font-black">Add City</h3>
                   <button onClick={() => setShowAddModal(null)} className="p-2 hover:bg-slate-50 rounded-full transition-colors"><X className="w-6 h-6" /></button>
                </div>
                <form onSubmit={handleAddCommunity} className="p-10 space-y-6">
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Community Title</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">City Name</label>
                      <input name="title" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Noida West" />
                   </div>
                   <div className="space-y-2">
@@ -2645,10 +2819,10 @@ function AdminDashboard() {
                   </div>
                   <div className="space-y-2">
                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Description</label>
-                     <textarea name="description" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition h-32" placeholder="Describe the community..." />
+                     <textarea name="description" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition h-32" placeholder="Describe the city..." />
                   </div>
                   <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.01] transition-all">
-                     {isSubmitting ? "Adding..." : "Add Community"}
+                     {isSubmitting ? "Adding..." : "Add City"}
                   </button>
                </form>
             </div>
