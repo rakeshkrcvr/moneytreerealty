@@ -37,6 +37,7 @@ import { Route as PropertiesHospitalityRouteImport } from './routes/properties.h
 import { Route as PropertiesCommercialRouteImport } from './routes/properties.commercial'
 import { Route as PropertiesApartmentsRouteImport } from './routes/properties.apartments'
 import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
+import { Route as PagesSlugRouteImport } from './routes/pages.$slug'
 import { Route as CompletedSlugRouteImport } from './routes/completed.$slug'
 import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
 
@@ -180,6 +181,11 @@ const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
   path: '/properties/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PagesSlugRoute = PagesSlugRouteImport.update({
+  id: '/pages/$slug',
+  path: '/pages/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompletedSlugRoute = CompletedSlugRouteImport.update({
   id: '/completed/$slug',
   path: '/completed/$slug',
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/completed/$slug': typeof CompletedSlugRoute
+  '/pages/$slug': typeof PagesSlugRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/properties/apartments': typeof PropertiesApartmentsRoute
   '/properties/commercial': typeof PropertiesCommercialRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/completed/$slug': typeof CompletedSlugRoute
+  '/pages/$slug': typeof PagesSlugRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/properties/apartments': typeof PropertiesApartmentsRoute
   '/properties/commercial': typeof PropertiesCommercialRoute
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
   '/completed/$slug': typeof CompletedSlugRoute
+  '/pages/$slug': typeof PagesSlugRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/properties/apartments': typeof PropertiesApartmentsRoute
   '/properties/commercial': typeof PropertiesCommercialRoute
@@ -311,6 +320,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blogs/$slug'
     | '/completed/$slug'
+    | '/pages/$slug'
     | '/properties/$slug'
     | '/properties/apartments'
     | '/properties/commercial'
@@ -343,6 +353,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blogs/$slug'
     | '/completed/$slug'
+    | '/pages/$slug'
     | '/properties/$slug'
     | '/properties/apartments'
     | '/properties/commercial'
@@ -375,6 +386,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blogs/$slug'
     | '/completed/$slug'
+    | '/pages/$slug'
     | '/properties/$slug'
     | '/properties/apartments'
     | '/properties/commercial'
@@ -408,6 +420,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   BlogsSlugRoute: typeof BlogsSlugRoute
   CompletedSlugRoute: typeof CompletedSlugRoute
+  PagesSlugRoute: typeof PagesSlugRoute
   PropertiesSlugRoute: typeof PropertiesSlugRoute
   PropertiesApartmentsRoute: typeof PropertiesApartmentsRoute
   PropertiesCommercialRoute: typeof PropertiesCommercialRoute
@@ -618,6 +631,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pages/$slug': {
+      id: '/pages/$slug'
+      path: '/pages/$slug'
+      fullPath: '/pages/$slug'
+      preLoaderRoute: typeof PagesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/completed/$slug': {
       id: '/completed/$slug'
       path: '/completed/$slug'
@@ -656,6 +676,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   BlogsSlugRoute: BlogsSlugRoute,
   CompletedSlugRoute: CompletedSlugRoute,
+  PagesSlugRoute: PagesSlugRoute,
   PropertiesSlugRoute: PropertiesSlugRoute,
   PropertiesApartmentsRoute: PropertiesApartmentsRoute,
   PropertiesCommercialRoute: PropertiesCommercialRoute,

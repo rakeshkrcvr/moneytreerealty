@@ -9,27 +9,70 @@ export function Footer() {
   const settings = useSiteSettings();
   const [logoFailed, setLogoFailed] = useState(false);
   const logoUrl = settings?.logo_url || "";
+  const pageContent = settings?.page_content || {};
 
   useEffect(() => {
     setLogoFailed(false);
   }, [logoUrl]);
-  
-  const quickLinks = [
-    { label: "Home", to: "/" },
-    { label: "About Us", to: "/about" },
-    { label: "Properties", to: "/properties" },
-    { label: "Our Services", to: "/services" },
-    { label: "Contact", to: "/contact" },
-    { label: "Careers", to: "/careers" },
-    { label: "Latest News", to: "/blogs" },
-    { label: "Events", to: "/events" },
-    { label: "Awards & Recognition", to: "/awards" },
-  ];
 
-  const legalLinks = [
-    { label: "Privacy Policy", to: "/privacy" },
-    { label: "Terms & Conditions", to: "/terms" },
+  const footerPages = [
+    { key: "home", label: "Home", to: "/", defaultSection: "quick" },
+    { key: "about", label: "About Us", to: "/about", defaultSection: "quick" },
+    { key: "services", label: "Our Services", to: "/services", defaultSection: "quick" },
+    { key: "contact", label: "Contact", to: "/contact", defaultSection: "quick" },
+    { key: "careers", label: "Careers", to: "/careers", defaultSection: "quick" },
+    { key: "events", label: "Events", to: "/events", defaultSection: "quick" },
+    { key: "awards", label: "Awards & Recognition", to: "/awards", defaultSection: "quick" },
+    { key: "newsroom", label: "Newsroom", to: "/newsroom", defaultSection: "none" },
+    { key: "sustainability", label: "Sustainability", to: "/sustainability", defaultSection: "none" },
+    { key: "investor-relations", label: "Investor Relations", to: "/investor-relations", defaultSection: "none" },
+    { key: "brokers", label: "Brokers", to: "/brokers", defaultSection: "none" },
+    { key: "customer-service", label: "Customer Service", to: "/customer-service", defaultSection: "none" },
+    { key: "faqs", label: "FAQs", to: "/faqs", defaultSection: "none" },
+    { key: "privacy", label: "Privacy Policy", to: "/privacy", defaultSection: "legal" },
+    { key: "terms", label: "Terms & Conditions", to: "/terms", defaultSection: "legal" },
+    { key: "cookies", label: "Cookie Policy", to: "/cookies", defaultSection: "none" },
+    { key: "properties-apartments", label: "Apartments", to: "/properties/apartments", defaultSection: "none" },
+    { key: "properties-villas", label: "Villas", to: "/properties/villas", defaultSection: "none" },
+    { key: "properties-townhouses", label: "Townhouses", to: "/properties/townhouses", defaultSection: "none" },
+    { key: "properties-commercial", label: "Commercial Properties", to: "/properties/commercial", defaultSection: "none" },
+    { key: "properties-hospitality", label: "Hospitality", to: "/properties/hospitality", defaultSection: "none" },
   ];
+  const customFooterPages = Object.entries(pageContent)
+    .filter(([, page]: [string, any]) => page?.customPage)
+    .map(([key, page]: [string, any]) => ({
+      key,
+      label: page.label || page.title || page.slug || "Page",
+      to: `/pages/${page.slug}`,
+      defaultSection: "none",
+    }));
+  const allFooterPages = [...footerPages, ...customFooterPages];
+
+  const linksForSection = (section: "quick" | "legal") => {
+    const links = allFooterPages
+      .filter((page) => {
+        const saved = pageContent?.[page.key] || {};
+        const footerSection = saved.footerSection || page.defaultSection;
+        return !saved.deleted && footerSection === section;
+      })
+      .map((page) => {
+        const saved = pageContent?.[page.key] || {};
+        return { label: saved.footerLabel || page.label, to: page.to };
+      });
+
+    if (section === "quick") {
+      const fixedLinks = [
+        { label: "Properties", to: "/properties" },
+        { label: "Latest News", to: "/blogs" },
+      ];
+      return [...links.slice(0, 2), ...fixedLinks, ...links.slice(2)];
+    }
+
+    return links;
+  };
+
+  const quickLinks = linksForSection("quick");
+  const legalLinks = linksForSection("legal");
 
   return (
     <footer className="bg-[#003029] text-white pt-20 pb-10 relative overflow-hidden">

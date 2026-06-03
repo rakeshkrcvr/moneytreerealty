@@ -38,12 +38,12 @@ const adminPages = [
     { heading: "Project Launches", body: "Join our launch events to preview new residences, payment plans and inventory before public release." },
     { heading: "Open Houses", body: "Visit ready-to-move homes and sample apartments with our property consultants." },
     { heading: "Investor Meets", body: "Attend curated sessions on market trends, high-growth locations and portfolio planning." },
-  ] } },
+  ], galleryImages: [] } },
   { key: "awards", label: "Awards & Recognition Page", editor: "info", defaults: { eyebrow: "Recognition", title: "Awards & Recognition", intro: "A record of excellence across development, design, service and customer trust.", heroImg: "/assets/community-marina.jpg", sections: [
     { heading: "Industry Recognition", body: "Our projects and teams are recognised for quality, innovation and customer-first delivery." },
     { heading: "Design Excellence", body: "Golden Door Realty communities are shaped by thoughtful architecture, planning and placemaking." },
     { heading: "Customer Trust", body: "Awards matter most when they reflect the confidence of homebuyers, investors and partners." },
-  ] } },
+  ], galleryImages: [] } },
   { key: "newsroom", label: "Newsroom Page", editor: "info", defaults: { eyebrow: "Press", title: "Newsroom", intro: "Press releases, announcements and stories from across Golden Door Realty.", heroImg: "", sections: [
     { heading: "Latest News", body: "Stay up to date with our launches, milestones and corporate announcements." },
     { heading: "Media Enquiries", body: "Journalists may contact our communications team at media@goldendoorrealty.com for interviews and information requests." },
@@ -110,6 +110,53 @@ const adminPages = [
   ] } },
 ];
 
+const defaultFooterSections: Record<string, "quick" | "legal" | "none"> = {
+  home: "quick",
+  about: "quick",
+  services: "quick",
+  contact: "quick",
+  careers: "quick",
+  events: "quick",
+  awards: "quick",
+  privacy: "legal",
+  terms: "legal",
+};
+
+const reservedPageSlugs = new Set([
+  "",
+  "about",
+  "admin",
+  "awards",
+  "blogs",
+  "brokers",
+  "career",
+  "careers",
+  "completed",
+  "contact",
+  "cookies",
+  "customer-service",
+  "events",
+  "faqs",
+  "home",
+  "investor-relations",
+  "newsroom",
+  "privacy",
+  "properties",
+  "property",
+  "services",
+  "sustainability",
+  "terms",
+]);
+
+function slugifyPage(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function AdminDashboard() {
   const { tab } = useSearch({ from: "/admin" });
   const navigate = useNavigate({ from: "/admin" });
@@ -131,6 +178,7 @@ function AdminDashboard() {
   const [developerLogoUrl, setDeveloperLogoUrl] = useState("");
   const [blogImgUrl, setBlogImgUrl] = useState("");
   const [propertyImageUrl, setPropertyImageUrl] = useState("");
+  const [pageGalleryUrls, setPageGalleryUrls] = useState<string[]>([]);
   const [editingPageContent, setEditingPageContent] = useState<string | null>(null);
   const [isPagesExpanded, setIsPagesExpanded] = useState(false);
 
@@ -185,6 +233,37 @@ function AdminDashboard() {
     setIsUploading(false);
     toast.success(`${newUrls.length} images added to gallery`);
   }
+
+  async function handlePageGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    const newUrls: string[] = [];
+
+    for (const file of files) {
+      const reader = new FileReader();
+      const uploadPromise = new Promise<string>((resolve) => {
+        reader.onload = async () => {
+          const base64 = reader.result as string;
+          try {
+            const { url } = await uploadImage({ data: { base64, fileName: file.name } });
+            resolve(url);
+          } catch (error) {
+            toast.error(`Failed to upload ${file.name}`);
+            resolve("");
+          }
+        };
+      });
+      reader.readAsDataURL(file);
+      const url = await uploadPromise;
+      if (url) newUrls.push(url);
+    }
+
+    setPageGalleryUrls(prev => [...prev, ...newUrls]);
+    setIsUploading(false);
+    toast.success(`${newUrls.length} gallery images added`);
+  }
   const [data, setData] = useState<any>({ properties: [], types: [], amenities: [], leads: [], developers: [], blogs: [], communities: [], settings: null });
   const [dbStatus, setDbStatus] = useState<"checking" | "connected" | "failed">("checking");
 
@@ -234,8 +313,22 @@ function AdminDashboard() {
       setDeveloperLogoUrl("");
       setBlogImgUrl("");
       setEditingPageContent(null);
+      setPageGalleryUrls([]);
     }
   }, [showAddModal]);
+
+  useEffect(() => {
+    if (!editingPageContent || !["events", "awards"].includes(editingPageContent)) {
+      setPageGalleryUrls([]);
+      return;
+    }
+
+    const pageMeta = adminPages.find(page => page.key === editingPageContent);
+    const saved = data.settings?.page_content?.[editingPageContent] || {};
+    const defaults = pageMeta?.defaults || {};
+    const images = saved.galleryImages || defaults.galleryImages || [];
+    setPageGalleryUrls(Array.isArray(images) ? images : []);
+  }, [editingPageContent, data.settings]);
 
   useEffect(() => {
     setSearchTerm("");
@@ -312,6 +405,98 @@ function AdminDashboard() {
       refreshData();
     } catch (e) {
       toast.error(`Failed to delete ${type}`);
+    }
+  }
+
+  async function updatePageMeta(pageKey: string, meta: Record<string, any>, successMessage = "Page settings updated") {
+    setIsSubmitting(true);
+    try {
+      const currentPage = data.settings?.page_content?.[pageKey] || {};
+      await updateSiteSettings({
+        data: {
+          ...data.settings,
+          page_content: {
+            ...(data.settings?.page_content || {}),
+            [pageKey]: {
+              ...currentPage,
+              ...meta,
+            },
+          },
+        },
+      });
+      toast.success(successMessage);
+      if (editingPageContent === pageKey && meta.deleted) setEditingPageContent(null);
+      refreshData();
+    } catch (e) {
+      toast.error("Failed to update page settings");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleDeletePage(pageKey: string) {
+    const saved = data.settings?.page_content?.[pageKey] || {};
+    const pageMeta = adminPages.find(page => page.key === pageKey);
+    if (!confirm(`Are you sure you want to delete ${saved.label || pageMeta?.label || "this page"} from admin and footer links?`)) return;
+    await updatePageMeta(pageKey, { deleted: true, footerSection: "none" }, "Page deleted from admin and footer links");
+  }
+
+  async function handleAddPage(e: React.FormEvent) {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const title = (formData.get("title") as string || "").trim();
+    const slug = slugifyPage((formData.get("slug") as string) || title);
+    const currentPageContent = data.settings?.page_content || {};
+    const slugExists = Object.values(currentPageContent).some((page: any) => page?.customPage && !page?.deleted && page?.slug === slug);
+
+    if (!title) {
+      toast.error("Page title is required");
+      return;
+    }
+
+    if (!slug || reservedPageSlugs.has(slug) || slugExists) {
+      toast.error("Please use a unique page URL slug");
+      return;
+    }
+
+    const pageKey = `custom-${slug}`;
+    const sections = [0, 1, 2].map((idx) => ({
+      heading: formData.get(`section_${idx}_heading`) as string,
+      body: formData.get(`section_${idx}_body`) as string,
+    })).filter(section => section.heading || section.body);
+
+    setIsSubmitting(true);
+    try {
+      await updateSiteSettings({
+        data: {
+          ...data.settings,
+          page_content: {
+            ...currentPageContent,
+            [pageKey]: {
+              customPage: true,
+              slug,
+              label: title,
+              eyebrow: formData.get("eyebrow") || "Info",
+              title,
+              intro: formData.get("intro") || "",
+              heroImg: formData.get("heroImg") || "",
+              sections,
+              footerSection: formData.get("footerSection") || "none",
+              deleted: false,
+            },
+          },
+        },
+      });
+      toast.success("New page added!");
+      setShowAddModal(null);
+      setEditingPageContent(pageKey);
+      setIsPagesExpanded(true);
+      navigate({ search: { tab: "pages" } });
+      refreshData();
+    } catch (e) {
+      toast.error("Failed to add page");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -622,6 +807,24 @@ function AdminDashboard() {
     );
   }
 
+  const pageContent = data.settings?.page_content || {};
+  const customAdminPages = Object.entries(pageContent)
+    .filter(([, page]: [string, any]) => page?.customPage)
+    .map(([key, page]: [string, any]) => ({
+      key,
+      label: `${page.label || page.title || page.slug || "Custom"} Page`,
+      editor: "info",
+      defaults: {
+        eyebrow: page.eyebrow || "Info",
+        title: page.title || page.label || "Custom Page",
+        intro: page.intro || "",
+        heroImg: page.heroImg || "",
+        sections: page.sections || [],
+      },
+    }));
+  const allAdminPages = [...adminPages, ...customAdminPages];
+  const visibleAdminPages = allAdminPages.filter(page => !pageContent?.[page.key]?.deleted);
+
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, count: data.properties.length },
     { id: "manage_property", label: "Properties", icon: Building2, count: data.properties.length },
@@ -631,7 +834,7 @@ function AdminDashboard() {
     { id: "developers", label: "Developers", icon: Building2, count: data.developers.length },
     { id: "blogs", label: "Blogs", icon: FileText, count: data.blogs.length },
     { id: "leads", label: "Leads", icon: User, count: data.leads.length },
-    { id: "pages", label: "Pages", icon: AppWindow, subItems: adminPages.map(page => page.key) },
+    { id: "pages", label: "Pages", icon: AppWindow, subItems: visibleAdminPages.map(page => page.key) },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -687,7 +890,7 @@ function AdminDashboard() {
                {item.subItems && isPagesExpanded && (
                  <div className="mt-1 mb-2 ml-10 space-y-0.5">
                    {item.subItems.map(sub => {
-                     const pageMeta = adminPages.find(page => page.key === sub);
+                     const pageMeta = allAdminPages.find(page => page.key === sub);
                      return (
                      <button
                        key={sub}
@@ -750,6 +953,9 @@ function AdminDashboard() {
             )}
             {tab === "manage_communities" && (
                <button onClick={() => setShowAddModal("community")} className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2"><Plus className="w-5 h-5" /> Add City</button>
+            )}
+            {tab === "pages" && (
+               <button onClick={() => setShowAddModal("page")} className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2"><Plus className="w-5 h-5" /> Add Page</button>
             )}
          </header>
 
@@ -1708,7 +1914,7 @@ function AdminDashboard() {
                ) : editingPageContent ? (
                  <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white">
                     {(() => {
-                      const pageMeta = adminPages.find(page => page.key === editingPageContent);
+                      const pageMeta = allAdminPages.find(page => page.key === editingPageContent);
                       const saved = data.settings?.page_content?.[editingPageContent] || {};
                       const defaults = pageMeta?.defaults || {};
                       const sections = saved.sections || defaults.sections || [
@@ -1726,6 +1932,10 @@ function AdminDashboard() {
                             heading: formData.get(`section_${idx}_heading`) as string,
                             body: formData.get(`section_${idx}_body`) as string,
                           })).filter(section => section.heading || section.body);
+                          const galleryImages = (formData.get("galleryImages") as string || "")
+                            .split(/\r?\n/)
+                            .map(url => url.trim())
+                            .filter(Boolean);
 
                           try {
                             await updateSiteSettings({
@@ -1734,11 +1944,15 @@ function AdminDashboard() {
                                 page_content: {
                                   ...(data.settings?.page_content || {}),
                                   [editingPageContent]: {
+                                    ...saved,
                                     eyebrow: formData.get("eyebrow"),
                                     title: formData.get("title"),
                                     intro: formData.get("intro"),
                                     heroImg: formData.get("heroImg"),
                                     sections: nextSections,
+                                    galleryImages: ["events", "awards"].includes(editingPageContent) ? galleryImages : saved.galleryImages,
+                                    footerSection: formData.get("footerSection"),
+                                    deleted: false,
                                   }
                                 }
                               }
@@ -1753,7 +1967,20 @@ function AdminDashboard() {
                         }} className="space-y-6">
                           <div>
                             <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">{pageMeta?.label || "Page Content"}</h3>
-                            <p className="text-xs text-slate-400 mt-1">Update the page hero and text sections.</p>
+                            <p className="text-xs text-slate-400 mt-1">Update the page hero, text sections, and footer placement.</p>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Show in Footer</label>
+                            <select
+                              name="footerSection"
+                              defaultValue={saved.footerSection || defaultFooterSections[editingPageContent] || "none"}
+                              className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none"
+                            >
+                              <option value="none">Do not show</option>
+                              <option value="quick">Quick Links</option>
+                              <option value="legal">Legal & Info</option>
+                            </select>
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
@@ -1785,6 +2012,56 @@ function AdminDashboard() {
                             ))}
                           </div>
 
+                          {["events", "awards"].includes(editingPageContent) && (
+                            <div className="space-y-4 pt-4 border-t border-slate-100">
+                              <div>
+                                <h3 className="font-bold text-sm uppercase tracking-widest text-slate-400">Lightbox Gallery</h3>
+                                <p className="text-xs text-slate-400 mt-1">Upload images or paste one image URL per line.</p>
+                              </div>
+
+                              <div className="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50 hover:border-blue-200 transition">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  onChange={handlePageGalleryUpload}
+                                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                />
+                                <div className="text-center">
+                                  <p className="text-sm font-bold text-slate-600">{isUploading ? "Uploading..." : "Click to upload gallery images"}</p>
+                                  <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Multiple images supported</p>
+                                </div>
+                              </div>
+
+                              {pageGalleryUrls.length > 0 && (
+                                <div className="grid grid-cols-3 gap-3">
+                                  {pageGalleryUrls.map((url, index) => (
+                                    <div key={`${url}-${index}`} className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 group">
+                                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+                                      <button
+                                        type="button"
+                                        onClick={() => setPageGalleryUrls(prev => prev.filter((_, itemIndex) => itemIndex !== index))}
+                                        className="absolute right-2 top-2 w-8 h-8 rounded-xl bg-white/90 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                                        aria-label="Remove gallery image"
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+
+                              <textarea
+                                name="galleryImages"
+                                rows={5}
+                                value={pageGalleryUrls.join("\n")}
+                                onChange={(e) => setPageGalleryUrls(e.target.value.split(/\r?\n/).map(url => url.trim()).filter(Boolean))}
+                                placeholder="https://example.com/image-1.jpg"
+                                className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none"
+                              />
+                            </div>
+                          )}
+
                           <button disabled={isSubmitting} type="submit" className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition disabled:opacity-50 shadow-lg shadow-blue-100">
                             {isSubmitting ? "Saving..." : "Update Page"}
                           </button>
@@ -1794,7 +2071,10 @@ function AdminDashboard() {
                  </div>
                ) : (
                  <div className="bg-white rounded-[40px] p-10 shadow-sm border border-white space-y-4">
-                     {adminPages.map(page => (
+                     {visibleAdminPages.map(page => {
+                        const saved = pageContent?.[page.key] || {};
+                        const footerSection = saved.footerSection || defaultFooterSections[page.key] || "none";
+                        return (
                         <div key={page.key} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-100 transition-all group">
                            <div className="flex items-center gap-4">
                               <div className="w-12 h-12 bg-white border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center group-hover:text-blue-600 group-hover:border-blue-100 transition-all">
@@ -1802,17 +2082,39 @@ function AdminDashboard() {
                               </div>
                               <div>
                                  <p className="font-bold uppercase tracking-widest text-sm text-slate-700 group-hover:text-blue-600 transition-colors">{page.label}</p>
-                                 <p className="text-[10px] text-slate-400">Manage templates and content sections</p>
+                                 <p className="text-[10px] text-slate-400">Footer: {footerSection === "quick" ? "Quick Links" : footerSection === "legal" ? "Legal & Info" : "Hidden"}</p>
                               </div>
                            </div>
-                           <button 
-                             onClick={() => setEditingPageContent(page.key)}
-                             className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2"
-                           >
-                              <Plus className="w-3.5 h-3.5 rotate-45" /> Edit Content
-                           </button>
+                           <div className="flex items-center gap-2">
+                             <select
+                               value={footerSection}
+                               disabled={isSubmitting}
+                               onChange={(e) => updatePageMeta(page.key, { footerSection: e.target.value, deleted: false }, "Footer placement updated")}
+                               className="h-10 bg-white border border-slate-200 text-slate-600 rounded-xl px-3 font-bold uppercase tracking-widest text-[10px] outline-none hover:border-blue-200 focus:border-blue-500 disabled:opacity-50"
+                               aria-label={`Footer placement for ${page.label}`}
+                             >
+                               <option value="none">Hidden</option>
+                               <option value="quick">Quick Links</option>
+                               <option value="legal">Legal & Info</option>
+                             </select>
+                             <button 
+                               onClick={() => setEditingPageContent(page.key)}
+                               className="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2"
+                             >
+                                <Plus className="w-3.5 h-3.5 rotate-45" /> Edit
+                             </button>
+                             <button
+                               onClick={() => handleDeletePage(page.key)}
+                               disabled={isSubmitting}
+                               className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-slate-300 hover:text-red-500 border border-slate-200 transition-all hover:border-red-100 disabled:opacity-50"
+                               aria-label={`Delete ${page.label}`}
+                               title={`Delete ${page.label}`}
+                             >
+                                <Trash2 className="w-4 h-4" />
+                             </button>
+                           </div>
                         </div>
-                     ))}
+                     )})}
                  </div>
                )}
             </div>
@@ -2637,6 +2939,72 @@ function AdminDashboard() {
 
                  <button type="submit" disabled={isSubmitting || isUploading} className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.01] transition-all disabled:opacity-50">
                     {isSubmitting ? "Adding Property..." : "Add Property"}
+                 </button>
+              </form>
+           </div>
+        </div>
+      )}
+
+      {showAddModal === "page" && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
+           <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
+              <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+                 <div>
+                   <h3 className="text-xl font-black">Add New Page</h3>
+                   <p className="text-xs text-slate-400 mt-1">New pages will open at /pages/your-url-slug.</p>
+                 </div>
+                 <button onClick={() => setShowAddModal(null)} className="p-2 hover:bg-slate-50 rounded-full transition-colors"><X className="w-6 h-6" /></button>
+              </div>
+              <form onSubmit={handleAddPage} className="p-10 space-y-6 max-h-[85vh] overflow-y-auto">
+                 <div className="grid grid-cols-2 gap-5">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Page Title</label>
+                      <input name="title" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" placeholder="Our Story" />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">URL Slug</label>
+                      <input name="slug" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" placeholder="our-story" />
+                      <p className="text-[10px] text-slate-400 ml-1">Leave empty to generate from title.</p>
+                   </div>
+                 </div>
+
+                 <div className="grid grid-cols-2 gap-5">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Eyebrow</label>
+                      <input name="eyebrow" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" placeholder="Info" />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Show in Footer</label>
+                      <select name="footerSection" defaultValue="none" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none">
+                         <option value="none">Do not show</option>
+                         <option value="quick">Quick Links</option>
+                         <option value="legal">Legal & Info</option>
+                      </select>
+                   </div>
+                 </div>
+
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Intro</label>
+                    <textarea name="intro" rows={3} className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" placeholder="Short page introduction..." />
+                 </div>
+
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Hero Image URL</label>
+                    <input name="heroImg" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition outline-none" placeholder="https://..." />
+                 </div>
+
+                 <div className="space-y-4 pt-4 border-t border-slate-100">
+                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Content Sections</h4>
+                    {[0, 1, 2].map((idx) => (
+                      <div key={idx} className="p-4 bg-slate-50 rounded-2xl space-y-3">
+                        <input name={`section_${idx}_heading`} placeholder={`Section ${idx + 1} heading`} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm font-bold focus:bg-white focus:border-blue-500 transition outline-none" />
+                        <textarea name={`section_${idx}_body`} rows={4} placeholder={`Section ${idx + 1} content`} className="w-full bg-white border-transparent rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-blue-500 transition outline-none" />
+                      </div>
+                    ))}
+                 </div>
+
+                 <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-5 rounded-[24px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.01] transition-all disabled:opacity-50">
+                    {isSubmitting ? "Adding Page..." : "Add Page"}
                  </button>
               </form>
            </div>
