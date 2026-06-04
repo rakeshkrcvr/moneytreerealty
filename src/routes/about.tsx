@@ -20,12 +20,6 @@ const stats = [
   { v: "85K+", l: "Homes Delivered" },
 ];
 
-const team = [
-  { name: "Mohamed Alabbar", role: "Founder & Chairman", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400" },
-  { name: "Amit Jain", role: "Group CEO", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400" },
-  { name: "Sarah Al Qasimi", role: "Chief Strategy Officer", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" },
-];
-
 function AboutPage() {
   const settings = useSiteSettings();
   const content = settings?.page_content?.about || {};
@@ -97,25 +91,6 @@ function AboutPage() {
             <p className="text-xl font-light leading-relaxed text-white/80">
               {visionDesc}
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Team */}
-      <section className="py-24 bg-background">
-        <div className="container-realty text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-brand mb-6">Leadership</p>
-          <h2 className="text-3xl md:text-5xl text-ink uppercase mb-16" style={{ fontFamily: "var(--font-serif)" }}>MEET OUR TEAM</h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            {team.map((t) => (
-              <div key={t.name} className="group">
-                <div className="aspect-[3/4] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 mb-6">
-                  <img src={t.img} className="w-full h-full object-cover" />
-                </div>
-                <h4 className="text-xl text-ink uppercase tracking-widest">{t.name}</h4>
-                <p className="text-xs uppercase tracking-widest text-brand mt-2">{t.role}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
