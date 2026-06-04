@@ -10,6 +10,19 @@ export function Footer() {
   const [logoFailed, setLogoFailed] = useState(false);
   const logoUrl = settings?.logo_url || "";
   const pageContent = settings?.page_content || {};
+  const contactInfo = pageContent?.contact_info || {};
+  const socialLinks = pageContent?.social_links || {};
+  const officeLocation = contactInfo.location || "Floor No-2, Tower B, Tapasya Corp Heights, Sector 126, Noida, Uttar Pradesh - 201303";
+  const phone = settings?.phone || "+91-9732 300 007";
+  const email = settings?.email || "customercare@goldendoorrealty.com";
+  const telHref = phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : undefined;
+  const socialItems = [
+    { Icon: Facebook, href: socialLinks.facebook },
+    { Icon: Twitter, href: socialLinks.twitter },
+    { Icon: Instagram, href: socialLinks.instagram },
+    { Icon: Youtube, href: socialLinks.youtube },
+    { Icon: Linkedin, href: socialLinks.linkedin },
+  ];
 
   useEffect(() => {
     setLogoFailed(false);
@@ -102,21 +115,21 @@ export function Footer() {
               <div className="flex gap-3 items-start">
                 <MapPin className="w-5 h-5 text-[#c5a35d] shrink-0 mt-1" />
                 <p className="text-sm text-white/70 leading-relaxed">
-                  Floor No-2, Tower B, Tapasya Corp Heights, Sector 126, Noida, Uttar Pradesh - 201303
+                  {officeLocation}
                 </p>
               </div>
               <div className="flex gap-3 items-center">
                 <Phone className="w-5 h-5 text-[#c5a35d] shrink-0" />
-                <a href="tel:+919732300007" className="text-sm font-bold hover:text-[#c5a35d] transition-colors">+91-9732 300 007</a>
+                <a href={telHref} className="text-sm font-bold hover:text-[#c5a35d] transition-colors">{phone}</a>
               </div>
               <div className="flex gap-3 items-center">
                 <Mail className="w-5 h-5 text-[#c5a35d] shrink-0" />
-                <a href="mailto:customercare@goldendoorrealty.com" className="text-sm hover:text-[#c5a35d] transition-colors">customercare@goldendoorrealty.com</a>
+                <a href={`mailto:${email}`} className="text-sm hover:text-[#c5a35d] transition-colors">{email}</a>
               </div>
             </div>
             <div className="flex gap-4">
-              {[Facebook, Twitter, Instagram, Youtube, Linkedin].map((Icon, i) => (
-                <a key={i} href="#" className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center hover:bg-[#c5a35d] hover:border-[#c5a35d] transition-all group">
+              {socialItems.map(({ Icon, href }, i) => (
+                <a key={i} href={href || "#"} target={href ? "_blank" : undefined} rel={href ? "noopener noreferrer" : undefined} className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center hover:bg-[#c5a35d] hover:border-[#c5a35d] transition-all group">
                   <Icon className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
                 </a>
               ))}

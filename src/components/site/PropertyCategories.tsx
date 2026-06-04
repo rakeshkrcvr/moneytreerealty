@@ -1,15 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { useSiteSettings } from "./SiteSettingsContext";
 
-export function PropertyCategories() {
-  const cities = [
-    { name: "Noida", img: "https://images.unsplash.com/photo-1588417631561-268393910c66?auto=format&fit=crop&q=80&w=800" },
-    { name: "Greater Noida West", img: "https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?auto=format&fit=crop&q=80&w=800" },
-    { name: "Gurugram", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800" },
-    { name: "Pune", img: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?auto=format&fit=crop&q=80&w=800" },
-    { name: "Greater Noida", img: "https://images.unsplash.com/photo-1623101170068-0720a4449842?auto=format&fit=crop&q=80&w=800" },
-    { name: "Meerut", img: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=800" },
+export function PropertyCategories({ items = [] }: { items?: any[] }) {
+  const fallbackCities = [
+    { title: "Noida", slug: "noida", img: "https://images.unsplash.com/photo-1588417631561-268393910c66?auto=format&fit=crop&q=80&w=800" },
+    { title: "Greater Noida West", slug: "greater-noida-west", img: "https://images.unsplash.com/photo-1595113316349-9fa4ee24f884?auto=format&fit=crop&q=80&w=800" },
+    { title: "Gurugram", slug: "gurugram", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800" },
+    { title: "Pune", slug: "pune", img: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?auto=format&fit=crop&q=80&w=800" },
+    { title: "Greater Noida", slug: "greater-noida", img: "https://images.unsplash.com/photo-1623101170068-0720a4449842?auto=format&fit=crop&q=80&w=800" },
+    { title: "Meerut", slug: "meerut", img: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&q=80&w=800" },
   ];
+  const cities = items.length ? items : fallbackCities;
 
   return (
     <section className="py-20 bg-white">
@@ -25,18 +25,19 @@ export function PropertyCategories() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
           {cities.map((city, i) => (
             <Link 
-              key={i} 
+              key={city.id || city.slug || city.title || i} 
               to="/properties/$slug" 
-              params={{ slug: city.name.toLowerCase().replace(/ /g, '-') }}
+              params={{ slug: city.slug || city.title.toLowerCase().replace(/\s+/g, '-') }}
               className="group relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-2xl cursor-pointer block shadow-lg hover:shadow-2xl transition-all duration-500"
             >
               <img 
                 src={city.img} 
+                alt={city.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-6 left-6 text-white transition-transform duration-500 group-hover:-translate-y-2">
-                <h3 className="text-xl font-bold mb-1">{city.name}</h3>
+                <h3 className="text-xl font-bold mb-1">{city.title}</h3>
                 <p className="text-xs text-white/70 font-medium">View projects</p>
               </div>
             </Link>

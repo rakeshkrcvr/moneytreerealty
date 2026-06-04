@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { 
-  LayoutDashboard, Building2, Eye, EyeOff, Trash2, X, Plus, Layers, Tags, Search, User, Database, AlertCircle, CheckCircle2, Settings, FileText, AppWindow, ChevronDown, ChevronRight, Compass, Lock, LogIn, LogOut
+  LayoutDashboard, Building2, Eye, EyeOff, Trash2, X, Plus, Layers, Tags, Search, User, Database, AlertCircle, CheckCircle2, Settings, FileText, AppWindow, ChevronDown, ChevronRight, Compass, Lock, LogIn, LogOut, Images, Copy, ExternalLink
 } from "lucide-react";
 import { 
   getAllProperties, getAllPropertyTypes, getAllAmenitiesMaster, 
@@ -12,7 +12,8 @@ import {
   getAllDevelopers, createDeveloper, updateDeveloper, deleteDeveloper,
   updateLead,
   getAllBlogs, createBlog, updateBlog, deleteBlog,
-  getAllCommunities, createCommunity, updateCommunity, deleteCommunity
+  getAllCommunities, createCommunity, updateCommunity, deleteCommunity,
+  getUploadedMedia
 } from "../lib/server-functions";
 import { toast } from "sonner";
 import { DEFAULT_GOOGLE_MAP_EMBED_URL, normalizeGoogleMapsEmbedUrl } from "../lib/utils";
@@ -178,6 +179,10 @@ function AdminDashboard() {
   const [floorPlans, setFloorPlans] = useState<any[]>([]);
   const [developerLogoUrl, setDeveloperLogoUrl] = useState("");
   const [blogImgUrl, setBlogImgUrl] = useState("");
+  const [blogTitle, setBlogTitle] = useState("");
+  const [blogSlug, setBlogSlug] = useState("");
+  const [newBlogTitle, setNewBlogTitle] = useState("");
+  const [newBlogSlug, setNewBlogSlug] = useState("");
   const [propertyImageUrl, setPropertyImageUrl] = useState("");
   const [pageGalleryUrls, setPageGalleryUrls] = useState<string[]>([]);
   const [editingPageContent, setEditingPageContent] = useState<string | null>(null);
@@ -265,7 +270,58 @@ function AdminDashboard() {
     setIsUploading(false);
     toast.success(`${newUrls.length} gallery images added`);
   }
-  const [data, setData] = useState<any>({ properties: [], types: [], amenities: [], leads: [], developers: [], blogs: [], communities: [], settings: null });
+
+  async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    let uploadedCount = 0;
+
+    for (const file of files) {
+      const reader = new FileReader();
+      const uploadPromise = new Promise<boolean>((resolve) => {
+        reader.onload = async () => {
+          const base64 = reader.result as string;
+          try {
+            await uploadImage({ data: { base64, fileName: file.name } });
+            resolve(true);
+          } catch (error) {
+            toast.error(`Failed to upload ${file.name}`);
+            resolve(false);
+          }
+        };
+      });
+      reader.readAsDataURL(file);
+      if (await uploadPromise) uploadedCount += 1;
+    }
+
+    setIsUploading(false);
+    e.currentTarget.value = "";
+    if (uploadedCount) {
+      toast.success(`${uploadedCount} media image${uploadedCount > 1 ? "s" : ""} uploaded`);
+      refreshData();
+    }
+  }
+
+  function getMediaUrl(url: string) {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    return `${origin}${url}`;
+  }
+
+  async function copyMediaUrl(url: string) {
+    const fullUrl = getMediaUrl(url);
+    try {
+      await navigator.clipboard.writeText(fullUrl);
+      toast.success("Image link copied!");
+    } catch (error) {
+      toast.error("Could not copy link");
+    }
+  }
+
+  const [data, setData] = useState<any>({ properties: [], types: [], amenities: [], leads: [], developers: [], blogs: [], communities: [], media: [], settings: null });
   const [dbStatus, setDbStatus] = useState<"checking" | "connected" | "failed">("checking");
 
   useEffect(() => {
@@ -294,6 +350,10 @@ function AdminDashboard() {
       setFloorPlans(Array.isArray(parsedFloorPlans) ? parsedFloorPlans : []);
     } else if (editingItem && editingItem._type === 'developer') {
       setDeveloperLogoUrl(editingItem.logo_url || "");
+    } else if (editingItem && editingItem._type === 'blog') {
+      setBlogImgUrl(editingItem.img || "");
+      setBlogTitle(editingItem.title || "");
+      setBlogSlug(editingItem.slug || slugifyPage(editingItem.title || ""));
     } else {
       setGalleryUrls([]);
       setPropertyImageUrl("");
@@ -301,6 +361,9 @@ function AdminDashboard() {
       setSelectedAmenities([]);
       setFloorPlans([]);
       setDeveloperLogoUrl("");
+      setBlogImgUrl("");
+      setBlogTitle("");
+      setBlogSlug("");
     }
   }, [editingItem]);
 
@@ -313,6 +376,8 @@ function AdminDashboard() {
       setFloorPlans([]);
       setDeveloperLogoUrl("");
       setBlogImgUrl("");
+      setNewBlogTitle("");
+      setNewBlogSlug("");
       setEditingPageContent(null);
       setPageGalleryUrls([]);
     }
@@ -362,7 +427,7 @@ function AdminDashboard() {
 
   async function refreshData() {
     try {
-      const [p, t, a, ld, s, dev, bl, comms] = await Promise.all([
+      const [p, t, a, ld, s, dev, bl, comms, media] = await Promise.all([
         getAllProperties(),
         getAllPropertyTypes(),
         getAllAmenitiesMaster(),
@@ -370,7 +435,8 @@ function AdminDashboard() {
         getSiteSettings(),
         getAllDevelopers(),
         getAllBlogs(),
-        getAllCommunities()
+        getAllCommunities(),
+        getUploadedMedia()
       ]);
       
       setData({ 
@@ -381,6 +447,7 @@ function AdminDashboard() {
         developers: dev || [],
         blogs: bl || [],
         communities: comms || [],
+        media: media || [],
         settings: s || null
       });
 
@@ -562,6 +629,8 @@ function AdminDashboard() {
         await updateBlog({ 
           data: { 
             id: editingItem.id, 
+            oldSlug: editingItem.slug,
+            slug: formData.get("slug") as string,
             title: formData.get("title") as string, 
             img: formData.get("img") as string, 
             cat: formData.get("cat") as string, 
@@ -689,6 +758,7 @@ function AdminDashboard() {
     const formData = new FormData(e.target as HTMLFormElement);
     const b = {
       title: formData.get("title") as string,
+      slug: formData.get("slug") as string,
       img: formData.get("img") as string,
       cat: formData.get("cat") as string,
       excerpt: formData.get("excerpt") as string,
@@ -828,6 +898,7 @@ function AdminDashboard() {
 
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, count: data.properties.length },
+    { id: "media", label: "Media", icon: Images, count: data.media?.length || 0 },
     { id: "manage_property", label: "Properties", icon: Building2, count: data.properties.length },
     { id: "property_types", label: "Types", icon: Layers, count: data.types.length },
     { id: "manage_communities", label: "Cities", icon: Compass, count: data.communities?.length || 0 },
@@ -938,11 +1009,17 @@ function AdminDashboard() {
                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
                <input 
                  className="w-full bg-white border border-transparent rounded-2xl pl-16 pr-6 py-4.5 text-sm focus:outline-none shadow-sm" 
-                 placeholder={`Search ${tab === 'leads' ? 'Leads' : 'Properties'}...`}
+                 placeholder={`Search ${tab === 'leads' ? 'Leads' : tab === 'media' ? 'Media' : 'Properties'}...`}
                  value={searchTerm}
                  onChange={(e) => setSearchTerm(e.target.value)}
                />
             </div>
+            {tab === "media" && (
+               <label className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2">
+                  <Plus className="w-5 h-5" /> {isUploading ? "Uploading..." : "Upload Media"}
+                  <input type="file" accept="image/*" multiple onChange={handleMediaUpload} className="hidden" disabled={isUploading} />
+               </label>
+            )}
             {tab === "manage_property" && (
                <button onClick={() => setShowAddModal("property")} className="px-8 py-4 bg-blue-600 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-blue-100 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2"><Plus className="w-5 h-5" /> Add Property</button>
             )}
@@ -984,6 +1061,53 @@ function AdminDashboard() {
                        <button onClick={refreshData} className="mt-6 px-8 py-3 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-100 transition-all">Retry Connection</button>
                     </div>
                  )}
+              </div>
+            )}
+
+            {tab === "media" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between gap-6">
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Media Library</h2>
+                    <p className="text-sm text-slate-400 mt-1">All images uploaded in the website are listed here with direct links.</p>
+                  </div>
+                  <button onClick={refreshData} className="px-5 py-3 bg-white text-slate-500 rounded-2xl text-xs font-black uppercase tracking-widest border border-slate-100 hover:text-blue-600 hover:border-blue-100 transition-all">
+                    Refresh
+                  </button>
+                </div>
+
+                {data.media?.length ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-5">
+                    {data.media
+                      .filter((m: any) => m.name.toLowerCase().includes(searchTerm.toLowerCase()) || m.url.toLowerCase().includes(searchTerm.toLowerCase()))
+                      .map((m: any) => {
+                        const fullUrl = getMediaUrl(m.url);
+                        return (
+                          <div key={m.url} className="bg-white rounded-[28px] p-4 shadow-sm border border-white overflow-hidden">
+                            <div className="aspect-square rounded-[22px] bg-slate-100 overflow-hidden mb-4">
+                              <img src={m.url} alt={m.name} className="w-full h-full object-cover" />
+                            </div>
+                            <p className="text-xs font-black text-slate-800 truncate" title={m.name}>{m.name}</p>
+                            <input value={fullUrl} readOnly className="mt-3 w-full bg-slate-50 rounded-xl px-3 py-2 text-[11px] text-slate-500 outline-none font-mono" />
+                            <div className="grid grid-cols-2 gap-2 mt-3">
+                              <button onClick={() => copyMediaUrl(m.url)} className="h-10 rounded-xl bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-700 transition">
+                                <Copy className="w-3.5 h-3.5" /> Copy
+                              </button>
+                              <a href={m.url} target="_blank" rel="noopener noreferrer" className="h-10 rounded-xl bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:text-blue-600 hover:bg-blue-50 transition">
+                                <ExternalLink className="w-3.5 h-3.5" /> Open
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                ) : (
+                  <div className="p-16 bg-white rounded-[40px] border-2 border-dashed border-slate-100 text-center">
+                    <Images className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-slate-400 mb-2">No media uploaded yet</h3>
+                    <p className="text-sm text-slate-400">Upload images from properties, blogs, pages, or the Upload Media button.</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1233,7 +1357,7 @@ function AdminDashboard() {
                  </div>
                  <div className="grid grid-cols-3 gap-5">
                     {data.blogs.map((b: any) => (
-                       <div key={b.id} className="bg-white p-6 rounded-[32px] border border-white shadow-sm flex flex-col gap-4 group hover:border-indigo-100 transition-all">
+                       <div key={b.id || b.slug} className="bg-white p-6 rounded-[32px] border border-white shadow-sm flex flex-col gap-4 group hover:border-indigo-100 transition-all">
                           <div className="flex items-center gap-4">
                              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-indigo-50 transition-colors overflow-hidden">
                                 {b.img ? (
@@ -1252,7 +1376,7 @@ function AdminDashboard() {
                              <button onClick={() => setEditingItem({ ...b, _type: 'blog' })} className="flex-1 px-4 h-9 flex items-center justify-center gap-2 bg-white rounded-xl text-slate-200 hover:text-indigo-500 border border-slate-100 transition-all hover:border-indigo-100 shadow-sm font-bold text-[9px] uppercase tracking-widest cursor-pointer">
                                 <Plus className="w-3 h-3 rotate-45" /> Edit
                              </button>
-                             <button onClick={() => handleDelete("blog", b.id)} className="w-9 h-9 flex items-center justify-center bg-white rounded-xl text-slate-200 hover:text-red-500 border border-slate-100 transition-all hover:border-red-100 shadow-sm cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                             <button onClick={() => handleDelete("blog", { id: b.id, slug: b.slug })} className="w-9 h-9 flex items-center justify-center bg-white rounded-xl text-slate-200 hover:text-red-500 border border-slate-100 transition-all hover:border-red-100 shadow-sm cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                           </div>
                        </div>
                     ))}
@@ -2553,8 +2677,12 @@ function AdminDashboard() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Name</label>
-                      <input name="name" defaultValue={editingItem.name} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                      {['type', 'developer', 'amenity'].includes(editingItem._type) && (
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Name</label>
+                          <input name="name" defaultValue={editingItem.name} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                        </div>
+                      )}
                       {editingItem._type === 'type' && (
                         <>
                           <div className="mt-4 space-y-2">
@@ -2612,7 +2740,27 @@ function AdminDashboard() {
                         <div className="space-y-6">
                            <div className="mt-4 space-y-2">
                               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Title</label>
-                              <input name="title" defaultValue={editingItem.title} required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" />
+                              <input
+                                name="title"
+                                value={blogTitle}
+                                onChange={(e) => {
+                                  setBlogTitle(e.target.value);
+                                  setBlogSlug(slugifyPage(e.target.value));
+                                }}
+                                required
+                                className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition"
+                              />
+                           </div>
+                           <div className="mt-4 space-y-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">URL Slug</label>
+                              <input
+                                name="slug"
+                                value={blogSlug}
+                                onChange={(e) => setBlogSlug(slugifyPage(e.target.value))}
+                                className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition"
+                                placeholder="blog-url"
+                              />
+                              <p className="text-[10px] text-slate-400 ml-1">Blog URL will be /blogs/your-url-slug</p>
                            </div>
                            <div className="grid grid-cols-2 gap-4 mt-4">
                              <div className="space-y-2">
@@ -3125,11 +3273,37 @@ function AdminDashboard() {
                  <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Title</label>
-                       <input name="title" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Market Trends 2026" />
+                       <input
+                         name="title"
+                         value={newBlogTitle}
+                         onChange={(e) => {
+                           setNewBlogTitle(e.target.value);
+                           setNewBlogSlug(slugifyPage(e.target.value));
+                         }}
+                         required
+                         className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition"
+                         placeholder="Market Trends 2026"
+                       />
                     </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">URL Slug</label>
+                       <input
+                         name="slug"
+                         value={newBlogSlug}
+                         onChange={(e) => setNewBlogSlug(slugifyPage(e.target.value))}
+                         className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition"
+                         placeholder="market-trends-2026"
+                       />
+                    </div>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Category</label>
                        <input name="cat" required className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Real Estate" />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Author</label>
+                       <input name="author" className="w-full bg-slate-50 border-transparent rounded-2xl px-6 py-4 text-sm focus:bg-white focus:border-blue-600 transition" placeholder="Admin" />
                     </div>
                  </div>
                  <div className="space-y-2">

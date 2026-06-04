@@ -30,6 +30,18 @@ async function getSql() {
   }
 }
 
+function slugify(value: string) {
+  return value.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+async function ensureBlogColumns(db: any) {
+  await db`CREATE TABLE IF NOT EXISTS blogs (slug TEXT PRIMARY KEY, title TEXT, date TEXT, img TEXT, cat TEXT)`;
+  await db`ALTER TABLE blogs ADD COLUMN IF NOT EXISTS id BIGSERIAL`;
+  await db`ALTER TABLE blogs ADD COLUMN IF NOT EXISTS content TEXT DEFAULT ''`;
+  await db`ALTER TABLE blogs ADD COLUMN IF NOT EXISTS excerpt TEXT DEFAULT ''`;
+  await db`ALTER TABLE blogs ADD COLUMN IF NOT EXISTS author TEXT DEFAULT 'Admin'`;
+}
+
 // Optimized Data Fetchers with Safe Serialization (Fix for TanStack Start Serialization Error)
 export const getAllProperties = createServerFn({ method: "GET" }).handler(async () => {
   const db = await getSql();
@@ -299,6 +311,7 @@ export const getAllBlogs = createServerFn({ method: "GET" }).handler(async () =>
   const db = await getSql();
   if (!db) return [];
   try {
+    await ensureBlogColumns(db);
     const res = await db`SELECT * FROM blogs ORDER BY date DESC`;
     return res.map((r: any) => ({ ...r }));
   } catch (e) { return []; }
@@ -307,10 +320,11 @@ export const getAllBlogs = createServerFn({ method: "GET" }).handler(async () =>
 export const createBlog = createServerFn({ method: "POST" }).handler(async ({ data }: { data: any }) => {
   const db = await getSql();
   if (!db) throw new Error("Offline");
-  const slug = data.title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+  const slug = slugify(data.slug || data.title);
   try {
+    await ensureBlogColumns(db);
     await db`INSERT INTO blogs (title, slug, date, img, cat, content, excerpt, author) 
-             VALUES (${data.title}, ${slug}, ${new Date().toISOString()}, ${data.img}, ${data.cat}, ${data.content}, ${data.excerpt}, ${data.author || 'Admin'})`;
+             VALUES (${data.title}, ${slug}, ${new Date().toISOString()}, ${data.img}, ${data.cat}, ${data.content || ''}, ${data.excerpt || ''}, ${data.author || 'Admin'})`;
     return { success: true };
   } catch (e) {
     console.error("Blog creation failed:", e);
@@ -321,15 +335,33 @@ export const createBlog = createServerFn({ method: "POST" }).handler(async ({ da
 export const updateBlog = createServerFn({ method: "POST" }).handler(async ({ data }: { data: any }) => {
   const db = await getSql();
   if (!db) throw new Error("Offline");
+  const slug = slugify(data.slug || data.title);
+  const oldSlug = data.oldSlug ? slugify(data.oldSlug) : "";
   try {
-    await db`UPDATE blogs SET 
-             title = ${data.title}, 
-             img = ${data.img}, 
-             cat = ${data.cat}, 
-             content = ${data.content}, 
-             excerpt = ${data.excerpt}, 
-             author = ${data.author} 
-             WHERE id = ${data.id}`;
+    await ensureBlogColumns(db);
+    const updated = data.id
+      ? await db`UPDATE blogs SET 
+                 title = ${data.title}, 
+                 slug = ${slug},
+                 img = ${data.img}, 
+                 cat = ${data.cat}, 
+                 content = ${data.content || ''}, 
+                 excerpt = ${data.excerpt || ''}, 
+                 author = ${data.author || 'Admin'} 
+                 WHERE id = ${data.id}
+                 RETURNING slug`
+      : [];
+    if (!updated.length && oldSlug) {
+      await db`UPDATE blogs SET 
+               title = ${data.title}, 
+               slug = ${slug},
+               img = ${data.img}, 
+               cat = ${data.cat}, 
+               content = ${data.content || ''}, 
+               excerpt = ${data.excerpt || ''}, 
+               author = ${data.author || 'Admin'} 
+               WHERE slug = ${oldSlug}`;
+    }
     return { success: true };
   } catch (e) {
     console.error("Blog update failed:", e);
@@ -337,11 +369,16 @@ export const updateBlog = createServerFn({ method: "POST" }).handler(async ({ da
   }
 });
 
-export const deleteBlog = createServerFn({ method: "POST" }).handler(async ({ data: id }: { data: number }) => {
+export const deleteBlog = createServerFn({ method: "POST" }).handler(async ({ data }: { data: any }) => {
   const db = await getSql();
   if (!db) throw new Error("Offline");
   try {
-    await db`DELETE FROM blogs WHERE id = ${id}`;
+    await ensureBlogColumns(db);
+    if (data?.id) {
+      await db`DELETE FROM blogs WHERE id = ${data.id}`;
+    } else {
+      await db`DELETE FROM blogs WHERE slug = ${data?.slug || data}`;
+    }
     return { success: true };
   } catch (e) {
     console.error("Blog deletion failed:", e);
@@ -463,6 +500,10 @@ export const uploadImage = createServerFn({ method: "POST" }).handler(async ({ d
     const uniqueName = `${Date.now()}-${fileName.replace(/\s+/g, '-')}`;
     const publicDir = path.join(process.cwd(), "public");
     const uploadDir = path.join(publicDir, "uploads");
+
+    if (process.env.VERCEL) {
+      return await saveImageToDatabase(base64, fileName);
+    }
     
     // Ensure directories exist
     await fs.mkdir(uploadDir, { recursive: true });
@@ -472,7 +513,90 @@ export const uploadImage = createServerFn({ method: "POST" }).handler(async ({ d
     
     return { url: `/uploads/${uniqueName}` };
   } catch (error) {
-    console.error("Upload Error:", error);
-    throw new Error("Failed to upload image");
+    try {
+      return await saveImageToDatabase(data.base64, data.fileName);
+    } catch (fallbackError) {
+      console.error("Upload Error:", error, fallbackError);
+      throw new Error("Failed to upload image");
+    }
+  }
+});
+
+async function saveImageToDatabase(base64: string, fileName: string) {
+  const db = await getSql();
+  if (!db) throw new Error("DB Error");
+
+  await db`
+    CREATE TABLE IF NOT EXISTS media_assets (
+      id TEXT PRIMARY KEY,
+      file_name TEXT,
+      content_type TEXT,
+      data_base64 TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+
+  const safeName = fileName.replace(/[^\w.\-]+/g, "-").replace(/^-+|-+$/g, "") || "image";
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const mimeMatch = base64.match(/^data:([^;]+);base64,/);
+  const contentType = mimeMatch?.[1] || "image/jpeg";
+  const dataBase64 = base64.includes(",") ? base64.split(",")[1] : base64;
+
+  await db`
+    INSERT INTO media_assets (id, file_name, content_type, data_base64)
+    VALUES (${id}, ${safeName}, ${contentType}, ${dataBase64})
+  `;
+
+  return { url: `/api/media/${id}/${safeName}` };
+}
+
+export const getUploadedMedia = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const fs = await import("node:fs/promises");
+    const path = await import("node:path");
+    const db = await getSql();
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg", ".avif"]);
+
+    await fs.mkdir(uploadDir, { recursive: true });
+    const files = await fs.readdir(uploadDir, { withFileTypes: true });
+    const media = await Promise.all(
+      files
+        .filter((file) => file.isFile() && imageExtensions.has(path.extname(file.name).toLowerCase()))
+        .map(async (file) => {
+          const stat = await fs.stat(path.join(uploadDir, file.name));
+          return {
+            name: file.name,
+            url: `/uploads/${file.name}`,
+            size: stat.size,
+            updatedAt: stat.mtime.toISOString(),
+          };
+        })
+    );
+
+    let dbMedia: any[] = [];
+    if (db) {
+      await db`
+        CREATE TABLE IF NOT EXISTS media_assets (
+          id TEXT PRIMARY KEY,
+          file_name TEXT,
+          content_type TEXT,
+          data_base64 TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `;
+      const rows = await db`SELECT id, file_name, created_at FROM media_assets ORDER BY created_at DESC`;
+      dbMedia = rows.map((row: any) => ({
+        name: row.file_name,
+        url: `/api/media/${row.id}/${row.file_name}`,
+        size: 0,
+        updatedAt: new Date(row.created_at).toISOString(),
+      }));
+    }
+
+    return [...dbMedia, ...media].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  } catch (error) {
+    console.error("Media list error:", error);
+    return [];
   }
 });

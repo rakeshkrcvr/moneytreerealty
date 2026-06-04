@@ -3,7 +3,6 @@ import { Header } from "@/components/site/Header";
 import { Hero } from "@/components/site/Hero";
 import { Intro } from "@/components/site/Intro";
 import { FeaturedProperties } from "@/components/site/FeaturedProperties";
-import { Communities } from "@/components/site/Communities";
 import { Launches } from "@/components/site/Launches";
 import { PropertyCategories, WhyChooseUs } from "@/components/site/PropertyCategories";
 import { Testimonials, HomeFAQ } from "@/components/site/HomeTrust";
@@ -14,7 +13,7 @@ import { Footer } from "@/components/site/Footer";
 import { TrustSection } from "@/components/site/TrustSection";
 import { CTABanner } from "@/components/site/CTABanner";
 
-import { getAllBlogs, getAllTestimonials, getAllFAQs, getAllProperties, getAllCommunities, getAllPropertyTypes } from "@/lib/server-functions";
+import { getAllBlogs, getAllTestimonials, getAllFAQs, getAllProperties, getAllCommunities } from "@/lib/server-functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,21 +27,20 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async () => {
-    const [blogs, testimonials, faqs, properties, communities, propertyTypes] = await Promise.all([
+    const [blogs, testimonials, faqs, properties, communities] = await Promise.all([
       getAllBlogs(),
       getAllTestimonials(),
       getAllFAQs(),
       getAllProperties(),
       getAllCommunities(),
-      getAllPropertyTypes()
     ]);
-    return { blogs, testimonials, faqs, properties, communities, propertyTypes };
+    return { blogs, testimonials, faqs, properties, communities };
   },
   component: Index,
 });
 
 function Index() {
-  const { blogs, testimonials, faqs, properties, communities, propertyTypes } = Route.useLoaderData();
+  const { blogs, testimonials, faqs, properties, communities } = Route.useLoaderData();
   
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +49,7 @@ function Index() {
         <Hero />
         <Intro />
         <FeaturedProperties items={properties} />
-        <PropertyCategories items={propertyTypes} />
+        <PropertyCategories items={communities} />
         <Launches items={properties} />
         <WhyChooseUs />
         <TourBanner />

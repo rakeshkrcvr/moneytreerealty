@@ -3,6 +3,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getAllBlogs } from "@/lib/server-functions";
 import { Calendar, User, ArrowLeft, Share2, Facebook, Twitter, Link as LinkIcon } from "lucide-react";
+import { ImageWithFallback } from "@/components/site/ImageWithFallback";
 
 export const Route = createFileRoute("/blogs/$slug")({
   loader: async ({ params }) => {
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/blogs/$slug")({
 
 function BlogDetail() {
   const { blog, related } = Route.useLoaderData();
+  const content = blog.content || blog.excerpt || "";
+  const hasHtmlContent = /<\/?[a-z][\s\S]*>/i.test(content);
 
   return (
     <div className="min-h-screen bg-white">
@@ -68,23 +71,23 @@ function BlogDetail() {
 
           {/* Featured Image */}
           <div className="container-realty mb-16">
-            <div className="aspect-[21/9] rounded-[48px] overflow-hidden shadow-2xl border-8 border-slate-50">
-              <img src={blog.img} alt={blog.title} className="w-full h-full object-cover" />
+            <div className="aspect-[21/9] rounded-[32px] md:rounded-[48px] overflow-hidden shadow-2xl border-8 border-slate-50 bg-slate-100">
+              <ImageWithFallback src={blog.img} alt={blog.title} className="w-full h-full object-cover" />
             </div>
           </div>
 
           {/* Content */}
           <div className="container-realty max-w-4xl pb-24">
             <div className="prose prose-slate prose-lg max-w-none prose-headings:font-serif prose-headings:uppercase prose-headings:tracking-tight prose-brand">
-               {/* 
-                  Note: In a real app, we'd use a markdown renderer or dangerousSetInnerHTML.
-                  Since our seed data is text, we'll split by newlines for basic formatting.
-               */}
-               {blog.content?.split('\n').map((para: string, i: number) => (
-                 <p key={i} className="mb-6 text-slate-600 leading-relaxed text-lg font-medium">
-                   {para}
-                 </p>
-               ))}
+               {hasHtmlContent ? (
+                 <div className="text-slate-600 leading-relaxed text-lg font-medium" dangerouslySetInnerHTML={{ __html: content }} />
+               ) : (
+                 content.split('\n').filter(Boolean).map((para: string, i: number) => (
+                   <p key={i} className="mb-6 text-slate-600 leading-relaxed text-lg font-medium">
+                     {para}
+                   </p>
+                 ))
+               )}
             </div>
             
             {/* Tags / Footer */}
@@ -110,7 +113,7 @@ function BlogDetail() {
                {related.map((p: any) => (
                  <Link key={p.slug} to="/blogs/$slug" params={{ slug: p.slug }} className="group">
                     <div className="aspect-[4/3] rounded-3xl overflow-hidden mb-4 shadow-sm">
-                       <img src={p.img} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" />
+                       <ImageWithFallback src={p.img} alt={p.title} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" />
                     </div>
                     <h4 className="text-lg font-serif uppercase tracking-tight group-hover:text-brand transition-colors line-clamp-2 leading-tight">{p.title}</h4>
                  </Link>
