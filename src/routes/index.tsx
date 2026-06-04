@@ -4,7 +4,7 @@ import { Hero } from "@/components/site/Hero";
 import { Intro } from "@/components/site/Intro";
 import { FeaturedProperties } from "@/components/site/FeaturedProperties";
 import { Launches } from "@/components/site/Launches";
-import { PropertyCategories, WhyChooseUs } from "@/components/site/PropertyCategories";
+import { PropertyCategories } from "@/components/site/PropertyCategories";
 import { Testimonials, HomeFAQ } from "@/components/site/HomeTrust";
 import { Developers } from "@/components/site/Developers";
 import { TourBanner } from "@/components/site/TourBanner";
@@ -51,7 +51,6 @@ function Index() {
         <FeaturedProperties items={properties} />
         <PropertyCategories items={communities} />
         <Launches items={properties} />
-        <WhyChooseUs />
         <TourBanner />
         <Testimonials reviews={testimonials} />
         <Developers />
