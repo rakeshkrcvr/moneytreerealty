@@ -73,7 +73,7 @@ export function PropertyCard({ property: p }: PropertyCardProps) {
              </h3>
              <div className="space-y-1">
                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
-                   <Building2 className="w-3 h-3 text-slate-400" /> {p.developer || "Golden Door Realty"}
+                   <Building2 className="w-3 h-3 text-slate-400" /> {p.developer_name || p.developer || "Golden Door Realty"}
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
                    <MapPin className="w-3 h-3 text-slate-400" /> {p.location}

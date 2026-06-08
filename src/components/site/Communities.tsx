@@ -34,8 +34,8 @@ export function Communities({ items = [] }: { items?: any[] }) {
           {displayItems.map((c: any) => (
             <Link 
               key={c.slug} 
-              to="/properties/$slug" 
-              params={{ slug: c.slug }}
+              to="/properties"
+              search={{ city: c.title }}
               className="group relative aspect-[4/6] overflow-hidden rounded-[32px] bg-slate-100 flex flex-col justify-end p-6 shadow-lg hover:shadow-2xl transition-all duration-700"
             >
               {/* Background Image */}

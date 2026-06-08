@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { MapPin, ChevronRight, Building2, Sparkles, Navigation, Compass } from "lucide-react";
@@ -9,12 +9,33 @@ import { ImageWithFallback } from "@/components/site/ImageWithFallback";
 export const Route = createFileRoute("/properties/$slug")({
   loader: async ({ params }) => {
     const community = await getCommunityBySlug(params.slug);
+    const cityTitle = community?.title || cityTitleBySlug[params.slug];
+    if (cityTitle) {
+      throw redirect({
+        to: "/properties",
+        search: { city: cityTitle },
+      });
+    }
+
     if (!community) throw notFound();
     const projects = await getProjectsInCommunity(params.slug);
     return JSON.parse(JSON.stringify({ community, projects }));
   },
   component: CommunityDetail,
 });
+
+const cityTitleBySlug: Record<string, string> = {
+  ghaziabad: "Ghaziabad",
+  "greater-noida": "Greater Noida",
+  "greater-noida-west": "Greater Noida West",
+  gurugram: "Gurugram",
+  lucknow: "Lucknow",
+  meerut: "Meerut",
+  mumbai: "Mumbai",
+  noida: "Noida",
+  pune: "Pune",
+  "yamuna-expressway": "Yamuna Expressway",
+};
 
 function CommunityDetail() {
   const { community, projects } = Route.useLoaderData();

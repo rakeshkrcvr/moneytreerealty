@@ -147,9 +147,9 @@ export function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3 md:gap-5">
-          <button className="p-2 hover:bg-white/10 rounded-full transition-colors hidden sm:block">
+          <Link to="/properties" className="p-2 hover:bg-white/10 rounded-full transition-colors hidden sm:block" aria-label="Search properties">
             <Search className="w-5 h-5" />
-          </button>
+          </Link>
           
           <a 
             href={`tel:${settings?.phone || "+919732300007"}`} 

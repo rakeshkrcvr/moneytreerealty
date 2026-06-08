@@ -11,6 +11,7 @@ export const Route = createFileRoute("/properties/")({
     return {
       type: (search.type as string) || undefined,
       city: (search.city as string) || undefined,
+      q: (search.q as string) || undefined,
     };
   },
   head: () => ({
@@ -36,22 +37,42 @@ const filters = {
 };
 
 function LaunchesPage() {
-  const { type, city } = useSearch({ from: "/properties/" });
+  const { type, city, q } = useSearch({ from: "/properties/" });
   const navigate = useNavigate({ from: "/properties/" });
   const { launches } = Route.useLoaderData();
   const [activePurpose, setActivePurpose] = useState("Buy");
   const [selectedSub, setSelectedSub] = useState<string | null>(type || null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(q || "");
 
   useEffect(() => {
     setSelectedSub(type || null);
   }, [type]);
 
+  useEffect(() => {
+    setSearch(q || "");
+  }, [q]);
+
   const filteredItems = useMemo(() => {
+    const searchTerms = search.toLowerCase().trim().split(/\s+/).filter(Boolean);
+
     return launches.filter(it => {
-      const matchSearch = it.title.toLowerCase().includes(search.toLowerCase()) || 
-                          it.location.toLowerCase().includes(search.toLowerCase());
+      const searchableText = [
+        it.title,
+        it.type,
+        it.category,
+        it.city,
+        it.location,
+        it.developer,
+        it.developer_name,
+        it.agent_name,
+        it.description,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const matchSearch = searchTerms.length ? searchTerms.every(term => searchableText.includes(term)) : true;
       
       const matchSub = selectedSub ? it.type === selectedSub : true;
       const matchCity = city ? it.city?.toLowerCase() === city.toLowerCase() : true;
@@ -151,6 +172,7 @@ function LaunchesPage() {
             <div className="flex justify-between items-center mb-8 pb-6 border-b border-border">
               <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">
                 Showing {filteredItems.length} results{city ? ` in ${city}` : ""}
+                {q ? ` for "${q}"` : ""}
               </p>
               <div className="flex items-center gap-4">
                 <select className="text-[10px] uppercase tracking-widest font-bold bg-transparent focus:outline-none border-none cursor-pointer">

@@ -46,7 +46,7 @@ export function TrustSection() {
       <div className="container mx-auto px-4 md:px-8">
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-black text-[#1a1a1a] mb-6 tracking-tight">
-            Why <span className="text-[#004037]">25,000+ Families</span> Choose Golden Door
+            Why <span className="text-[#004037]">250+ Families</span> Choose Golden Door
           </h2>
           <p className="text-slate-500 text-sm md:text-base leading-relaxed">
             Others may compete on price. We stand apart with our promise of <span className="font-bold text-slate-800">complete satisfaction</span>—from your first meeting to the day you step into your new home.

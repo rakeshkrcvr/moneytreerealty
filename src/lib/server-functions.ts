@@ -47,7 +47,12 @@ export const getAllProperties = createServerFn({ method: "GET" }).handler(async 
   const db = await getSql();
   if (!db) return [];
   try {
-    const res = await db`SELECT * FROM properties ORDER BY id DESC`;
+    const res = await db`
+      SELECT p.*, d.name as developer_name, d.logo_url as developer_logo, d.about as developer_about
+      FROM properties p
+      LEFT JOIN developers d ON p.developer_id = d.id
+      ORDER BY p.id DESC
+    `;
     // CRITICAL FIX: Convert postgres Result object to plain Array of Objects
     return res.map((row: any) => ({ ...row }));
   } catch (e) {

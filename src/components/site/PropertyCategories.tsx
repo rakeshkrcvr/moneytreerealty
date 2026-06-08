@@ -26,8 +26,8 @@ export function PropertyCategories({ items = [] }: { items?: any[] }) {
           {cities.map((city, i) => (
             <Link 
               key={city.id || city.slug || city.title || i} 
-              to="/properties/$slug" 
-              params={{ slug: city.slug || city.title.toLowerCase().replace(/\s+/g, '-') }}
+              to="/properties"
+              search={{ city: city.title }}
               className="group relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-2xl cursor-pointer block shadow-lg hover:shadow-2xl transition-all duration-500"
             >
               <img 
