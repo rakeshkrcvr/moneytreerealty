@@ -48,7 +48,7 @@ export const getAllProperties = createServerFn({ method: "GET" }).handler(async 
   if (!db) return [];
   try {
     const res = await db`
-      SELECT p.*, d.name as developer_name, d.logo_url as developer_logo, d.about as developer_about
+      SELECT p.*, d.name as developer_name, d.slug as developer_slug, d.logo_url as developer_logo, d.about as developer_about
       FROM properties p
       LEFT JOIN developers d ON p.developer_id = d.id
       ORDER BY p.id DESC
@@ -418,7 +418,7 @@ export const getLaunchBySlug = createServerFn({ method: "GET" })
     
     try {
       const rows = await sql`
-        SELECT p.*, d.name as developer_name, d.logo_url as developer_logo, d.about as developer_about
+        SELECT p.*, d.name as developer_name, d.slug as developer_slug, d.logo_url as developer_logo, d.about as developer_about
         FROM properties p
         LEFT JOIN developers d ON p.developer_id = d.id
         WHERE p.slug = ${slug} 

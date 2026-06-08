@@ -12,6 +12,7 @@ export const Route = createFileRoute("/properties/")({
       type: (search.type as string) || undefined,
       city: (search.city as string) || undefined,
       q: (search.q as string) || undefined,
+      developer: (search.developer as string) || undefined,
     };
   },
   head: () => ({
@@ -37,7 +38,7 @@ const filters = {
 };
 
 function LaunchesPage() {
-  const { type, city, q } = useSearch({ from: "/properties/" });
+  const { type, city, q, developer } = useSearch({ from: "/properties/" });
   const navigate = useNavigate({ from: "/properties/" });
   const { launches } = Route.useLoaderData();
   const [activePurpose, setActivePurpose] = useState("Buy");
@@ -55,6 +56,7 @@ function LaunchesPage() {
 
   const filteredItems = useMemo(() => {
     const searchTerms = search.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const developerFilter = developer?.toLowerCase().trim();
 
     return launches.filter(it => {
       const searchableText = [
@@ -76,10 +78,33 @@ function LaunchesPage() {
       
       const matchSub = selectedSub ? it.type === selectedSub : true;
       const matchCity = city ? it.city?.toLowerCase() === city.toLowerCase() : true;
+      const matchDeveloper = developerFilter
+        ? [
+            it.developer_slug,
+            it.developer_name,
+            it.developer,
+            it.developer_id?.toString(),
+          ]
+            .filter(Boolean)
+            .some(value => value.toLowerCase().trim() === developerFilter)
+        : true;
       
-      return matchSearch && matchSub && matchCity;
+      return matchSearch && matchSub && matchCity && matchDeveloper;
     });
-  }, [search, selectedSub, city, launches]);
+  }, [search, selectedSub, city, developer, launches]);
+
+  const developerLabel = developer
+    ? launches.find(it =>
+        [
+          it.developer_slug,
+          it.developer_name,
+          it.developer,
+          it.developer_id?.toString(),
+        ]
+          .filter(Boolean)
+          .some(value => value.toLowerCase().trim() === developer.toLowerCase().trim())
+      )?.developer_name || developer
+    : "";
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -172,6 +197,7 @@ function LaunchesPage() {
             <div className="flex justify-between items-center mb-8 pb-6 border-b border-border">
               <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">
                 Showing {filteredItems.length} results{city ? ` in ${city}` : ""}
+                {developerLabel ? ` by ${developerLabel}` : ""}
                 {q ? ` for "${q}"` : ""}
               </p>
               <div className="flex items-center gap-4">

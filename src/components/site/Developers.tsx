@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { getAllDevelopers } from "@/lib/server-functions";
-import { Building2 } from "lucide-react";
 import { ImageWithFallback } from "./ImageWithFallback";
 
 export function Developers() {
@@ -38,8 +38,11 @@ export function Developers() {
         <div className="relative overflow-hidden w-full" style={{ display: 'flex' }}>
           <div className="flex animate-marquee py-2" style={{ display: 'flex', flexWrap: 'nowrap' }}>
             {developers.map((dev, idx) => (
-              <div 
+              <Link
                 key={`${dev.id}-row1-${idx}`} 
+                to="/properties"
+                search={{ developer: dev.slug || dev.name || String(dev.id) }}
+                aria-label={`View ${dev.name} properties`}
                 className="mx-3 bg-white rounded-2xl border border-slate-100 flex items-center justify-center p-6 shadow-sm hover:shadow-md transition-all duration-300 shrink-0"
                 style={{ width: '200px', height: '110px', flexShrink: 0 }}
               >
@@ -49,7 +52,7 @@ export function Developers() {
                   className="w-full h-full object-contain"
                   fallback="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=200"
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -58,8 +61,11 @@ export function Developers() {
         <div className="relative overflow-hidden w-full" style={{ display: 'flex' }}>
           <div className="flex animate-marquee py-2" style={{ display: 'flex', flexWrap: 'nowrap', animationDirection: 'reverse' }}>
             {developers.map((dev, idx) => (
-              <div 
+              <Link
                 key={`${dev.id}-row2-${idx}`} 
+                to="/properties"
+                search={{ developer: dev.slug || dev.name || String(dev.id) }}
+                aria-label={`View ${dev.name} properties`}
                 className="mx-3 bg-white rounded-2xl border border-slate-100 flex items-center justify-center p-6 shadow-sm hover:shadow-md transition-all duration-300 shrink-0"
                 style={{ width: '200px', height: '110px', flexShrink: 0 }}
               >
@@ -69,7 +75,7 @@ export function Developers() {
                   className="w-full h-full object-contain"
                   fallback="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=200"
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
