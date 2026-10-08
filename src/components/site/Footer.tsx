@@ -223,7 +223,7 @@ export function Footer() {
               © {new Date().getFullYear()}, All rights reserved. <span className="font-bold text-white">Golden Door Realty Services Limited</span>
            </p>
            <p className="text-[10px] text-white/40 max-w-4xl leading-relaxed uppercase tracking-widest">
-              RERA: UP - UPRERAAGT25048 | Haryana - RC/HARERA/GGM/2569/2164/2024/282 | Maharashtra - A041172401062
+              
            </p>
         </div>
       </div>
