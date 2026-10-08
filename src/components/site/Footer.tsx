@@ -222,9 +222,7 @@ export function Footer() {
            <p className="text-sm text-white/60">
               © {new Date().getFullYear()}, All rights reserved. <span className="font-bold text-white">Golden Door Realty Services Limited</span>
            </p>
-           <p className="text-[10px] text-white/40 max-w-4xl leading-relaxed uppercase tracking-widest">
-              
-           </p>
+           <p className="text-[10px] text-white/40 max-w-4xl leading-relaxed uppercase tracking-widest"></p>
         </div>
       </div>
     </footer>
