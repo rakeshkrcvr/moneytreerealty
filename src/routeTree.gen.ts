@@ -9,116 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SustainabilityRouteImport } from './routes/sustainability'
-import { Route as ServicesRouteImport } from './routes/services'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as NewsroomRouteImport } from './routes/newsroom'
-import { Route as InvestorRelationsRouteImport } from './routes/investor-relations'
-import { Route as FaqsRouteImport } from './routes/faqs'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as CustomerServiceRouteImport } from './routes/customer-service'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CareersRouteImport } from './routes/careers'
-import { Route as CareerRouteImport } from './routes/career'
-import { Route as BrokersRouteImport } from './routes/brokers'
-import { Route as AwardsRouteImport } from './routes/awards'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
-import { Route as CompletedIndexRouteImport } from './routes/completed.index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AwardsRouteImport } from './routes/awards'
+import { Route as BrokersRouteImport } from './routes/brokers'
+import { Route as CareerRouteImport } from './routes/career'
+import { Route as CareersRouteImport } from './routes/careers'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as CustomerServiceRouteImport } from './routes/customer-service'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as FaqsRouteImport } from './routes/faqs'
+import { Route as InvestorRelationsRouteImport } from './routes/investor-relations'
+import { Route as NewsroomRouteImport } from './routes/newsroom'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SustainabilityRouteImport } from './routes/sustainability'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as BlogsIndexRouteImport } from './routes/blogs.index'
-import { Route as PropertySlugRouteImport } from './routes/property.$slug'
-import { Route as PropertiesVillasRouteImport } from './routes/properties.villas'
-import { Route as PropertiesTownhousesRouteImport } from './routes/properties.townhouses'
-import { Route as PropertiesHospitalityRouteImport } from './routes/properties.hospitality'
-import { Route as PropertiesCommercialRouteImport } from './routes/properties.commercial'
-import { Route as PropertiesApartmentsRouteImport } from './routes/properties.apartments'
-import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
-import { Route as PagesSlugRouteImport } from './routes/pages.$slug'
-import { Route as CompletedSlugRouteImport } from './routes/completed.$slug'
 import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
+import { Route as CompletedIndexRouteImport } from './routes/completed.index'
+import { Route as CompletedSlugRouteImport } from './routes/completed.$slug'
+import { Route as PagesSlugRouteImport } from './routes/pages.$slug'
+import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
+import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
+import { Route as PropertiesApartmentsRouteImport } from './routes/properties.apartments'
+import { Route as PropertiesCommercialRouteImport } from './routes/properties.commercial'
+import { Route as PropertiesHospitalityRouteImport } from './routes/properties.hospitality'
+import { Route as PropertiesTownhousesRouteImport } from './routes/properties.townhouses'
+import { Route as PropertiesVillasRouteImport } from './routes/properties.villas'
+import { Route as PropertySlugRouteImport } from './routes/property.$slug'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SustainabilityRoute = SustainabilityRouteImport.update({
-  id: '/sustainability',
-  path: '/sustainability',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsroomRoute = NewsroomRouteImport.update({
-  id: '/newsroom',
-  path: '/newsroom',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InvestorRelationsRoute = InvestorRelationsRouteImport.update({
-  id: '/investor-relations',
-  path: '/investor-relations',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqsRoute = FaqsRouteImport.update({
-  id: '/faqs',
-  path: '/faqs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CustomerServiceRoute = CustomerServiceRouteImport.update({
-  id: '/customer-service',
-  path: '/customer-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CareersRoute = CareersRouteImport.update({
-  id: '/careers',
-  path: '/careers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CareerRoute = CareerRouteImport.update({
-  id: '/career',
-  path: '/career',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrokersRoute = BrokersRouteImport.update({
-  id: '/brokers',
-  path: '/brokers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AwardsRoute = AwardsRouteImport.update({
-  id: '/awards',
-  path: '/awards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -126,19 +51,84 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
-  id: '/properties/',
-  path: '/properties/',
+const AwardsRoute = AwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CompletedIndexRoute = CompletedIndexRouteImport.update({
-  id: '/completed/',
-  path: '/completed/',
+const BrokersRoute = BrokersRouteImport.update({
+  id: '/brokers',
+  path: '/brokers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareerRoute = CareerRouteImport.update({
+  id: '/career',
+  path: '/career',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerServiceRoute = CustomerServiceRouteImport.update({
+  id: '/customer-service',
+  path: '/customer-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqsRoute = FaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestorRelationsRoute = InvestorRelationsRouteImport.update({
+  id: '/investor-relations',
+  path: '/investor-relations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsroomRoute = NewsroomRouteImport.update({
+  id: '/newsroom',
+  path: '/newsroom',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SustainabilityRoute = SustainabilityRouteImport.update({
+  id: '/sustainability',
+  path: '/sustainability',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogsIndexRoute = BlogsIndexRouteImport.update({
@@ -146,44 +136,14 @@ const BlogsIndexRoute = BlogsIndexRouteImport.update({
   path: '/blogs/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertySlugRoute = PropertySlugRouteImport.update({
-  id: '/property/$slug',
-  path: '/property/$slug',
+const BlogsSlugRoute = BlogsSlugRouteImport.update({
+  id: '/blogs/$slug',
+  path: '/blogs/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertiesVillasRoute = PropertiesVillasRouteImport.update({
-  id: '/properties/villas',
-  path: '/properties/villas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PropertiesTownhousesRoute = PropertiesTownhousesRouteImport.update({
-  id: '/properties/townhouses',
-  path: '/properties/townhouses',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PropertiesHospitalityRoute = PropertiesHospitalityRouteImport.update({
-  id: '/properties/hospitality',
-  path: '/properties/hospitality',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PropertiesCommercialRoute = PropertiesCommercialRouteImport.update({
-  id: '/properties/commercial',
-  path: '/properties/commercial',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PropertiesApartmentsRoute = PropertiesApartmentsRouteImport.update({
-  id: '/properties/apartments',
-  path: '/properties/apartments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
-  id: '/properties/$slug',
-  path: '/properties/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PagesSlugRoute = PagesSlugRouteImport.update({
-  id: '/pages/$slug',
-  path: '/pages/$slug',
+const CompletedIndexRoute = CompletedIndexRouteImport.update({
+  id: '/completed/',
+  path: '/completed/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompletedSlugRoute = CompletedSlugRouteImport.update({
@@ -191,9 +151,49 @@ const CompletedSlugRoute = CompletedSlugRouteImport.update({
   path: '/completed/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogsSlugRoute = BlogsSlugRouteImport.update({
-  id: '/blogs/$slug',
-  path: '/blogs/$slug',
+const PagesSlugRoute = PagesSlugRouteImport.update({
+  id: '/pages/$slug',
+  path: '/pages/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
+  id: '/properties/',
+  path: '/properties/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
+  id: '/properties/$slug',
+  path: '/properties/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesApartmentsRoute = PropertiesApartmentsRouteImport.update({
+  id: '/properties/apartments',
+  path: '/properties/apartments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesCommercialRoute = PropertiesCommercialRouteImport.update({
+  id: '/properties/commercial',
+  path: '/properties/commercial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesHospitalityRoute = PropertiesHospitalityRouteImport.update({
+  id: '/properties/hospitality',
+  path: '/properties/hospitality',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesTownhousesRoute = PropertiesTownhousesRouteImport.update({
+  id: '/properties/townhouses',
+  path: '/properties/townhouses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesVillasRoute = PropertiesVillasRouteImport.update({
+  id: '/properties/villas',
+  path: '/properties/villas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertySlugRoute = PropertySlugRouteImport.update({
+  id: '/property/$slug',
+  path: '/property/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -435,116 +435,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sustainability': {
-      id: '/sustainability'
-      path: '/sustainability'
-      fullPath: '/sustainability'
-      preLoaderRoute: typeof SustainabilityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/newsroom': {
-      id: '/newsroom'
-      path: '/newsroom'
-      fullPath: '/newsroom'
-      preLoaderRoute: typeof NewsroomRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/investor-relations': {
-      id: '/investor-relations'
-      path: '/investor-relations'
-      fullPath: '/investor-relations'
-      preLoaderRoute: typeof InvestorRelationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faqs': {
-      id: '/faqs'
-      path: '/faqs'
-      fullPath: '/faqs'
-      preLoaderRoute: typeof FaqsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/customer-service': {
-      id: '/customer-service'
-      path: '/customer-service'
-      fullPath: '/customer-service'
-      preLoaderRoute: typeof CustomerServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/careers': {
-      id: '/careers'
-      path: '/careers'
-      fullPath: '/careers'
-      preLoaderRoute: typeof CareersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/career': {
-      id: '/career'
-      path: '/career'
-      fullPath: '/career'
-      preLoaderRoute: typeof CareerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/brokers': {
-      id: '/brokers'
-      path: '/brokers'
-      fullPath: '/brokers'
-      preLoaderRoute: typeof BrokersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/awards': {
-      id: '/awards'
-      path: '/awards'
-      fullPath: '/awards'
-      preLoaderRoute: typeof AwardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -554,25 +449,116 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/properties/': {
-      id: '/properties/'
-      path: '/properties'
-      fullPath: '/properties/'
-      preLoaderRoute: typeof PropertiesIndexRouteImport
+    '/awards': {
+      id: '/awards'
+      path: '/awards'
+      fullPath: '/awards'
+      preLoaderRoute: typeof AwardsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/completed/': {
-      id: '/completed/'
-      path: '/completed'
-      fullPath: '/completed/'
-      preLoaderRoute: typeof CompletedIndexRouteImport
+    '/brokers': {
+      id: '/brokers'
+      path: '/brokers'
+      fullPath: '/brokers'
+      preLoaderRoute: typeof BrokersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/career': {
+      id: '/career'
+      path: '/career'
+      fullPath: '/career'
+      preLoaderRoute: typeof CareerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer-service': {
+      id: '/customer-service'
+      path: '/customer-service'
+      fullPath: '/customer-service'
+      preLoaderRoute: typeof CustomerServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faqs': {
+      id: '/faqs'
+      path: '/faqs'
+      fullPath: '/faqs'
+      preLoaderRoute: typeof FaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investor-relations': {
+      id: '/investor-relations'
+      path: '/investor-relations'
+      fullPath: '/investor-relations'
+      preLoaderRoute: typeof InvestorRelationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsroom': {
+      id: '/newsroom'
+      path: '/newsroom'
+      fullPath: '/newsroom'
+      preLoaderRoute: typeof NewsroomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sustainability': {
+      id: '/sustainability'
+      path: '/sustainability'
+      fullPath: '/sustainability'
+      preLoaderRoute: typeof SustainabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blogs/': {
@@ -582,60 +568,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/property/$slug': {
-      id: '/property/$slug'
-      path: '/property/$slug'
-      fullPath: '/property/$slug'
-      preLoaderRoute: typeof PropertySlugRouteImport
+    '/blogs/$slug': {
+      id: '/blogs/$slug'
+      path: '/blogs/$slug'
+      fullPath: '/blogs/$slug'
+      preLoaderRoute: typeof BlogsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/properties/villas': {
-      id: '/properties/villas'
-      path: '/properties/villas'
-      fullPath: '/properties/villas'
-      preLoaderRoute: typeof PropertiesVillasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties/townhouses': {
-      id: '/properties/townhouses'
-      path: '/properties/townhouses'
-      fullPath: '/properties/townhouses'
-      preLoaderRoute: typeof PropertiesTownhousesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties/hospitality': {
-      id: '/properties/hospitality'
-      path: '/properties/hospitality'
-      fullPath: '/properties/hospitality'
-      preLoaderRoute: typeof PropertiesHospitalityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties/commercial': {
-      id: '/properties/commercial'
-      path: '/properties/commercial'
-      fullPath: '/properties/commercial'
-      preLoaderRoute: typeof PropertiesCommercialRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties/apartments': {
-      id: '/properties/apartments'
-      path: '/properties/apartments'
-      fullPath: '/properties/apartments'
-      preLoaderRoute: typeof PropertiesApartmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties/$slug': {
-      id: '/properties/$slug'
-      path: '/properties/$slug'
-      fullPath: '/properties/$slug'
-      preLoaderRoute: typeof PropertiesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pages/$slug': {
-      id: '/pages/$slug'
-      path: '/pages/$slug'
-      fullPath: '/pages/$slug'
-      preLoaderRoute: typeof PagesSlugRouteImport
+    '/completed/': {
+      id: '/completed/'
+      path: '/completed'
+      fullPath: '/completed/'
+      preLoaderRoute: typeof CompletedIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/completed/$slug': {
@@ -645,11 +589,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompletedSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blogs/$slug': {
-      id: '/blogs/$slug'
-      path: '/blogs/$slug'
-      fullPath: '/blogs/$slug'
-      preLoaderRoute: typeof BlogsSlugRouteImport
+    '/pages/$slug': {
+      id: '/pages/$slug'
+      path: '/pages/$slug'
+      fullPath: '/pages/$slug'
+      preLoaderRoute: typeof PagesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/': {
+      id: '/properties/'
+      path: '/properties'
+      fullPath: '/properties/'
+      preLoaderRoute: typeof PropertiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/$slug': {
+      id: '/properties/$slug'
+      path: '/properties/$slug'
+      fullPath: '/properties/$slug'
+      preLoaderRoute: typeof PropertiesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/apartments': {
+      id: '/properties/apartments'
+      path: '/properties/apartments'
+      fullPath: '/properties/apartments'
+      preLoaderRoute: typeof PropertiesApartmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/commercial': {
+      id: '/properties/commercial'
+      path: '/properties/commercial'
+      fullPath: '/properties/commercial'
+      preLoaderRoute: typeof PropertiesCommercialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/hospitality': {
+      id: '/properties/hospitality'
+      path: '/properties/hospitality'
+      fullPath: '/properties/hospitality'
+      preLoaderRoute: typeof PropertiesHospitalityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/townhouses': {
+      id: '/properties/townhouses'
+      path: '/properties/townhouses'
+      fullPath: '/properties/townhouses'
+      preLoaderRoute: typeof PropertiesTownhousesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/villas': {
+      id: '/properties/villas'
+      path: '/properties/villas'
+      fullPath: '/properties/villas'
+      preLoaderRoute: typeof PropertiesVillasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/property/$slug': {
+      id: '/property/$slug'
+      path: '/property/$slug'
+      fullPath: '/property/$slug'
+      preLoaderRoute: typeof PropertySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
