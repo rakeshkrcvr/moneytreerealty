@@ -811,7 +811,7 @@ function AdminDashboard() {
               <Lock className="w-6 h-6" />
             </div>
             <h1 className="text-2xl font-black tracking-tight text-slate-900">Admin Login</h1>
-            <p className="mt-2 text-sm font-medium text-slate-400">Sign in to manage MoneyTree Realty.</p>
+            <p className="mt-2 text-sm font-medium text-slate-400">Sign in to manage Golden Door Realty.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
@@ -827,7 +827,7 @@ function AdminDashboard() {
                   type="text"
                   autoComplete="username"
                   className="w-full bg-slate-50 border border-transparent rounded-2xl pl-12 pr-4 py-4 text-sm font-bold text-slate-700 outline-none transition focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-50"
-                  placeholder="admin"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -844,7 +844,7 @@ function AdminDashboard() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   className="w-full bg-slate-50 border border-transparent rounded-2xl pl-12 pr-12 py-4 text-sm font-bold text-slate-700 outline-none transition focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-50"
-                  placeholder="admin@123"
+                  placeholder=""
                 />
                 <button
                   type="button"
